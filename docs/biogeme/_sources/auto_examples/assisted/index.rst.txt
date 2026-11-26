@@ -1,0 +1,246 @@
+
+
+.. _sphx_glr_auto_examples_assisted:
+
+Assisted specification with Biogeme
+***********************************
+
+Examples discussed in `Bierlaire and Ortelli (2023) Assisted Specification with Biogeme 3.2.12
+<https://transp-or.epfl.ch/documents/technicalReports/BierOrte23.pdf>`_
+
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="We combine the following specifications:">
+
+.. only:: html
+
+  .. image:: /auto_examples/assisted/images/thumb/sphx_glr_everything_spec_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_assisted_everything_spec.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Combination of many specifications</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Logit model.">
+
+.. only:: html
+
+  .. image:: /auto_examples/assisted/images/thumb/sphx_glr_plot_b00logit_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_assisted_plot_b00logit.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Base model</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Investigate several choice models:">
+
+.. only:: html
+
+  .. image:: /auto_examples/assisted/images/thumb/sphx_glr_plot_b01model_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_assisted_plot_b01model.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Investigation of several choice models</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Investigate of nonlinear specifications for the travel time variables:">
+
+.. only:: html
+
+  .. image:: /auto_examples/assisted/images/thumb/sphx_glr_plot_b02nonlinear_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_assisted_plot_b02nonlinear.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Catalog of nonlinear specifications</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Investigate alternative specific parameters:">
+
+.. only:: html
+
+  .. image:: /auto_examples/assisted/images/thumb/sphx_glr_plot_b03alt_spec_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_assisted_plot_b03alt_spec.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Catalog for alternative specific coefficients</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Investigate the segmentations of parameters.">
+
+.. only:: html
+
+  .. image:: /auto_examples/assisted/images/thumb/sphx_glr_plot_b04segmentation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_assisted_plot_b04segmentation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Catalog for segmented parameters</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="We consider 4 specifications for the constants:">
+
+.. only:: html
+
+  .. image:: /auto_examples/assisted/images/thumb/sphx_glr_plot_b05alt_spec_segmentation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_assisted_plot_b05alt_spec_segmentation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Segmentations and alternative specific specification</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="We combine many specifications, defined in everything_spec_section. This leads to a total of 432 specifications. When the total number of specifications exceeds 100, Biogeme raises an ValueOutOfRange exception when the estimate_catalog is called. See Bierlaire and Ortelli (2023).">
+
+.. only:: html
+
+  .. image:: /auto_examples/assisted/images/thumb/sphx_glr_plot_b06everything_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_assisted_plot_b06everything.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Combine many specifications: exception is raised</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="We combine many specifications, defined in everything_spec_section.  This leads to a total of 432 specifications. The algorithm implemented in the AssistedSpecification object is used to investigate some of these specifications. See Bierlaire and Ortelli (2023).">
+
+.. only:: html
+
+  .. image:: /auto_examples/assisted/images/thumb/sphx_glr_plot_b07everything_assisted_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_assisted_plot_b07everything_assisted.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Combine many specifications: assisted specification algorithm</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="We consider the model with 432 specifications defined in everything_spec_section. We select one specification and estimate it. See Bierlaire and Ortelli (2023).">
+
+.. only:: html
+
+  .. image:: /auto_examples/assisted/images/thumb/sphx_glr_plot_b08selected_specification_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_assisted_plot_b08selected_specification.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">One model among many</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="After running the assisted specification algorithm for the 432 specifications in everything_spec_section, we use post processing to re-estimate all Pareto optimal models, and display some information about the algorithm. See Bierlaire and Ortelli (2023).">
+
+.. only:: html
+
+  .. image:: /auto_examples/assisted/images/thumb/sphx_glr_plot_b09post_processing_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_assisted_plot_b09post_processing.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Re-estimation of best models</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Illustration of the concept of catalog. See Bierlaire and Ortelli (2023)">
+
+.. only:: html
+
+  .. image:: /auto_examples/assisted/images/thumb/sphx_glr_plot_simple_example_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_assisted_plot_simple_example.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Example of a catalog</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/assisted/everything_spec
+   /auto_examples/assisted/plot_b00logit
+   /auto_examples/assisted/plot_b01model
+   /auto_examples/assisted/plot_b02nonlinear
+   /auto_examples/assisted/plot_b03alt_spec
+   /auto_examples/assisted/plot_b04segmentation
+   /auto_examples/assisted/plot_b05alt_spec_segmentation
+   /auto_examples/assisted/plot_b06everything
+   /auto_examples/assisted/plot_b07everything_assisted
+   /auto_examples/assisted/plot_b08selected_specification
+   /auto_examples/assisted/plot_b09post_processing
+   /auto_examples/assisted/plot_simple_example
+

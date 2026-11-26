@@ -1,0 +1,401 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuration parameters &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Native draws" href="native_draws.html" />
+    <link rel="prev" title="Example of a catalog" href="../auto_examples/assisted/plot_simple_example.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration parameters</a><ul class="simple">
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Configuration parameters</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/code/toml.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="configuration-parameters">
+<h1>Configuration parameters<a class="headerlink" href="#configuration-parameters" title="Link to this heading"></a></h1>
+<p>Biogeme can be configured using a parameter file. By default, the name is supposed to be <code class="docutils literal notranslate"><span class="pre">biogeme.toml</span></code>. If such a
+file does not exist, Biogeme will create one containing the default values. The following table provides a description
+of all parameters that can be configured.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Section</p></th>
+<th class="head"><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>largest_neighborhood</p></td>
+<td><p>int: size of the largest neighborhood copnsidered by the Variable Neighborhood Search (VNS) algorithm.</p></td>
+<td><p>20</p></td>
+<td><p>AssistedSpecification</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-odd"><td><p>maximum_attempts</p></td>
+<td><p>int: an attempts consists in selecting a solution in the Pareto set, and trying to improve it. The parameter imposes an upper bound on the total number of attempts, irrespectively if they are successful or not.</p></td>
+<td><p>100</p></td>
+<td><p>AssistedSpecification</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-even"><td><p>maximum_number_parameters</p></td>
+<td><p>int: maximum number of parameters allowed in a model. Each specification with a higher number is deemed invalid and not estimated.</p></td>
+<td><p>50</p></td>
+<td><p>AssistedSpecification</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-odd"><td><p>number_of_neighbors</p></td>
+<td><p>int: maximum number of neighbors that are visited by the VNS algorithm.</p></td>
+<td><p>20</p></td>
+<td><p>AssistedSpecification</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-even"><td><p>version</p></td>
+<td><p>Version of Biogeme that created the TOML file. Do not modify this value.</p></td>
+<td><p>3.2.14</p></td>
+<td><p>Biogeme</p></td>
+<td><p>str</p></td>
+</tr>
+<tr class="row-odd"><td><p>bootstrap_samples</p></td>
+<td><p>int: number of re-estimations for bootstrap sampling.</p></td>
+<td><p>100</p></td>
+<td><p>Estimation</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-even"><td><p>large_data_set</p></td>
+<td><p>If the number of observations is larger than this value, the data set is deemed large, and the default estimation algorithm will not use second derivatives.</p></td>
+<td><p>100000</p></td>
+<td><p>Estimation</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-odd"><td><p>max_number_parameters_to_report</p></td>
+<td><p>int: maximum number of parameters to report during the estimation.</p></td>
+<td><p>15</p></td>
+<td><p>Estimation</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-even"><td><p>maximum_number_catalog_expressions</p></td>
+<td><p>If the expression contains catalogs, the parameter sets an upper bound of the total number of possible combinations that can be estimated in the same loop.</p></td>
+<td><p>100</p></td>
+<td><p>Estimation</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-odd"><td><p>optimization_algorithm</p></td>
+<td><p>str: optimization algorithm to be used for estimation. Valid values: [‘automatic’, ‘scipy’, ‘LS-newton’, ‘TR-newton’, ‘LS-BFGS’, ‘TR-BFGS’, ‘simple_bounds’, ‘simple_bounds_newton’, ‘simple_bounds_BFGS’]</p></td>
+<td><p>automatic</p></td>
+<td><p>Estimation</p></td>
+<td><p>str</p></td>
+</tr>
+<tr class="row-even"><td><p>save_iterations</p></td>
+<td><p>bool: If True, the current iterate is saved after each iteration, in a file named <code class="docutils literal notranslate"><span class="pre">__[modelName].iter</span></code>, where <code class="docutils literal notranslate"><span class="pre">[modelName]</span></code> is the name given to the model. If such a file exists, the starting values for the estimation are replaced by the values saved in the file.</p></td>
+<td><p>True</p></td>
+<td><p>Estimation</p></td>
+<td><p>bool</p></td>
+</tr>
+<tr class="row-odd"><td><p>number_of_draws</p></td>
+<td><p>int: Number of draws for Monte-Carlo integration.</p></td>
+<td><p>100</p></td>
+<td><p>MonteCarlo</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-even"><td><p>seed</p></td>
+<td><p>int: Seed used for the pseudo-random number generation. It is useful only when each run should generate the exact same result. If 0, a new seed is used at each run.</p></td>
+<td><p>0</p></td>
+<td><p>MonteCarlo</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-odd"><td><p>number_of_threads</p></td>
+<td><p>int: Number of threads/processors to be used. If the parameter is 0, the number of available threads is calculated using cpu_count().</p></td>
+<td><p>0</p></td>
+<td><p>MultiThreading</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-even"><td><p>generate_html</p></td>
+<td><p>bool: “True” if the HTML file with the results must be generated.</p></td>
+<td><p>True</p></td>
+<td><p>Output</p></td>
+<td><p>bool</p></td>
+</tr>
+<tr class="row-odd"><td><p>generate_pickle</p></td>
+<td><p>bool: “True” if the pickle file with the results must be generated.</p></td>
+<td><p>True</p></td>
+<td><p>Output</p></td>
+<td><p>bool</p></td>
+</tr>
+<tr class="row-even"><td><p>identification_threshold</p></td>
+<td><p>float: if the smallest eigenvalue of the second derivative matrix is lesser or equal to this parameter, the model is considered not identified. The corresponding eigenvector is then reported to identify the parameters involved in the issue.</p></td>
+<td><p>1e-05</p></td>
+<td><p>Output</p></td>
+<td><p>float</p></td>
+</tr>
+<tr class="row-odd"><td><p>only_robust_stats</p></td>
+<td><p>bool: “True” if only the robust statistics need to be reported. If “False”, the statistics from the Rao-Cramer bound are also reported.</p></td>
+<td><p>True</p></td>
+<td><p>Output</p></td>
+<td><p>bool</p></td>
+</tr>
+<tr class="row-even"><td><p>enlarging_factor</p></td>
+<td><p>If an iteration is very successful, the radius of the trust region is multiplied by this factor</p></td>
+<td><p>10</p></td>
+<td><p>SimpleBounds</p></td>
+<td><p>float</p></td>
+</tr>
+<tr class="row-odd"><td><p>infeasible_cg</p></td>
+<td><p>If True, the conjugate gradient algorithm may generate infeasible solutions until termination.  The result will then be projected on the feasible domain.  If False, the algorithm stops as soon as an infeasible iterate is generated</p></td>
+<td><p>False</p></td>
+<td><p>SimpleBounds</p></td>
+<td><p>bool</p></td>
+</tr>
+<tr class="row-even"><td><p>initial_radius</p></td>
+<td><p>Initial radius of the trust region</p></td>
+<td><p>1</p></td>
+<td><p>SimpleBounds</p></td>
+<td><p>float</p></td>
+</tr>
+<tr class="row-odd"><td><p>max_iterations</p></td>
+<td><p>int: maximum number of iterations</p></td>
+<td><p>1000</p></td>
+<td><p>SimpleBounds</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-even"><td><p>second_derivatives</p></td>
+<td><p>float: proportion (between 0 and 1) of iterations when the analytical Hessian is calculated</p></td>
+<td><p>1.0</p></td>
+<td><p>SimpleBounds</p></td>
+<td><p>float</p></td>
+</tr>
+<tr class="row-odd"><td><p>steptol</p></td>
+<td><p>The algorithm stops when the relative change in x is below this threshold. Basically, if p significant digits of x are needed, steptol should be set to 1.0e-p.</p></td>
+<td><p>1e-05</p></td>
+<td><p>SimpleBounds</p></td>
+<td><p>float</p></td>
+</tr>
+<tr class="row-even"><td><p>tolerance</p></td>
+<td><p>float: the algorithm stops when this precision is reached</p></td>
+<td><p>0.0001220703125</p></td>
+<td><p>SimpleBounds</p></td>
+<td><p>float</p></td>
+</tr>
+<tr class="row-odd"><td><p>missing_data</p></td>
+<td><p>number: If one variable has this value, it is assumed that a data is missing and an exception will be triggered.</p></td>
+<td><p>99999</p></td>
+<td><p>Specification</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-even"><td><p>dogleg</p></td>
+<td><p>bool: choice of the method to solve the trust region subproblem. True: dogleg. False: truncated conjugate gradient.</p></td>
+<td><p>True</p></td>
+<td><p>TrustRegion</p></td>
+<td><p>bool</p></td>
+</tr>
+</tbody>
+</table>
+<p>The structure of the <code class="docutils literal notranslate"><span class="pre">biogeme.toml</span></code> file is as follows.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span># Default parameter file for Biogeme 3.2.14
+<span class="linenos"> 2</span># Automatically created on December 01, 2025. 18:23:47
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span>[TrustRegion]
+<span class="linenos"> 5</span>dogleg = &quot;True&quot; # bool: choice of the method to solve the trust region subproblem.
+<span class="linenos"> 6</span>                # True: dogleg. False: truncated conjugate gradient.
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span>[Output]
+<span class="linenos"> 9</span>identification_threshold = 1e-05 # float: if the smallest eigenvalue of the
+<span class="linenos">10</span>                                 # second derivative matrix is lesser or equal to
+<span class="linenos">11</span>                                 # this parameter, the model is considered not
+<span class="linenos">12</span>                                 # identified. The corresponding eigenvector is
+<span class="linenos">13</span>                                 # then reported to identify the parameters
+<span class="linenos">14</span>                                 # involved in the issue.
+<span class="linenos">15</span>only_robust_stats = &quot;True&quot; # bool: &quot;True&quot; if only the robust statistics need to be
+<span class="linenos">16</span>                           # reported. If &quot;False&quot;, the statistics from the
+<span class="linenos">17</span>                           # Rao-Cramer bound are also reported.
+<span class="linenos">18</span>generate_html = &quot;True&quot; # bool: &quot;True&quot; if the HTML file with the results must be
+<span class="linenos">19</span>                       # generated.
+<span class="linenos">20</span>generate_pickle = &quot;True&quot; # bool: &quot;True&quot; if the pickle file with the results must be
+<span class="linenos">21</span>                         # generated.
+<span class="linenos">22</span>
+<span class="linenos">23</span>[Specification]
+<span class="linenos">24</span>missing_data = 99999 # number: If one variable has this value, it is assumed that
+<span class="linenos">25</span>                     # a data is missing and an exception will be triggered.
+<span class="linenos">26</span>
+<span class="linenos">27</span>[AssistedSpecification]
+<span class="linenos">28</span>maximum_number_parameters = 50 # int: maximum number of parameters allowed in a
+<span class="linenos">29</span>                               # model. Each specification with a higher number
+<span class="linenos">30</span>                               # is deemed invalid and not estimated.
+<span class="linenos">31</span>number_of_neighbors = 20 # int: maximum number of neighbors that are visited by
+<span class="linenos">32</span>                         # the VNS algorithm.
+<span class="linenos">33</span>largest_neighborhood = 20 # int: size of the largest neighborhood copnsidered by
+<span class="linenos">34</span>                          # the Variable Neighborhood Search (VNS) algorithm.
+<span class="linenos">35</span>maximum_attempts = 100 # int: an attempts consists in selecting a solution in the
+<span class="linenos">36</span>                       # Pareto set, and trying to improve it. The parameter
+<span class="linenos">37</span>                       # imposes an upper bound on the total number of attempts,
+<span class="linenos">38</span>                       # irrespectively if they are successful or not.
+<span class="linenos">39</span>
+<span class="linenos">40</span>[MonteCarlo]
+<span class="linenos">41</span>number_of_draws = 100 # int: Number of draws for Monte-Carlo integration.
+<span class="linenos">42</span>seed = 0 # int: Seed used for the pseudo-random number generation. It is useful
+<span class="linenos">43</span>         # only when each run should generate the exact same result. If 0, a new
+<span class="linenos">44</span>         # seed is used at each run.
+<span class="linenos">45</span>
+<span class="linenos">46</span>[SimpleBounds]
+<span class="linenos">47</span>second_derivatives = 1.0 # float: proportion (between 0 and 1) of iterations when
+<span class="linenos">48</span>                         # the analytical Hessian is calculated
+<span class="linenos">49</span>tolerance = 0.0001220703125 # float: the algorithm stops when this precision is
+<span class="linenos">50</span>                            # reached
+<span class="linenos">51</span>max_iterations = 1000 # int: maximum number of iterations
+<span class="linenos">52</span>infeasible_cg = &quot;False&quot; # If True, the conjugate gradient algorithm may generate
+<span class="linenos">53</span>                        # infeasible solutions until termination.  The result
+<span class="linenos">54</span>                        # will then be projected on the feasible domain.  If
+<span class="linenos">55</span>                        # False, the algorithm stops as soon as an infeasible
+<span class="linenos">56</span>                        # iterate is generated
+<span class="linenos">57</span>initial_radius = 1 # Initial radius of the trust region
+<span class="linenos">58</span>steptol = 1e-05 # The algorithm stops when the relative change in x is below this
+<span class="linenos">59</span>                # threshold. Basically, if p significant digits of x are needed,
+<span class="linenos">60</span>                # steptol should be set to 1.0e-p.
+<span class="linenos">61</span>enlarging_factor = 10 # If an iteration is very successful, the radius of the
+<span class="linenos">62</span>                      # trust region is multiplied by this factor
+<span class="linenos">63</span>
+<span class="linenos">64</span>[Biogeme]
+<span class="linenos">65</span>version = &quot;3.2.14&quot; # Version of Biogeme that created the TOML file. Do not modify
+<span class="linenos">66</span>                   # this value.
+<span class="linenos">67</span>
+<span class="linenos">68</span>[MultiThreading]
+<span class="linenos">69</span>number_of_threads = 0 # int: Number of threads/processors to be used. If the
+<span class="linenos">70</span>                      # parameter is 0, the number of available threads is
+<span class="linenos">71</span>                      # calculated using cpu_count().
+<span class="linenos">72</span>
+<span class="linenos">73</span>[Estimation]
+<span class="linenos">74</span>bootstrap_samples = 100 # int: number of re-estimations for bootstrap sampling.
+<span class="linenos">75</span>large_data_set = 100000 # If the number of observations is larger than this
+<span class="linenos">76</span>                        # value, the data set is deemed large, and the default
+<span class="linenos">77</span>                        # estimation algorithm will not use second derivatives.
+<span class="linenos">78</span>max_number_parameters_to_report = 15 # int: maximum number of parameters to
+<span class="linenos">79</span>                                     # report during the estimation.
+<span class="linenos">80</span>save_iterations = &quot;True&quot; # bool: If True, the current iterate is saved after each
+<span class="linenos">81</span>                         # iteration, in a file named ``__[modelName].iter``,
+<span class="linenos">82</span>                         # where ``[modelName]`` is the name given to the model.
+<span class="linenos">83</span>                         # If such a file exists, the starting values for the
+<span class="linenos">84</span>                         # estimation are replaced by the values saved in the
+<span class="linenos">85</span>                         # file.
+<span class="linenos">86</span>maximum_number_catalog_expressions = 100 # If the expression contains catalogs,
+<span class="linenos">87</span>                                         # the parameter sets an upper bound of
+<span class="linenos">88</span>                                         # the total number of possible
+<span class="linenos">89</span>                                         # combinations that can be estimated in
+<span class="linenos">90</span>                                         # the same loop.
+<span class="linenos">91</span>optimization_algorithm = &quot;automatic&quot; # str: optimization algorithm to be used for
+<span class="linenos">92</span>                                     # estimation. Valid values: [&#39;automatic&#39;,
+<span class="linenos">93</span>                                     # &#39;scipy&#39;, &#39;LS-newton&#39;, &#39;TR-newton&#39;,
+<span class="linenos">94</span>                                     # &#39;LS-BFGS&#39;, &#39;TR-BFGS&#39;, &#39;simple_bounds&#39;,
+<span class="linenos">95</span>                                     # &#39;simple_bounds_newton&#39;,
+<span class="linenos">96</span>                                     # &#39;simple_bounds_BFGS&#39;]
+<span class="linenos">97</span>
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../auto_examples/assisted/plot_simple_example.html" class="btn btn-neutral float-left" title="Example of a catalog" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="native_draws.html" class="btn btn-neutral float-right" title="Native draws" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

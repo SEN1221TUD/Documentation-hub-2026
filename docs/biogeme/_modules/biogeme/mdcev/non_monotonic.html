@@ -1,0 +1,437 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.mdcev.non_monotonic &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.mdcev.non_monotonic</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.mdcev.non_monotonic</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Implementation of the &quot;non-monotonic&quot; MDCEV model. See the technical report.</span>
+
+<span class="sd">Michel Bierlaire</span>
+<span class="sd">Tue Apr 9 09:25:20 2024</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.database</span><span class="w"> </span><span class="kn">import</span> <span class="n">Database</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiogemeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">exp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.mdcev.mdcev</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mdcev</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.tools.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_dict_types</span>
+
+
+<div class="viewcode-block" id="NonMonotonic">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/non_monotonic.html#biogeme.mdcev.non_monotonic.NonMonotonic">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NonMonotonic</span><span class="p">(</span><span class="n">Mdcev</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implementation of the MDCEV model with non-monotonic utility function.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">baseline_utilities</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+        <span class="n">gamma_parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">mu_utilities</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+        <span class="n">alpha_parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scale_parameter</span><span class="p">:</span> <span class="n">Expression</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">weights</span><span class="p">:</span> <span class="n">Expression</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Implementation of the MDCEV model with Gamma profile.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">baseline_utilities</span><span class="o">=</span><span class="n">baseline_utilities</span><span class="p">,</span>
+            <span class="n">gamma_parameters</span><span class="o">=</span><span class="n">gamma_parameters</span><span class="p">,</span>
+            <span class="n">alpha_parameters</span><span class="o">=</span><span class="n">alpha_parameters</span><span class="p">,</span>
+            <span class="n">scale_parameter</span><span class="o">=</span><span class="n">scale_parameter</span><span class="p">,</span>
+            <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu_utilities</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu_utilities</span>
+        <span class="n">validate_dict_types</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_utilities</span><span class="p">,</span> <span class="s1">&#39;mu_utilities&#39;</span><span class="p">,</span> <span class="n">Expression</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NonMonotonic.transformed_utility">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/non_monotonic.html#biogeme.mdcev.non_monotonic.NonMonotonic.transformed_utility">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transformed_utility</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">the_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">the_consumption</span><span class="p">:</span> <span class="n">Expression</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the utility for one alternative. .&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">the_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Alternative id </span><span class="si">{</span><span class="n">the_id</span><span class="si">}</span><span class="s1"> is invalid. Valid ids: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+
+        <span class="n">baseline_utility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">baseline_utilities</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+        <span class="n">mu_utility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_utilities</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+
+        <span class="n">alpha_parameter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">mu_utility</span> <span class="o">+</span> <span class="n">exp</span><span class="p">(</span><span class="n">baseline_utility</span><span class="p">)</span> <span class="o">*</span> <span class="n">the_consumption</span> <span class="o">**</span> <span class="p">(</span>
+                <span class="n">alpha_parameter</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mu_utility</span> <span class="o">+</span> <span class="n">exp</span><span class="p">(</span><span class="n">baseline_utility</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">the_consumption</span> <span class="o">/</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span>
+            <span class="n">alpha_parameter</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NonMonotonic.calculate_log_determinant_one_alternative">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/non_monotonic.html#biogeme.mdcev.non_monotonic.NonMonotonic.calculate_log_determinant_one_alternative">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_log_determinant_one_alternative</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">the_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">consumption</span><span class="p">:</span> <span class="n">Expression</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the log of the entries for the determinant. For</span>
+<span class="sd">            the outside good, gamma is equal to 0.</span>
+
+<span class="sd">        :param the_id: identifier of the good.</span>
+<span class="sd">        :param consumption: expression for the consumption.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">the_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Alternative id </span><span class="si">{</span><span class="n">the_id</span><span class="si">}</span><span class="s1"> is invalid. Valid ids: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">baseline_utilities</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">])</span>
+                <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">consumption</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">baseline_utilities</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+            <span class="o">+</span> <span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">])</span>
+            <span class="o">-</span> <span class="n">log</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span>
+            <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">consumption</span> <span class="o">/</span> <span class="n">gamma</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NonMonotonic.calculate_inverse_of_determinant_one_alternative">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/non_monotonic.html#biogeme.mdcev.non_monotonic.NonMonotonic.calculate_inverse_of_determinant_one_alternative">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_inverse_of_determinant_one_alternative</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">the_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">consumption</span><span class="p">:</span> <span class="n">Expression</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the inverse of the entries for the determinant. For</span>
+<span class="sd">            the outside good, gamma is equal to 0.</span>
+
+<span class="sd">        :param the_id: identifier of the good.</span>
+<span class="sd">        :param consumption: expression for the consumption.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">the_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Alternative id </span><span class="si">{</span><span class="n">the_id</span><span class="si">}</span><span class="s1"> is invalid. Valid ids: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Expression</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_utilities</span><span class="p">[</span><span class="n">the_id</span><span class="p">])</span>
+                <span class="o">*</span> <span class="n">consumption</span> <span class="o">**</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">])</span>
+                <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">])</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_utilities</span><span class="p">[</span><span class="n">the_id</span><span class="p">])</span>
+            <span class="o">*</span> <span class="n">gamma</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">consumption</span> <span class="o">/</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">])</span>
+            <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">])</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NonMonotonic.calculate_mu_utility">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/non_monotonic.html#biogeme.mdcev.non_monotonic.NonMonotonic.calculate_mu_utility">[docs]</a>
+    <span class="nd">@lru_cache</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_mu_utility</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">alternative_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">one_observation</span><span class="p">:</span> <span class="n">Database</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;As this function may be called many times with the same input in forecasting mode, we use the</span>
+<span class="sd">        lru_cache decorator.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">one_observation</span><span class="o">.</span><span class="n">get_sample_size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimation_results</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_utilities</span><span class="p">[</span><span class="n">alternative_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_value_c</span><span class="p">(</span>
+                <span class="n">database</span><span class="o">=</span><span class="n">one_observation</span><span class="p">,</span>
+                <span class="n">betas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">estimation_results</span><span class="o">.</span><span class="n">get_beta_values</span><span class="p">(),</span>
+                <span class="n">prepare_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_utilities</span><span class="p">[</span><span class="n">alternative_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_value_c</span><span class="p">(</span>
+            <span class="n">database</span><span class="o">=</span><span class="n">one_observation</span><span class="p">,</span>
+            <span class="n">prepare_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="NonMonotonic.utility_expression_one_alternative">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/non_monotonic.html#biogeme.mdcev.non_monotonic.NonMonotonic.utility_expression_one_alternative">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">utility_expression_one_alternative</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">the_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">the_consumption</span><span class="p">:</span> <span class="n">Expression</span><span class="p">,</span>
+        <span class="n">unscaled_epsilon</span><span class="p">:</span> <span class="n">Expression</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Utility expression. Used only for code validation.&quot;&quot;&quot;</span>
+        <span class="n">baseline_utility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">baseline_utilities</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+        <span class="n">mu_utility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_utilities</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="n">Expression</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">unscaled_epsilon</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">unscaled_epsilon</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span>
+        <span class="p">)</span>
+        <span class="n">alpha</span><span class="p">:</span> <span class="n">Expression</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Expression</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">exp</span><span class="p">(</span><span class="n">baseline_utility</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">the_consumption</span><span class="o">**</span><span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">alpha</span>
+                <span class="o">+</span> <span class="p">(</span><span class="n">mu_utility</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span> <span class="o">*</span> <span class="n">the_consumption</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">gamma</span>
+            <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="n">baseline_utility</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">the_consumption</span> <span class="o">/</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">**</span> <span class="n">alpha</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="o">/</span> <span class="n">alpha</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">mu_utility</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span> <span class="o">*</span> <span class="n">the_consumption</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NonMonotonic.utility_one_alternative">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/non_monotonic.html#biogeme.mdcev.non_monotonic.NonMonotonic.utility_one_alternative">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">utility_one_alternative</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">the_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">the_consumption</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">one_observation</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Utility needed for forecasting&quot;&quot;&quot;</span>
+        <span class="n">baseline_utility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_baseline_utility</span><span class="p">(</span>
+            <span class="n">alternative_id</span><span class="o">=</span><span class="n">the_id</span><span class="p">,</span> <span class="n">one_observation</span><span class="o">=</span><span class="n">one_observation</span>
+        <span class="p">)</span>
+        <span class="n">mu_utility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_mu_utility</span><span class="p">(</span>
+            <span class="n">alternative_id</span><span class="o">=</span><span class="n">the_id</span><span class="p">,</span> <span class="n">one_observation</span><span class="o">=</span><span class="n">one_observation</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">epsilon</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+        <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Expression</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">baseline_utility</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">the_consumption</span><span class="o">**</span><span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">alpha</span>
+                <span class="o">+</span> <span class="p">(</span><span class="n">mu_utility</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span> <span class="o">*</span> <span class="n">the_consumption</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">gamma</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">baseline_utility</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">the_consumption</span> <span class="o">/</span> <span class="n">gamma</span><span class="o">.</span><span class="n">get_value</span><span class="p">())</span> <span class="o">**</span> <span class="n">alpha</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="o">/</span> <span class="n">alpha</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">mu_utility</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span> <span class="o">*</span> <span class="n">the_consumption</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NonMonotonic.derivative_utility_one_alternative">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/non_monotonic.html#biogeme.mdcev.non_monotonic.NonMonotonic.derivative_utility_one_alternative">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">derivative_utility_one_alternative</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">the_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">the_consumption</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">one_observation</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Used in the optimization problem solved for forecasting tp calculate the dual variable.&quot;&quot;&quot;</span>
+        <span class="n">baseline_utility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_baseline_utility</span><span class="p">(</span>
+            <span class="n">alternative_id</span><span class="o">=</span><span class="n">the_id</span><span class="p">,</span> <span class="n">one_observation</span><span class="o">=</span><span class="n">one_observation</span>
+        <span class="p">)</span>
+        <span class="n">mu_utility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_mu_utility</span><span class="p">(</span>
+            <span class="n">alternative_id</span><span class="o">=</span><span class="n">the_id</span><span class="p">,</span> <span class="n">one_observation</span><span class="o">=</span><span class="n">one_observation</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">epsilon</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+        <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Expression</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">baseline_utility</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">the_consumption</span> <span class="o">**</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">))</span>
+                <span class="o">+</span> <span class="n">mu_utility</span>
+                <span class="o">+</span> <span class="n">epsilon</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">baseline_utility</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">the_consumption</span> <span class="o">/</span> <span class="n">gamma</span><span class="o">.</span><span class="n">get_value</span><span class="p">())</span> <span class="o">**</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">mu_utility</span>
+            <span class="o">+</span> <span class="n">epsilon</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NonMonotonic.optimal_consumption_one_alternative">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/non_monotonic.html#biogeme.mdcev.non_monotonic.NonMonotonic.optimal_consumption_one_alternative">[docs]</a>
+    <span class="nd">@lru_cache</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">optimal_consumption_one_alternative</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">the_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">dual_variable</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">one_observation</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Analytical calculation of the optimal consumption if the dual variable is known.&quot;&quot;&quot;</span>
+        <span class="n">baseline_utility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_baseline_utility</span><span class="p">(</span>
+            <span class="n">alternative_id</span><span class="o">=</span><span class="n">the_id</span><span class="p">,</span> <span class="n">one_observation</span><span class="o">=</span><span class="n">one_observation</span>
+        <span class="p">)</span>
+        <span class="n">mu_utility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_mu_utility</span><span class="p">(</span>
+            <span class="n">alternative_id</span><span class="o">=</span><span class="n">the_id</span><span class="p">,</span> <span class="n">one_observation</span><span class="o">=</span><span class="n">one_observation</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">epsilon</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+        <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Expression</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_parameters</span><span class="p">[</span><span class="n">the_id</span><span class="p">]</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">(</span><span class="n">dual_variable</span> <span class="o">-</span> <span class="n">mu_utility</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">baseline_utility</span><span class="p">)</span>
+
+        <span class="n">exponent</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">gamma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">base</span><span class="o">**</span><span class="n">exponent</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">gamma</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="n">base</span><span class="o">**</span><span class="n">exponent</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_list_of_expressions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Expression</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract the list of expressions involved in the model&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">expression</span> <span class="k">for</span> <span class="n">expression</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_utilities</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+
+<div class="viewcode-block" id="NonMonotonic.lower_bound_dual_variable">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/non_monotonic.html#biogeme.mdcev.non_monotonic.NonMonotonic.lower_bound_dual_variable">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lower_bound_dual_variable</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chosen_alternatives</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">one_observation</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Method providing model specific lower bound on the dual variable.</span>
+
+<span class="sd">        :param chosen_alternatives: list of alternatives that are chosen at the optimal solution</span>
+<span class="sd">        :param one_observation: data for one observation.</span>
+<span class="sd">        :param epsilon: draws from the error term.</span>
+<span class="sd">        :return: a lower bound and upper bound on the dual variable</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lower_bound</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="k">for</span> <span class="n">alternative_id</span> <span class="ow">in</span> <span class="n">chosen_alternatives</span><span class="p">:</span>
+            <span class="n">epsilon_alternative</span> <span class="o">=</span> <span class="n">epsilon</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key_to_index</span><span class="p">[</span><span class="n">alternative_id</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">epsilon_alternative</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+            <span class="n">mu_utility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_mu_utility</span><span class="p">(</span>
+                <span class="n">alternative_id</span><span class="o">=</span><span class="n">alternative_id</span><span class="p">,</span> <span class="n">one_observation</span><span class="o">=</span><span class="n">one_observation</span>
+            <span class="p">)</span>
+            <span class="n">mu_utility</span> <span class="o">+=</span> <span class="n">epsilon_alternative</span>
+            <span class="k">if</span> <span class="n">mu_utility</span> <span class="o">&gt;</span> <span class="n">lower_bound</span><span class="p">:</span>
+                <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">mu_utility</span>
+        <span class="k">return</span> <span class="n">lower_bound</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,456 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.assisted &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.assisted</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.assisted</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;File assisted.py</span>
+
+<span class="sd">:author: Michel Bierlaire</span>
+<span class="sd">:date: Sun Mar 19 17:06:29 2023</span>
+
+<span class="sd">New version of the assisted specification using Catalogs</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme_optimization.neighborhood</span><span class="w"> </span><span class="kn">import</span> <span class="n">Neighborhood</span><span class="p">,</span> <span class="n">Operator</span> <span class="k">as</span> <span class="n">VnsOperator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme_optimization.pareto</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pareto</span><span class="p">,</span> <span class="n">SetElement</span><span class="p">,</span> <span class="n">DATE_TIME_STRING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme_optimization.vns</span><span class="w"> </span><span class="kn">import</span> <span class="n">vns</span><span class="p">,</span> <span class="n">ParetoClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biogeme.tools.unique_ids</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">biogeme.version</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">bv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.biogeme</span><span class="w"> </span><span class="kn">import</span> <span class="n">BIOGEME</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.configuration</span><span class="w"> </span><span class="kn">import</span> <span class="n">Configuration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.controller</span><span class="w"> </span><span class="kn">import</span> <span class="n">ControllerOperator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiogemeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parameters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">bioResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.specification</span><span class="w"> </span><span class="kn">import</span> <span class="n">Specification</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="c1"># Operators</span>
+
+
+<div class="viewcode-block" id="ParetoPostProcessing">
+<a class="viewcode-back" href="../../code/biogeme/assisted.html#biogeme.assisted.ParetoPostProcessing">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParetoPostProcessing</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to process an existing Pareto set.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">biogeme_object</span><span class="p">:</span> <span class="n">BIOGEME</span><span class="p">,</span>
+        <span class="n">pareto_file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ctor</span>
+
+<span class="sd">        :param biogeme_object: object containing the loglikelihood and the database</span>
+<span class="sd">        :type biogeme_object: biogeme.biogeme.BIOGEME</span>
+
+<span class="sd">        :param pareto_file_name: file where to read and write the Pareto solutions</span>
+<span class="sd">        :type pareto_file_name: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">biogeme_object</span> <span class="o">=</span> <span class="n">biogeme_object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pareto</span> <span class="o">=</span> <span class="n">Pareto</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">pareto_file_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expression</span> <span class="o">=</span> <span class="n">biogeme_object</span><span class="o">.</span><span class="n">log_like</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expression</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="s1">&#39;No log likelihood function is defined&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">biogeme_object</span><span class="o">.</span><span class="n">database</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_names</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="ParetoPostProcessing.reestimate">
+<a class="viewcode-back" href="../../code/biogeme/assisted.html#biogeme.assisted.ParetoPostProcessing.reestimate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reestimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recycle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">bioResults</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The assisted specification uses quickEstimate to estimate</span>
+<span class="sd">        the models. A complete estimation is necessary to obtain the</span>
+<span class="sd">        full estimation results.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_names</span> <span class="o">=</span> <span class="n">biogeme</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">unique_ids</span><span class="o">.</span><span class="n">ModelNames</span><span class="p">(</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">biogeme_object</span><span class="o">.</span><span class="n">modelName</span>
+            <span class="p">)</span>
+
+        <span class="n">all_results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">pareto</span><span class="p">:</span>
+            <span class="n">config_id</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">element_id</span>
+            <span class="n">the_biogeme</span> <span class="o">=</span> <span class="n">BIOGEME</span><span class="o">.</span><span class="n">from_configuration</span><span class="p">(</span>
+                <span class="n">config_id</span><span class="o">=</span><span class="n">config_id</span><span class="p">,</span>
+                <span class="n">expression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">expression</span><span class="p">,</span>
+                <span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">,</span>
+                <span class="n">parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">biogeme_object</span><span class="o">.</span><span class="n">biogeme_parameters</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">Configuration</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">config_id</span><span class="p">)</span>
+            <span class="n">the_biogeme</span><span class="o">.</span><span class="n">modelName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_names</span><span class="p">(</span><span class="n">config_id</span><span class="p">)</span>
+            <span class="n">the_result</span> <span class="o">=</span> <span class="n">the_biogeme</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">recycle</span><span class="o">=</span><span class="n">recycle</span><span class="p">)</span>
+            <span class="n">all_results</span><span class="p">[</span><span class="n">config_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">the_result</span>
+        <span class="k">return</span> <span class="n">all_results</span></div>
+
+
+<div class="viewcode-block" id="ParetoPostProcessing.log_statistics">
+<a class="viewcode-back" href="../../code/biogeme/assisted.html#biogeme.assisted.ParetoPostProcessing.log_statistics">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Report some statistics about the process in the logger&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">statistics</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ParetoPostProcessing.plot">
+<a class="viewcode-back" href="../../code/biogeme/assisted.html#biogeme.assisted.ParetoPostProcessing.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">objective_x</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">objective_y</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">label_x</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_y</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">margin_x</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="n">margin_y</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the members of the set according to two</span>
+<span class="sd">            objective functions.  They  determine the x- and</span>
+<span class="sd">            y-coordinate of the plot.</span>
+
+<span class="sd">        :param objective_x: index of the objective function to use for the x-coordinate.</span>
+<span class="sd">        :type objective_x: int</span>
+
+<span class="sd">        :param objective_y: index of the objective function to use for the y-coordinate.</span>
+<span class="sd">        :type objective_y: int</span>
+
+<span class="sd">        :param label_x: label for the x_axis</span>
+<span class="sd">        :type label_x: str</span>
+
+<span class="sd">        :param label_y: label for the y_axis</span>
+<span class="sd">        :type label_y: str</span>
+
+<span class="sd">        :param margin_x: margin for the x axis</span>
+<span class="sd">        :type margin_x: int</span>
+
+<span class="sd">        :param margin_y: margin for the y axis</span>
+<span class="sd">        :type margin_y: int</span>
+
+<span class="sd">        :param ax: matplotlib axis for the plot</span>
+<span class="sd">        :type ax: matplotlib.Axes</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">objective_x</span><span class="p">,</span> <span class="n">objective_y</span><span class="p">,</span> <span class="n">label_x</span><span class="p">,</span> <span class="n">label_y</span><span class="p">,</span> <span class="n">margin_x</span><span class="p">,</span> <span class="n">margin_y</span><span class="p">,</span> <span class="n">ax</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AssistedSpecification">
+<a class="viewcode-back" href="../../code/biogeme/assisted.html#biogeme.assisted.AssistedSpecification">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AssistedSpecification</span><span class="p">(</span><span class="n">Neighborhood</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class defining assisted specification problem for the VNS algorithm.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">biogeme_object</span><span class="p">:</span> <span class="n">BIOGEME</span><span class="p">,</span>
+        <span class="n">multi_objectives</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">bioResults</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
+        <span class="n">pareto_file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">validity</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">bioResults</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">parameter_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ctor</span>
+
+<span class="sd">        :param biogeme_object: object containing the loglikelihood and the database</span>
+<span class="sd">        :param multi_objectives: function calculating the objectives to minimize</span>
+<span class="sd">        :param pareto_file_name: file where to read and write the Pareto solutions</span>
+<span class="sd">        :param validity: function verifying that the estimation</span>
+<span class="sd">            results are valid. It must return a bool and an explanation</span>
+<span class="sd">            why if it is invalid, or None otherwise</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">biogeme_parameters</span><span class="p">:</span> <span class="n">Parameters</span> <span class="o">=</span> <span class="n">Parameters</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">biogeme_parameters</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">parameter_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameter_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">biogeme_parameters</span><span class="o">.</span><span class="n">file_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multi_objectives</span> <span class="o">=</span> <span class="n">multi_objectives</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Ctor assisted specification&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">biogeme_object</span> <span class="o">=</span> <span class="n">biogeme_object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">central_controller</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">biogeme_object</span><span class="o">.</span><span class="n">log_like</span><span class="o">.</span><span class="n">set_central_controller</span><span class="p">()</span>
+        <span class="n">Specification</span><span class="o">.</span><span class="n">generic_name</span> <span class="o">=</span> <span class="n">biogeme_object</span><span class="o">.</span><span class="n">modelName</span>
+        <span class="n">Specification</span><span class="o">.</span><span class="n">user_defined_validity_check</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="kc">None</span> <span class="k">if</span> <span class="n">validity</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">validity</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">largest_neighborhood</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">biogeme_parameters</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;largest_neighborhood&#39;</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="s1">&#39;AssistedSpecification&#39;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pareto</span> <span class="o">=</span> <span class="n">ParetoClass</span><span class="p">(</span>
+            <span class="n">max_neighborhood</span><span class="o">=</span><span class="n">largest_neighborhood</span><span class="p">,</span> <span class="n">pareto_file</span><span class="o">=</span><span class="n">pareto_file_name</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">comments</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="sa">f</span><span class="s1">&#39;Biogeme </span><span class="si">{</span><span class="n">bv</span><span class="o">.</span><span class="n">get_version</span><span class="p">()</span><span class="si">}</span><span class="s1"> [</span><span class="si">{</span><span class="n">bv</span><span class="o">.</span><span class="n">versionDate</span><span class="si">}</span><span class="s1">]&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;File </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s1"> created on </span><span class="si">{</span><span class="n">DATE_TIME_STRING</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">bv</span><span class="o">.</span><span class="n">AUTHOR</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">bv</span><span class="o">.</span><span class="n">DEPARTMENT</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">bv</span><span class="o">.</span><span class="n">UNIVERSITY</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expression</span> <span class="o">=</span> <span class="n">biogeme_object</span><span class="o">.</span><span class="n">log_like</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expression</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="s1">&#39;No log likelihood function is defined&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">biogeme_object</span><span class="o">.</span><span class="n">database</span>
+        <span class="n">Specification</span><span class="o">.</span><span class="n">biogeme_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">biogeme_parameters</span>
+        <span class="n">Specification</span><span class="o">.</span><span class="n">expression</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expression</span>
+        <span class="n">Specification</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operators</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_operator</span><span class="p">(</span><span class="n">operator</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">operator</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">central_controller</span><span class="o">.</span><span class="n">prepare_operators</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operators</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AssistedSpecification.generate_operator">
+<a class="viewcode-back" href="../../code/biogeme/assisted.html#biogeme.assisted.AssistedSpecification.generate_operator">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">ControllerOperator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VnsOperator</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Defines an operator that takes a SetElement as an argument, to</span>
+<span class="sd">            comply with the interface of the VNS algorithm.</span>
+
+<span class="sd">        :param function: one of the function implementing the</span>
+<span class="sd">            operators from the central controller</span>
+<span class="sd">        :type function: function(str, int) --&gt; str, int</span>
+
+<span class="sd">        :return: operator</span>
+<span class="sd">        :rtype: function(SetElement, int) --&gt; SetElement, int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">the_operator</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n">SetElement</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">SetElement</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+            <span class="n">the_new_configuration</span><span class="p">,</span> <span class="n">number_of_modifications</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span>
+                <span class="n">Configuration</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">element_id</span><span class="p">),</span>
+                <span class="n">step</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">new_specification</span> <span class="o">=</span> <span class="n">Specification</span><span class="p">(</span><span class="n">configuration</span><span class="o">=</span><span class="n">the_new_configuration</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">new_specification</span><span class="o">.</span><span class="n">get_element</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">multi_objectives</span><span class="p">),</span>
+                <span class="n">number_of_modifications</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">the_operator</span></div>
+
+
+<div class="viewcode-block" id="AssistedSpecification.is_valid">
+<a class="viewcode-back" href="../../code/biogeme/assisted.html#biogeme.assisted.AssistedSpecification.is_valid">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">SetElement</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check the validity of the solution.</span>
+
+<span class="sd">        :param element: solution to be checked</span>
+<span class="sd">        :type element: :class:`biogeme.pareto.SetElement`</span>
+
+<span class="sd">        :return: valid, why where valid is True if the solution is</span>
+<span class="sd">            valid, and False otherwise. why contains an explanation why it</span>
+<span class="sd">            is invalid.</span>
+<span class="sd">        :rtype: tuple(bool, str)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">SetElement</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Wrong type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">element</span><span class="p">)</span><span class="si">}</span><span class="s1"> instead of SetElement&#39;</span><span class="p">)</span>
+
+        <span class="n">specification</span> <span class="o">=</span> <span class="n">Specification</span><span class="o">.</span><span class="n">from_string_id</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">element_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">specification</span><span class="o">.</span><span class="n">validity</span></div>
+
+
+<div class="viewcode-block" id="AssistedSpecification.run">
+<a class="viewcode-back" href="../../code/biogeme/assisted.html#biogeme.assisted.AssistedSpecification.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">bioResults</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Runs the VNS algorithm</span>
+
+<span class="sd">        :return: doct with the estimation results of the Pareto optimal models</span>
+<span class="sd">        :rtype: dict[biogeme.results.bioResults]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Run assisted specification&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Pareto solutions BEFORE&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">pareto</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">element_id</span><span class="p">)</span>
+        <span class="c1"># We first try to estimate all possible configurations</span>
+        <span class="n">Specification</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">biogeme_object</span><span class="o">.</span><span class="n">database</span>
+        <span class="n">Specification</span><span class="o">.</span><span class="n">expression</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">biogeme_object</span><span class="o">.</span><span class="n">log_like</span>
+        <span class="n">Specification</span><span class="o">.</span><span class="n">pareto</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pareto</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Default specification&#39;</span><span class="p">)</span>
+        <span class="n">default_specification</span> <span class="o">=</span> <span class="n">Specification</span><span class="o">.</span><span class="n">default_specification</span><span class="p">()</span>
+        <span class="n">the_element</span> <span class="o">=</span> <span class="n">default_specification</span><span class="o">.</span><span class="n">get_element</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">multi_objectives</span><span class="p">)</span>
+        <span class="n">Specification</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">the_element</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">default_specification</span><span class="si">=}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Default specification: done&#39;</span><span class="p">)</span>
+        <span class="n">pareto_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">length_of_all_sets</span><span class="p">()</span>
+
+        <span class="c1"># Check if we can estimate everything</span>
+        <span class="n">number_of_specifications</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">biogeme_object</span><span class="o">.</span><span class="n">log_like</span><span class="o">.</span><span class="n">number_of_multiple_expressions</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">maximum_number</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">biogeme_object</span><span class="o">.</span><span class="n">maximum_number_catalog_expressions</span>
+        <span class="k">if</span> <span class="n">number_of_specifications</span> <span class="o">&lt;=</span> <span class="n">maximum_number</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;We consider all possible combinations of the catalogs.&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">configuration</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">biogeme_object</span><span class="o">.</span><span class="n">log_like</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Model </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">number_of_specifications</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">the_config</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="n">current_configuration</span><span class="p">()</span>
+                <span class="n">the_specification</span> <span class="o">=</span> <span class="n">Specification</span><span class="p">(</span><span class="n">the_config</span><span class="p">)</span>
+                <span class="n">the_element</span> <span class="o">=</span> <span class="n">the_specification</span><span class="o">.</span><span class="n">get_element</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">multi_objectives</span><span class="p">)</span>
+                <span class="n">Specification</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">the_element</span><span class="p">)</span>
+                <span class="n">Specification</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;The number of possible specifications [</span><span class="si">{</span><span class="n">number_of_specifications</span><span class="si">}</span><span class="s1">] &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;exceeds the maximum number [</span><span class="si">{</span><span class="n">maximum_number</span><span class="si">}</span><span class="s1">]. &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;A heuristic algorithm is applied.&#39;</span>
+            <span class="p">)</span>
+
+            <span class="n">default_element</span> <span class="o">=</span> <span class="n">default_specification</span><span class="o">.</span><span class="n">get_element</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">multi_objectives</span><span class="p">)</span>
+            <span class="n">number_of_neighbors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">biogeme_parameters</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;number_of_neighbors&#39;</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="s1">&#39;AssistedSpecification&#39;</span>
+            <span class="p">)</span>
+            <span class="n">maximum_attempts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">biogeme_parameters</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;maximum_attempts&#39;</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="s1">&#39;AssistedSpecification&#39;</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">default_element</span><span class="si">=}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pareto</span> <span class="o">=</span> <span class="n">vns</span><span class="p">(</span>
+                <span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">first_solutions</span><span class="o">=</span><span class="p">[</span><span class="n">default_element</span><span class="p">],</span>
+                <span class="n">pareto</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pareto</span><span class="p">,</span>
+                <span class="n">number_of_neighbors</span><span class="o">=</span><span class="n">number_of_neighbors</span><span class="p">,</span>
+                <span class="n">maximum_attempts</span><span class="o">=</span><span class="n">maximum_attempts</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Pareto solutions AFTER&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">pareto</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">element_id</span><span class="p">)</span>
+
+        <span class="n">pareto_after</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">length_of_all_sets</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Pareto file has been updated: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Before the algorithm: </span><span class="si">{</span><span class="n">pareto_before</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> models, &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;with </span><span class="si">{</span><span class="n">pareto_before</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> Pareto.&#39;</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;After the algorithm: </span><span class="si">{</span><span class="n">pareto_after</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> models, &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;with </span><span class="si">{</span><span class="n">pareto_after</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> Pareto.&#39;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Postprocessing</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s1">&#39;VNS algorithm completed. Postprocessing of the Pareto optimal solutions&#39;</span>
+        <span class="p">)</span>
+
+        <span class="n">post_processing</span> <span class="o">=</span> <span class="n">ParetoPostProcessing</span><span class="p">(</span>
+            <span class="n">biogeme_object</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">biogeme_object</span><span class="p">,</span> <span class="n">pareto_file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pareto</span><span class="o">.</span><span class="n">filename</span>
+        <span class="p">)</span>
+        <span class="n">estimation_results</span> <span class="o">=</span> <span class="n">post_processing</span><span class="o">.</span><span class="n">reestimate</span><span class="p">()</span>
+        <span class="n">post_processing</span><span class="o">.</span><span class="n">log_statistics</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">estimation_results</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

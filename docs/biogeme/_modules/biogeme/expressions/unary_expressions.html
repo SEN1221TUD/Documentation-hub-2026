@@ -1,0 +1,966 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.expressions.unary_expressions &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.expressions.unary_expressions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.expressions.unary_expressions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Arithmetic expressions accepted by Biogeme: unary operators</span>
+
+<span class="sd">:author: Michel Bierlaire</span>
+<span class="sd">:date: Sat Sep  9 15:51:53 2023</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_and_convert</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base_expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Expression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..deprecated</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
+
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.database</span><span class="w"> </span><span class="kn">import</span> <span class="n">Database</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExpressionOrNumeric</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="UnaryOperator">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.UnaryOperator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnaryOperator</span><span class="p">(</span><span class="n">Expression</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for arithmetic expressions that are unary operators.</span>
+
+<span class="sd">    Such an expression is the result of the modification of another</span>
+<span class="sd">    expressions, typically changing its sign.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param child: first arithmetic expression</span>
+<span class="sd">        :type child: biogeme.expressions.Expression</span>
+
+<span class="sd">        :raise BiogemeError: if one of the expressions is invalid, that is</span>
+<span class="sd">            neither a numeric value nor a</span>
+<span class="sd">            biogeme.expressions.Expression object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Expression</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">child</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="UnaryMinus">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.UnaryMinus">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnaryMinus</span><span class="p">(</span><span class="n">UnaryOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unary minus expression</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param child: first arithmetic expression</span>
+<span class="sd">        :type child: biogeme.expressions.Expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UnaryOperator</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;(-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+<div class="viewcode-block" id="UnaryMinus.get_value">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.UnaryMinus.get_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluates the value of the expression</span>
+
+<span class="sd">        :return: value of the expression</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="UnaryMinus.getValue">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.UnaryMinus.getValue">[docs]</a>
+    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">get_value</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getValue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="MonteCarlo">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.MonteCarlo">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MonteCarlo</span><span class="p">(</span><span class="n">UnaryOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Monte Carlo integration</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param child: arithmetic expression</span>
+<span class="sd">        :type child: biogeme.expressions.Expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UnaryOperator</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;MonteCarlo(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+<div class="viewcode-block" id="MonteCarlo.check_draws">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.MonteCarlo.check_draws">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_draws</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List of draws defined outside of &#39;MonteCarlo&#39;</span>
+
+<span class="sd">        :return: List of names of variables</span>
+<span class="sd">        :rtype: list(str)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MonteCarlo.audit">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.MonteCarlo.audit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">audit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="n">Database</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs various checks on the expressions.</span>
+
+<span class="sd">        :param database: database object</span>
+<span class="sd">        :type database: biogeme.database.Database</span>
+
+<span class="sd">        :return: tuple list_of_errors, list_of_warnings</span>
+<span class="sd">        :rtype: list(string), list(string)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">list_of_errors</span><span class="p">,</span> <span class="n">list_of_warnings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">audit</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">database</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">embed_expression</span><span class="p">(</span><span class="s1">&#39;PanelLikelihoodTrajectory&#39;</span><span class="p">):</span>
+                <span class="n">the_warning</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s1">&#39;The formula contains a PanelLikelihoodTrajectory &#39;</span>
+                    <span class="s1">&#39;expression, and no database is given&#39;</span>
+                <span class="p">)</span>
+                <span class="n">list_of_warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_warning</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">database</span><span class="o">.</span><span class="n">is_panel</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">embed_expression</span><span class="p">(</span>
+                <span class="s1">&#39;PanelLikelihoodTrajectory&#39;</span>
+            <span class="p">):</span>
+                <span class="n">the_error</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;As the database is panel, the argument &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;of MonteCarlo must contain a&#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39; PanelLikelihoodTrajectory: </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="p">)</span>
+                <span class="n">list_of_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_error</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">embed_expression</span><span class="p">(</span><span class="s1">&#39;bioDraws&#39;</span><span class="p">):</span>
+            <span class="n">the_error</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;The argument of MonteCarlo must contain a&#39;</span> <span class="sa">f</span><span class="s1">&#39; bioDraws: </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="n">list_of_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_error</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">embed_expression</span><span class="p">(</span><span class="s1">&#39;MonteCarlo&#39;</span><span class="p">):</span>
+            <span class="n">the_error</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;It is not possible to include a MonteCarlo &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;statement in another one: </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="n">list_of_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_error</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">list_of_errors</span><span class="p">,</span> <span class="n">list_of_warnings</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="bioNormalCdf">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.bioNormalCdf">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">bioNormalCdf</span><span class="p">(</span><span class="n">UnaryOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cumulative Distribution Function of a normal random variable</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param child: first arithmetic expression</span>
+<span class="sd">        :type child: biogeme.expressions.Expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UnaryOperator</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;bioNormalCdf(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="si">}</span><span class="s1">)&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="PanelLikelihoodTrajectory">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.PanelLikelihoodTrajectory">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PanelLikelihoodTrajectory</span><span class="p">(</span><span class="n">UnaryOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Likelihood of a sequences of observations for the same individual</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param child: first arithmetic expression</span>
+<span class="sd">        :type child: biogeme.expressions.Expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UnaryOperator</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;PanelLikelihoodTrajectory(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+<div class="viewcode-block" id="PanelLikelihoodTrajectory.check_panel_trajectory">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.PanelLikelihoodTrajectory.check_panel_trajectory">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_panel_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List of variables defined outside of &#39;PanelLikelihoodTrajectory&#39;</span>
+
+<span class="sd">        :return: List of names of variables</span>
+<span class="sd">        :rtype: list(str)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="PanelLikelihoodTrajectory.count_panel_trajectory_expressions">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.PanelLikelihoodTrajectory.count_panel_trajectory_expressions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">count_panel_trajectory_expressions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Count the number of times the PanelLikelihoodTrajectory</span>
+<span class="sd">        is used in the formula.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">count_panel_trajectory_expressions</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="PanelLikelihoodTrajectory.audit">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.PanelLikelihoodTrajectory.audit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">audit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="n">Database</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs various checks on the expressions.</span>
+
+<span class="sd">        :param database: database object</span>
+<span class="sd">        :type database: biogeme.database.Database</span>
+
+<span class="sd">        :return: tuple list_of_errors, list_of_warnings</span>
+<span class="sd">        :rtype: list(string), list(string)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">list_of_errors</span><span class="p">,</span> <span class="n">list_of_warnings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">audit</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">database</span><span class="o">.</span><span class="n">is_panel</span><span class="p">():</span>
+            <span class="n">the_error</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Expression PanelLikelihoodTrajectory can &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;only be used with panel data. Use the statement &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;database.panel(&quot;IndividualId&quot;) to declare the &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;panel structure of the data: </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="n">list_of_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_error</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">list_of_errors</span><span class="p">,</span> <span class="n">list_of_warnings</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="exp">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.exp">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">exp</span><span class="p">(</span><span class="n">UnaryOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    exponential expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param child: first arithmetic expression</span>
+<span class="sd">        :type child: biogeme.expressions.Expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UnaryOperator</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;exp(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+<div class="viewcode-block" id="exp.get_value">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.exp.get_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluates the value of the expression</span>
+
+<span class="sd">        :return: value of the expression</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_value</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="exp.getValue">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.exp.getValue">[docs]</a>
+    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">get_value</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getValue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="sin">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.sin">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">sin</span><span class="p">(</span><span class="n">UnaryOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    sine expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param child: first arithmetic expression</span>
+<span class="sd">        :type child: biogeme.expressions.Expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UnaryOperator</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;sin(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+<div class="viewcode-block" id="sin.get_value">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.sin.get_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluates the value of the expression</span>
+
+<span class="sd">        :return: value of the expression</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_value</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="sin.getValue">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.sin.getValue">[docs]</a>
+    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">get_value</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getValue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="cos">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.cos">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">cos</span><span class="p">(</span><span class="n">UnaryOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    cosine expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param child: first arithmetic expression</span>
+<span class="sd">        :type child: biogeme.expressions.Expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UnaryOperator</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;cos(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+<div class="viewcode-block" id="cos.get_value">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.cos.get_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluates the value of the expression</span>
+
+<span class="sd">        :return: value of the expression</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_value</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="cos.getValue">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.cos.getValue">[docs]</a>
+    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">get_value</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getValue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="log">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.log">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">log</span><span class="p">(</span><span class="n">UnaryOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    logarithm expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param child: first arithmetic expression</span>
+<span class="sd">        :type child: biogeme.expressions.Expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UnaryOperator</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;log(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+<div class="viewcode-block" id="log.get_value">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.log.get_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluates the value of the expression</span>
+
+<span class="sd">        :return: value of the expression</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_value</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="log.getValue">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.log.getValue">[docs]</a>
+    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">get_value</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getValue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="logzero">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.logzero">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">logzero</span><span class="p">(</span><span class="n">UnaryOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    logarithm expression. Returns zero if the argument is zero.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param child: first arithmetic expression</span>
+<span class="sd">        :type child: biogeme.expressions.Expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UnaryOperator</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;logzero(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+<div class="viewcode-block" id="logzero.get_value">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.logzero.get_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluates the value of the expression</span>
+
+<span class="sd">        :return: value of the expression</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+        <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="logzero.getValue">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.logzero.getValue">[docs]</a>
+    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">get_value</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getValue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PowerConstant">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.PowerConstant">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PowerConstant</span><span class="p">(</span><span class="n">UnaryOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raise the argument to a constant power.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">,</span> <span class="n">exponent</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param child: first arithmetic expression</span>
+<span class="sd">        :type child: biogeme.expressions.Expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UnaryOperator</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exponent</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">exponent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">integer_exponent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span> <span class="k">if</span> <span class="n">exponent</span><span class="o">.</span><span class="n">is_integer</span><span class="p">()</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="si">}</span><span class="s1">**</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">exponent</span><span class="si">}</span><span class="s1">&#39;</span>
+
+<div class="viewcode-block" id="PowerConstant.get_value">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.PowerConstant.get_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluates the value of the expression</span>
+
+<span class="sd">        :return: value of the expression</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">v</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">exponent</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">integer_exponent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">v</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">integer_exponent</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Cannot calculate </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">**</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">exponent</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">raise</span> <span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PowerConstant.get_signature">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.PowerConstant.get_signature">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The signature of a string characterizing an expression.</span>
+
+<span class="sd">        This is designed to be communicated to C++, so that the</span>
+<span class="sd">        expression can be reconstructed in this environment.</span>
+
+<span class="sd">        The list contains the following elements:</span>
+
+<span class="sd">            1. the signatures of the child expression,</span>
+<span class="sd">            2. the name of the expression between &lt; &gt;</span>
+<span class="sd">            3. the id of the expression between { }, preceded by a comma</span>
+<span class="sd">            4. the id of the children, preceded by a comma</span>
+<span class="sd">            5. the index of the randon variable, preceded by a comma</span>
+
+<span class="sd">        Consider the following expression:</span>
+
+<span class="sd">        .. math:: 2 \\beta_1  V_1 -</span>
+<span class="sd">             \\frac{\\exp(-\\beta_2 V_2) }</span>
+<span class="sd">             { \\beta_3  (\\beta_2 \\geq \\beta_1)}.</span>
+
+<span class="sd">        It is defined as::</span>
+
+<span class="sd">            2 * beta1 * Variable1 - expressions.exp(-beta2*Variable2) /</span>
+<span class="sd">                 (beta3 * (beta2 &gt;= beta1))</span>
+
+<span class="sd">        And its signature is::</span>
+
+<span class="sd">            [b&#39;&lt;Numeric&gt;{4780527008},2&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277152}&quot;beta1&quot;[0],0,0&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780526952}(2),4780527008,4780277152&#39;,</span>
+<span class="sd">             b&#39;&lt;Variable&gt;{4511837152}&quot;Variable1&quot;,5,2&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527064}(2),4780526952,4511837152&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277656}&quot;beta2&quot;[0],1,1&#39;,</span>
+<span class="sd">             b&#39;&lt;UnaryMinus&gt;{4780527120}(1),4780277656&#39;,</span>
+<span class="sd">             b&#39;&lt;Variable&gt;{4511837712}&quot;Variable2&quot;,6,3&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527176}(2),4780527120,4511837712&#39;,</span>
+<span class="sd">             b&#39;&lt;exp&gt;{4780527232}(1),4780527176&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277264}&quot;beta3&quot;[1],2,0&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277656}&quot;beta2&quot;[0],1,1&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277152}&quot;beta1&quot;[0],0,0&#39;,</span>
+<span class="sd">             b&#39;&lt;GreaterOrEqual&gt;{4780527288}(2),4780277656,4780277152&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527344}(2),4780277264,4780527288&#39;,</span>
+<span class="sd">             b&#39;&lt;Divide&gt;{4780527400}(2),4780527232,4780527344&#39;,</span>
+<span class="sd">             b&#39;&lt;Minus&gt;{4780527456}(2),4780527064,4780527400&#39;]</span>
+
+<span class="sd">        :return: list of the signatures of an expression and its children.</span>
+<span class="sd">        :rtype: list(string)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">list_of_signatures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">list_of_signatures</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_signature</span><span class="p">()</span>
+        <span class="n">signature</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_class_name</span><span class="p">()</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
+        <span class="n">signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">{{</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span><span class="si">}</span><span class="se">}}</span><span class="s1">&#39;</span>
+        <span class="n">signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;,</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;,</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">exponent</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">list_of_signatures</span> <span class="o">+=</span> <span class="p">[</span><span class="n">signature</span><span class="o">.</span><span class="n">encode</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="n">list_of_signatures</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Derive">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.Derive">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Derive</span><span class="p">(</span><span class="n">UnaryOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Derivative with respect to an elementary expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param child: first arithmetic expression</span>
+<span class="sd">        :type child: biogeme.expressions.Expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UnaryOperator</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+        <span class="c1"># Name of the elementary expression by which the derivative is taken</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elementaryName</span> <span class="o">=</span> <span class="n">name</span>
+
+<div class="viewcode-block" id="Derive.get_signature">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.Derive.get_signature">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The signature of a string characterizing an expression.</span>
+
+<span class="sd">        This is designed to be communicated to C++, so that the</span>
+<span class="sd">        expression can be reconstructed in this environment.</span>
+
+<span class="sd">        The list contains the following elements:</span>
+
+<span class="sd">            1. the signatures of the child expression,</span>
+<span class="sd">            2. the name of the expression between &lt; &gt;</span>
+<span class="sd">            3. the id of the expression between { }</span>
+<span class="sd">            4. the id of the child, preceded by a comma.</span>
+
+<span class="sd">        Consider the following expression:</span>
+
+<span class="sd">        .. math:: 2 \\beta_1  V_1 -</span>
+<span class="sd">           \\frac{\\exp(-\\beta_2 V_2) }{ \\beta_3  (\\beta_2 \\geq \\beta_1)}.</span>
+
+<span class="sd">        It is defined as::</span>
+
+<span class="sd">            2 * beta1 * Variable1 - expressions.exp(-beta2*Variable2) /</span>
+<span class="sd">                (beta3 * (beta2 &gt;= beta1))</span>
+
+<span class="sd">        And its signature is::</span>
+
+<span class="sd">            [b&#39;&lt;Numeric&gt;{4780527008},2&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277152}&quot;beta1&quot;[0],0,0&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780526952}(2),4780527008,4780277152&#39;,</span>
+<span class="sd">             b&#39;&lt;Variable&gt;{4511837152}&quot;Variable1&quot;,5,2&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527064}(2),4780526952,4511837152&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277656}&quot;beta2&quot;[0],1,1&#39;,</span>
+<span class="sd">             b&#39;&lt;UnaryMinus&gt;{4780527120}(1),4780277656&#39;,</span>
+<span class="sd">             b&#39;&lt;Variable&gt;{4511837712}&quot;Variable2&quot;,6,3&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527176}(2),4780527120,4511837712&#39;,</span>
+<span class="sd">             b&#39;&lt;exp&gt;{4780527232}(1),4780527176&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277264}&quot;beta3&quot;[1],2,0&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277656}&quot;beta2&quot;[0],1,1&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277152}&quot;beta1&quot;[0],0,0&#39;,</span>
+<span class="sd">             b&#39;&lt;GreaterOrEqual&gt;{4780527288}(2),4780277656,4780277152&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527344}(2),4780277264,4780527288&#39;,</span>
+<span class="sd">             b&#39;&lt;Divide&gt;{4780527400}(2),4780527232,4780527344&#39;,</span>
+<span class="sd">             b&#39;&lt;Minus&gt;{4780527456}(2),4780527064,4780527400&#39;]</span>
+
+<span class="sd">        :return: list of the signatures of an expression and its children.</span>
+<span class="sd">        :rtype: list(string)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">elementary_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_manager</span><span class="o">.</span><span class="n">elementary_expressions</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">elementaryName</span>
+        <span class="p">]</span>
+        <span class="n">list_of_signatures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">list_of_signatures</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_signature</span><span class="p">()</span>
+        <span class="n">my_signature</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_class_name</span><span class="p">()</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
+        <span class="n">my_signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">{{</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span><span class="si">}</span><span class="se">}}</span><span class="s1">&#39;</span>
+        <span class="n">my_signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;,</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">my_signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;,</span><span class="si">{</span><span class="n">elementary_index</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">list_of_signatures</span> <span class="o">+=</span> <span class="p">[</span><span class="n">my_signature</span><span class="o">.</span><span class="n">encode</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="n">list_of_signatures</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;Derive(</span><span class="si">{self.child}</span><span class="s1">, &quot;</span><span class="si">{self.elementName}</span><span class="s1">&quot;)&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="Integrate">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.Integrate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Integrate</span><span class="p">(</span><span class="n">UnaryOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Numerical integration</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param child: first arithmetic expression</span>
+<span class="sd">        :type child: biogeme.expressions.Expression</span>
+<span class="sd">        :param name: name of the random variable for the integration.</span>
+<span class="sd">        :type name: string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UnaryOperator</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">randomVariableName</span> <span class="o">=</span> <span class="n">name</span>
+
+<div class="viewcode-block" id="Integrate.check_rv">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.Integrate.check_rv">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_rv</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List of random variables defined outside of &#39;Integrate&#39;</span>
+
+<span class="sd">        :return: List of names of variables</span>
+<span class="sd">        :rtype: list(str)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Integrate.audit">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.Integrate.audit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">audit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="n">Database</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs various checks on the expressions.</span>
+
+<span class="sd">        :param database: database object</span>
+<span class="sd">        :type database: biogeme.database.Database</span>
+
+<span class="sd">        :return: tuple list_of_errors, list_of_warnings</span>
+<span class="sd">        :rtype: list(string), list(string)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">list_of_errors</span><span class="p">,</span> <span class="n">list_of_warnings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">audit</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">embed_expression</span><span class="p">(</span><span class="s1">&#39;RandomVariable&#39;</span><span class="p">):</span>
+            <span class="n">the_error</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;The argument of Integrate must contain a &#39;</span> <span class="sa">f</span><span class="s1">&#39;RandomVariable: </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="n">list_of_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_error</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">list_of_errors</span><span class="p">,</span> <span class="n">list_of_warnings</span></div>
+
+
+<div class="viewcode-block" id="Integrate.get_signature">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.Integrate.get_signature">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The signature of a string characterizing an expression.</span>
+
+<span class="sd">        This is designed to be communicated to C++, so that the</span>
+<span class="sd">        expression can be reconstructed in this environment.</span>
+
+<span class="sd">        The list contains the following elements:</span>
+
+<span class="sd">            1. the signatures of the child expression,</span>
+<span class="sd">            2. the name of the expression between &lt; &gt;</span>
+<span class="sd">            3. the id of the expression between { }, preceeded by a comma</span>
+<span class="sd">            4. the id of the children, preceeded by a comma</span>
+<span class="sd">            5. the index of the randon variable, preceeded by a comma</span>
+
+<span class="sd">        Consider the following expression:</span>
+
+<span class="sd">        .. math:: 2 \\beta_1  V_1 -</span>
+<span class="sd">             \\frac{\\exp(-\\beta_2 V_2) }</span>
+<span class="sd">             { \\beta_3  (\\beta_2 \\geq \\beta_1)}.</span>
+
+<span class="sd">        It is defined as::</span>
+
+<span class="sd">            2 * beta1 * Variable1 - expressions.exp(-beta2*Variable2) /</span>
+<span class="sd">                 (beta3 * (beta2 &gt;= beta1))</span>
+
+<span class="sd">        And its signature is::</span>
+
+<span class="sd">            [b&#39;&lt;Numeric&gt;{4780527008},2&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277152}&quot;beta1&quot;[0],0,0&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780526952}(2),4780527008,4780277152&#39;,</span>
+<span class="sd">             b&#39;&lt;Variable&gt;{4511837152}&quot;Variable1&quot;,5,2&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527064}(2),4780526952,4511837152&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277656}&quot;beta2&quot;[0],1,1&#39;,</span>
+<span class="sd">             b&#39;&lt;UnaryMinus&gt;{4780527120}(1),4780277656&#39;,</span>
+<span class="sd">             b&#39;&lt;Variable&gt;{4511837712}&quot;Variable2&quot;,6,3&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527176}(2),4780527120,4511837712&#39;,</span>
+<span class="sd">             b&#39;&lt;exp&gt;{4780527232}(1),4780527176&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277264}&quot;beta3&quot;[1],2,0&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277656}&quot;beta2&quot;[0],1,1&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277152}&quot;beta1&quot;[0],0,0&#39;,</span>
+<span class="sd">             b&#39;&lt;GreaterOrEqual&gt;{4780527288}(2),4780277656,4780277152&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527344}(2),4780277264,4780527288&#39;,</span>
+<span class="sd">             b&#39;&lt;Divide&gt;{4780527400}(2),4780527232,4780527344&#39;,</span>
+<span class="sd">             b&#39;&lt;Minus&gt;{4780527456}(2),4780527064,4780527400&#39;]</span>
+
+<span class="sd">        :return: list of the signatures of an expression and its children.</span>
+<span class="sd">        :rtype: list(string)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">random_variable_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_manager</span><span class="o">.</span><span class="n">random_variables</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">randomVariableName</span>
+        <span class="p">]</span>
+        <span class="n">list_of_signatures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">list_of_signatures</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_signature</span><span class="p">()</span>
+        <span class="n">my_signature</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_class_name</span><span class="p">()</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
+        <span class="n">my_signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">{{</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span><span class="si">}</span><span class="se">}}</span><span class="s1">&#39;</span>
+        <span class="n">my_signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;,</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">my_signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;,</span><span class="si">{</span><span class="n">random_variable_index</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">list_of_signatures</span> <span class="o">+=</span> <span class="p">[</span><span class="n">my_signature</span><span class="o">.</span><span class="n">encode</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="n">list_of_signatures</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Integrate(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="si">}</span><span class="s1">, &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">randomVariableName</span><span class="si">}</span><span class="s1">&quot;)&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="BelongsTo">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.BelongsTo">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BelongsTo</span><span class="p">(</span><span class="n">UnaryOperator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a value belongs to a set</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">,</span> <span class="n">the_set</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param child: arithmetic expression</span>
+<span class="sd">        :type child: biogeme.expressions.Expression</span>
+<span class="sd">        :param the_set: set of values</span>
+<span class="sd">        :type the_set: set(float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">UnaryOperator</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">the_set</span> <span class="o">=</span> <span class="n">the_set</span>
+
+<div class="viewcode-block" id="BelongsTo.audit">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.BelongsTo.audit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">audit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="n">Database</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs various checks on the expressions.</span>
+
+<span class="sd">        :param database: database object</span>
+<span class="sd">        :type database: biogeme.database.Database</span>
+
+<span class="sd">        :return: tuple list_of_errors, list_of_warnings</span>
+<span class="sd">        :rtype: list(string), list(string)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">list_of_errors</span><span class="p">,</span> <span class="n">list_of_warnings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">audit</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">is_integer</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">the_set</span><span class="p">):</span>
+            <span class="n">the_warning</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;The set of numbers used in the expression &quot;BelongsTo&quot; contains &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;numbers that are not integer. If it is the intended use, ignore &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;this warning: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">the_set</span><span class="si">}</span><span class="s1">.&#39;</span>
+            <span class="p">)</span>
+            <span class="n">list_of_warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_warning</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">list_of_errors</span><span class="p">,</span> <span class="n">list_of_warnings</span></div>
+
+
+<div class="viewcode-block" id="BelongsTo.get_signature">
+<a class="viewcode-back" href="../../../unary_expressions.html#biogeme.expressions.unary_expressions.BelongsTo.get_signature">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The signature of a string characterizing an expression.</span>
+
+<span class="sd">        This is designed to be communicated to C++, so that the</span>
+<span class="sd">        expression can be reconstructed in this environment.</span>
+
+<span class="sd">        The list contains the following elements:</span>
+
+<span class="sd">            1. the signatures of the child expression,</span>
+<span class="sd">            2. the name of the expression between &lt; &gt;</span>
+<span class="sd">            3. the id of the expression between { }, preceded by a comma</span>
+<span class="sd">            4. the id of the children, preceded by a comma</span>
+<span class="sd">            5. the index of the randon variable, preceded by a comma</span>
+
+<span class="sd">        Consider the following expression:</span>
+
+<span class="sd">        .. math:: 2 \\beta_1  V_1 -</span>
+<span class="sd">             \\frac{\\exp(-\\beta_2 V_2) }</span>
+<span class="sd">             { \\beta_3  (\\beta_2 \\geq \\beta_1)}.</span>
+
+<span class="sd">        It is defined as::</span>
+
+<span class="sd">            2 * beta1 * Variable1 - expressions.exp(-beta2*Variable2) /</span>
+<span class="sd">                 (beta3 * (beta2 &gt;= beta1))</span>
+
+<span class="sd">        And its signature is::</span>
+
+<span class="sd">            [b&#39;&lt;Numeric&gt;{4780527008},2&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277152}&quot;beta1&quot;[0],0,0&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780526952}(2),4780527008,4780277152&#39;,</span>
+<span class="sd">             b&#39;&lt;Variable&gt;{4511837152}&quot;Variable1&quot;,5,2&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527064}(2),4780526952,4511837152&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277656}&quot;beta2&quot;[0],1,1&#39;,</span>
+<span class="sd">             b&#39;&lt;UnaryMinus&gt;{4780527120}(1),4780277656&#39;,</span>
+<span class="sd">             b&#39;&lt;Variable&gt;{4511837712}&quot;Variable2&quot;,6,3&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527176}(2),4780527120,4511837712&#39;,</span>
+<span class="sd">             b&#39;&lt;exp&gt;{4780527232}(1),4780527176&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277264}&quot;beta3&quot;[1],2,0&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277656}&quot;beta2&quot;[0],1,1&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277152}&quot;beta1&quot;[0],0,0&#39;,</span>
+<span class="sd">             b&#39;&lt;GreaterOrEqual&gt;{4780527288}(2),4780277656,4780277152&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527344}(2),4780277264,4780527288&#39;,</span>
+<span class="sd">             b&#39;&lt;Divide&gt;{4780527400}(2),4780527232,4780527344&#39;,</span>
+<span class="sd">             b&#39;&lt;Minus&gt;{4780527456}(2),4780527064,4780527400&#39;]</span>
+
+<span class="sd">        :return: list of the signatures of an expression and its children.</span>
+<span class="sd">        :rtype: list(string)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">list_of_signatures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">list_of_signatures</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_signature</span><span class="p">()</span>
+        <span class="n">signature</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_class_name</span><span class="p">()</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
+        <span class="n">signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">{{</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span><span class="si">}</span><span class="se">}}</span><span class="s1">&#39;</span>
+        <span class="n">signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">the_set</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
+        <span class="n">signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;,</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">the_set</span><span class="p">:</span>
+            <span class="n">signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;,</span><span class="si">{</span><span class="n">elem</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">list_of_signatures</span> <span class="o">+=</span> <span class="p">[</span><span class="n">signature</span><span class="o">.</span><span class="n">encode</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="n">list_of_signatures</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;BelongsTo(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="si">}</span><span class="s1">, &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">the_set</span><span class="si">}</span><span class="s1">&quot;)&#39;</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

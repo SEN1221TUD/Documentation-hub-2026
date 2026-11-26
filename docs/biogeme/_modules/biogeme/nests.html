@@ -1,0 +1,716 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.nests &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.nests</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.nests</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Implements objects in charge of the management of nests for the</span>
+<span class="sd">nested and the cross-nested logit model.</span>
+
+<span class="sd">:author: Michel Bierlaire</span>
+<span class="sd">:date: Thu Oct  5 14:45:58 2023</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">dblquad</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiogemeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Expression</span><span class="p">,</span>
+    <span class="n">Numeric</span><span class="p">,</span>
+    <span class="n">ExpressionOrNumeric</span><span class="p">,</span>
+    <span class="n">Beta</span><span class="p">,</span>
+    <span class="n">get_dict_expressions</span><span class="p">,</span>
+    <span class="n">get_dict_values</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="c1"># The first versions of Biogeme defined the nests as follows. We keep his for backward compatibility.</span>
+<span class="n">OldOneNestForNestedLogit</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ExpressionOrNumeric</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
+<span class="n">OldNestsForNestedLogit</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">OldOneNestForNestedLogit</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="n">OldOneNestForCrossNestedLogit</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ExpressionOrNumeric</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]]</span>
+<span class="n">OldNestsForCrossNestedLogit</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">OldOneNestForCrossNestedLogit</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="OneNestForNestedLogit">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.OneNestForNestedLogit">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OneNestForNestedLogit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class capturing the information for one nest of the nested logit model&quot;&quot;&quot;</span>
+
+    <span class="n">nest_param</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span>
+    <span class="n">list_of_alternatives</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="OneNestForNestedLogit.from_tuple">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.OneNestForNestedLogit.from_tuple">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_tuple</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">the_tuple</span><span class="p">:</span> <span class="n">OldOneNestForNestedLogit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OneNestForNestedLogit</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ctor to initialize the nest using the old syntax of Biogeme with a tuple&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">the_tuple</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OneNestForNestedLogit.intersection">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.OneNestForNestedLogit.intersection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">intersection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nest</span><span class="p">:</span> <span class="n">OneNestForNestedLogit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the intersection of two nests. Designed to verify the</span>
+<span class="sd">        validity of the specification</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">set1</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_of_alternatives</span><span class="p">)</span>
+        <span class="n">set2</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">other_nest</span><span class="o">.</span><span class="n">list_of_alternatives</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">set1</span> <span class="o">&amp;</span> <span class="n">set2</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_nest">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.get_nest">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_nest</span><span class="p">(</span><span class="n">a_nest</span><span class="p">:</span> <span class="n">OneNestForNestedLogit</span> <span class="o">|</span> <span class="n">OldOneNestForNestedLogit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a nest definition to an OneNestForNestedLogot, if needed.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a_nest</span><span class="p">,</span> <span class="n">OneNestForNestedLogit</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a_nest</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a_nest</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">OneNestForNestedLogit</span><span class="o">.</span><span class="n">from_tuple</span><span class="p">(</span><span class="n">a_nest</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Object to type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">a_nest</span><span class="p">)</span><span class="si">}</span><span class="s1"> does not represent a nest.&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="OneNestForCrossNestedLogit">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.OneNestForCrossNestedLogit">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OneNestForCrossNestedLogit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tuple capturing the information for one nest of the cross-nested logit&quot;&quot;&quot;</span>
+
+    <span class="n">nest_param</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span>
+    <span class="n">dict_of_alpha</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">]</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="OneNestForCrossNestedLogit.from_tuple">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.OneNestForCrossNestedLogit.from_tuple">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_tuple</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">the_tuple</span><span class="p">:</span> <span class="n">OldOneNestForCrossNestedLogit</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OneNestForCrossNestedLogit</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ctor to initialize the nest using the old syntax of Biogeme with a tuple&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">the_tuple</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_alpha</span> <span class="o">=</span> <span class="n">get_dict_expressions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_of_alpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_of_alternatives</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_of_alpha</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+<div class="viewcode-block" id="OneNestForCrossNestedLogit.all_alpha_fixed">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.OneNestForCrossNestedLogit.all_alpha_fixed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">all_alpha_fixed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the alpha parameters have a numeric value.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_alpha</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">Beta</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">alpha</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">Expression</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">Numeric</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Nests">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.Nests">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Nests</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generic interface for the nests.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">choice_set</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">tuple_of_nests</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">OneNestForNestedLogit</span> <span class="o">|</span> <span class="n">OneNestForCrossNestedLogit</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ctor</span>
+
+<span class="sd">        :param choice_set: the list of all alternatives in the choice</span>
+<span class="sd">            set. We use a list instead of a set because the order</span>
+<span class="sd">            matters.</span>
+
+<span class="sd">        :param tuple_of_nests: the list of nests</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span> <span class="o">=</span> <span class="n">choice_set</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span> <span class="o">=</span> <span class="n">tuple_of_nests</span>
+
+        <span class="c1"># Provide names to nests if there is none.</span>
+        <span class="n">nest_counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">nest</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span><span class="p">:</span>
+            <span class="n">nest_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nest</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">nest</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;nest_</span><span class="si">{</span><span class="n">nest_counter</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="c1"># Set of alternatives involved in nests</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mev_alternatives</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span><span class="o">.</span><span class="n">union</span><span class="p">(</span>
+            <span class="o">*</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">nest</span><span class="o">.</span><span class="n">list_of_alternatives</span><span class="p">)</span> <span class="k">for</span> <span class="n">nest</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Verify that all elements are indeed in the choice set</span>
+        <span class="n">invalid_elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_alternatives</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">invalid_elements</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;The following alternatives appear in a nest and not in the &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;choice set: </span><span class="si">{</span><span class="n">invalid_elements</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">alone</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_alternatives</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alone</span><span class="p">:</span>
+            <span class="n">warning_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;The following elements do not appear in any nest and are assumed each to be alone in a separate &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;nest: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alone</span><span class="si">}</span><span class="s1">. If it is not the intention, check the assignment of alternatives to nests.&#39;</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warning_msg</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OneNestForNestedLogit</span> <span class="o">|</span> <span class="n">OneNestForCrossNestedLogit</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Index out of bounds. Valid indices are between 0 and &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1">.&#39;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Nests.check_names">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.Nests.check_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks that all the nests have a name&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">nest</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nest</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="Nests.check_union">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.Nests.check_union">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_union</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the union of the nests is the choice set</span>
+
+<span class="sd">        :return: a boolean with the result of the check, as a message if check fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Union Check: The union of all lists should be equal to choice_set</span>
+
+        <span class="n">union_of_lists</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">i</span> <span class="k">for</span> <span class="n">nest</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">nest</span><span class="o">.</span><span class="n">list_of_alternatives</span>
+        <span class="p">}</span>
+        <span class="n">union_of_lists</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alone</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">union_of_lists</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span><span class="p">):</span>
+            <span class="n">missing_values</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span><span class="p">)</span> <span class="o">-</span> <span class="n">union_of_lists</span>  <span class="c1"># set difference</span>
+            <span class="n">extra_values</span> <span class="o">=</span> <span class="n">union_of_lists</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span>
+            <span class="p">)</span>  <span class="c1"># values not in choice_set</span>
+            <span class="n">error_msg_1</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Alternatives in the choice set, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;but not in any nest: </span><span class="si">{</span><span class="n">missing_values</span><span class="si">}</span><span class="s1">.&#39;</span>
+                <span class="k">if</span> <span class="n">missing_values</span>
+                <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+            <span class="p">)</span>
+            <span class="n">error_msg_2</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Alternatives in a nest, but not in the choice set: </span><span class="si">{</span><span class="n">extra_values</span><span class="si">}</span><span class="s1">.&#39;</span>
+                <span class="k">if</span> <span class="n">extra_values</span>
+                <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+            <span class="p">)</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">error_msg_1</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">error_msg_2</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">error_msg</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="NestsForNestedLogit">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.NestsForNestedLogit">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NestsForNestedLogit</span><span class="p">(</span><span class="n">Nests</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class handles nests for the nested logit model&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">choice_set</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">tuple_of_nests</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">OneNestForNestedLogit</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">OldNestsForNestedLogit</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ctor</span>
+
+<span class="sd">        :param choice_set: the list of all alternatives in the choice set</span>
+<span class="sd">        :param tuple_of_nests: the list of nests. The old syntax can still be used:</span>
+<span class="sd">            A tuple containing as many items as nests.</span>
+<span class="sd">            Each item is also a tuple containing two items:</span>
+
+<span class="sd">            - an object of type biogeme.expressions.expr.Expression representing</span>
+<span class="sd">              the nest parameter,</span>
+<span class="sd">            - a list containing the list of identifiers of the alternatives</span>
+<span class="sd">              belonging to the nest.</span>
+
+<span class="sd">            Example::</span>
+
+<span class="sd">                nesta = MUA ,[1, 2, 3]</span>
+<span class="sd">                nestb = MUB ,[4, 5, 6]</span>
+<span class="sd">                nests = nesta, nestb</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># In previous versions of Biogeme, the nests were defined</span>
+        <span class="c1"># using regular tuples, not NamedTuple. We cast them here for</span>
+        <span class="c1"># the sake of backward compatibility.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">OneNestForNestedLogit</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">tuple_of_nests</span><span class="p">):</span>
+            <span class="n">tuple_of_nests</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="n">OneNestForNestedLogit</span><span class="o">.</span><span class="n">from_tuple</span><span class="p">(</span><span class="n">nest</span><span class="p">)</span> <span class="k">for</span> <span class="n">nest</span> <span class="ow">in</span> <span class="n">tuple_of_nests</span>
+            <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">choice_set</span><span class="p">,</span> <span class="n">tuple_of_nests</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NestsForNestedLogit.correlation">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.NestsForNestedLogit.correlation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">correlation</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">alternatives_names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">mu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the correlation matrix of the error terms of all</span>
+<span class="sd">            alternatives of a nested logit model.</span>
+
+<span class="sd">        :param parameters: values of the parameters.</span>
+
+<span class="sd">        :param alternatives_names: dictionary associating a name with each alternative.</span>
+
+<span class="sd">        :param mu: value of the scale parameter mu.</span>
+
+<span class="sd">        :return: correlation matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="p">{</span><span class="n">alt</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">alt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span><span class="p">)}</span>
+        <span class="n">nbr_of_alternatives</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">alternatives_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">alternatives_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span><span class="p">}</span>
+        <span class="n">correlation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">nbr_of_alternatives</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">nest_param</span><span class="p">,</span> <span class="n">Expression</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">parameters</span><span class="p">:</span>
+                    <span class="n">m</span><span class="o">.</span><span class="n">nest_param</span><span class="o">.</span><span class="n">change_init_values</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                <span class="n">mu_m</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">nest_param</span><span class="o">.</span><span class="n">get_value_c</span><span class="p">(</span><span class="n">prepare_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mu_m</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">nest_param</span>
+            <span class="n">alt_m</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">list_of_alternatives</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">alt_m</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="n">correlation</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span> <span class="o">=</span> <span class="n">correlation</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]][</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="mf">1.0</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">mu_m</span> <span class="o">*</span> <span class="n">mu_m</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">mu</span> <span class="o">==</span> <span class="mf">1.0</span>
+                    <span class="k">else</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">mu</span> <span class="o">*</span> <span class="n">mu</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">mu_m</span> <span class="o">*</span> <span class="n">mu_m</span><span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">correlation</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">alternatives_names</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">alternatives_names</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NestsForNestedLogit.check_intersection">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.NestsForNestedLogit.check_intersection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_intersection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the intersection of nests is empty</span>
+
+<span class="sd">        :return: a boolean with the result of the check, and a message if check fails.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nest</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">nest</span><span class="o">.</span><span class="n">list_of_alternatives</span><span class="p">)</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">alone</span><span class="p">:</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;The following alternatives are both in nest </span><span class="si">{</span><span class="n">nest</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;and identified as alone in a nest: &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">set</span><span class="p">(</span><span class="n">nest</span><span class="o">.</span><span class="n">list_of_alternatives</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">alone</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">error_msg</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">other_nest</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span><span class="p">:</span>
+                    <span class="n">the_intersection</span> <span class="o">=</span> <span class="n">nest</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">other_nest</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">the_intersection</span><span class="p">:</span>
+                        <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="sa">f</span><span class="s1">&#39;The following alternatives appear both in nests &#39;</span>
+                            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">nest</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">other_nest</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">the_intersection</span><span class="si">}</span><span class="s1">.&#39;</span>
+                        <span class="p">)</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">error_msg</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="NestsForNestedLogit.check_partition">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.NestsForNestedLogit.check_partition">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_partition</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the nests correspond to a partition</span>
+
+<span class="sd">        :return: a boolean with the result of the check, and a message if check fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">valid_union</span><span class="p">,</span> <span class="n">msg_union</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_union</span><span class="p">()</span>
+        <span class="n">valid_intersection</span><span class="p">,</span> <span class="n">msg_intersection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_intersection</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">valid_union</span> <span class="ow">and</span> <span class="n">valid_intersection</span><span class="p">,</span> <span class="n">msg_union</span> <span class="o">+</span> <span class="s1">&#39;; &#39;</span> <span class="o">+</span> <span class="n">msg_intersection</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="NestsForCrossNestedLogit">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.NestsForCrossNestedLogit">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NestsForCrossNestedLogit</span><span class="p">(</span><span class="n">Nests</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class handles nests for the cross-nested logit model&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">choice_set</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">tuple_of_nests</span><span class="p">:</span> <span class="p">(</span>
+            <span class="nb">tuple</span><span class="p">[</span><span class="n">OneNestForCrossNestedLogit</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">OldNestsForCrossNestedLogit</span>
+        <span class="p">),</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ctor</span>
+
+<span class="sd">        :param choice_set: the list of all alternatives in the choice set</span>
+<span class="sd">        :param tuple_of_nests: the list of nests</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># In previous versions of Biogeme, the nests were defined</span>
+        <span class="c1"># using regular tuples, not NamedTuple. We cast them here for</span>
+        <span class="c1"># the sake of backward compatibility.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">OneNestForCrossNestedLogit</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">tuple_of_nests</span>
+        <span class="p">):</span>
+            <span class="n">tuple_of_nests</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="n">OneNestForCrossNestedLogit</span><span class="o">.</span><span class="n">from_tuple</span><span class="p">(</span><span class="n">nest</span><span class="p">)</span> <span class="k">for</span> <span class="n">nest</span> <span class="ow">in</span> <span class="n">tuple_of_nests</span>
+            <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">choice_set</span><span class="p">,</span> <span class="n">tuple_of_nests</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NestsForCrossNestedLogit.all_alphas_fixed">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.NestsForCrossNestedLogit.all_alphas_fixed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">all_alphas_fixed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if all the alphas are fixed&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">nest</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">nest</span><span class="o">.</span><span class="n">all_alpha_fixed</span><span class="p">():</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="NestsForCrossNestedLogit.get_alpha_dict">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.NestsForCrossNestedLogit.get_alpha_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_alpha_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alternative_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a dict mapping each nest with the alpha</span>
+<span class="sd">        parameter, for a given alternative</span>
+
+<span class="sd">        :param alternative_id: identifier of the alternative</span>
+<span class="sd">        :return: a dict mapping the name of a nest and the alpha expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">alphas</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">nest</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">nest</span><span class="o">.</span><span class="n">dict_of_alpha</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alternative_id</span><span class="p">,</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">nest</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">alphas</span></div>
+
+
+<div class="viewcode-block" id="NestsForCrossNestedLogit.get_alpha_values">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.NestsForCrossNestedLogit.get_alpha_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_alpha_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alternative_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a dict mapping each nest with the value of the alpha</span>
+<span class="sd">        parameters, for a given alternative</span>
+
+<span class="sd">        :param alternative_id: identifier of the alternative</span>
+<span class="sd">        :return: a dict mapping the name of a nest and the value of the alpha expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">alpha_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_alpha_dict</span><span class="p">(</span><span class="n">alternative_id</span><span class="o">=</span><span class="n">alternative_id</span><span class="p">)</span>
+        <span class="n">alpha_values</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">expression</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">alpha_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">alpha_values</span></div>
+
+
+<div class="viewcode-block" id="NestsForCrossNestedLogit.check_validity">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.NestsForCrossNestedLogit.check_validity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_validity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verifies if the cross-nested logit specification is valid</span>
+
+<span class="sd">        :return: a boolean with the result of the check, and a message if check fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ok</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_union</span><span class="p">()</span>
+
+        <span class="n">alt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Expression</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span><span class="p">}</span>
+        <span class="n">number</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">nest</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span><span class="p">:</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">nest</span><span class="o">.</span><span class="n">dict_of_alpha</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">alpha</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">alt</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="n">number</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">problems_one</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ell</span> <span class="ow">in</span> <span class="n">alt</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ell</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ell</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Expression</span><span class="p">):</span>
+                <span class="n">problems_one</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">problems_one</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39; Alternative in exactly one nest, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;and parameter alpha is defined by an &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;expression, and may not be constant: </span><span class="si">{</span><span class="n">problems_one</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ok</span><span class="p">,</span> <span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="NestsForCrossNestedLogit.covariance">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.NestsForCrossNestedLogit.covariance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">covariance</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the covariance between the error terms of two</span>
+<span class="sd">        alternatives of a cross-nested logit model. It is assumed that</span>
+<span class="sd">        the homogeneity parameter mu of the model has been normalized</span>
+<span class="sd">        to one.</span>
+
+<span class="sd">        :param parameters: values of the parameters.</span>
+
+<span class="sd">        :param i: first alternative</span>
+
+<span class="sd">        :param j: second alternative</span>
+
+<span class="sd">        :return: value of the correlation</span>
+
+<span class="sd">        :raise BiogemeError: if the requested number is non-positive or a float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown alternative: </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown alternative: </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">6.0</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">integrand</span><span class="p">(</span><span class="n">z_i</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">z_j</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Function to be integrated to calculate the correlation between</span>
+<span class="sd">            alternative i and alternative j.</span>
+
+<span class="sd">            :param z_i: argument corresponding to alternative i</span>
+<span class="sd">            :type z_i: float</span>
+
+<span class="sd">            :param z_j: argument corresponding to alternative j</span>
+<span class="sd">            :type z_j: float</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">y_i</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">z_i</span><span class="p">)</span>
+            <span class="n">y_j</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">z_j</span><span class="p">)</span>
+            <span class="n">xi_i</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y_i</span><span class="p">)</span>
+            <span class="n">xi_j</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y_j</span><span class="p">)</span>
+            <span class="n">dy_i</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">z_i</span>
+            <span class="n">dy_j</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">z_j</span>
+            <span class="n">dxi_i</span> <span class="o">=</span> <span class="o">-</span><span class="n">dy_i</span> <span class="o">/</span> <span class="n">y_i</span>
+            <span class="n">dxi_j</span> <span class="o">=</span> <span class="o">-</span><span class="n">dy_j</span> <span class="o">/</span> <span class="n">y_j</span>
+
+            <span class="n">g_sum</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">gi_sum</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">gj_sum</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">gij_sum</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuple_of_nests</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">nest_param</span><span class="p">,</span> <span class="n">Expression</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">parameters</span><span class="p">:</span>
+                        <span class="n">m</span><span class="o">.</span><span class="n">nest_param</span><span class="o">.</span><span class="n">change_init_values</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                    <span class="n">mu_m</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">nest_param</span><span class="o">.</span><span class="n">get_value_c</span><span class="p">(</span><span class="n">prepare_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">mu_m</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">nest_param</span>
+                <span class="n">alphas</span> <span class="o">=</span> <span class="n">get_dict_values</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">dict_of_alpha</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
+                <span class="n">alpha_i</span> <span class="o">=</span> <span class="n">alphas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">alpha_i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">term_i</span> <span class="o">=</span> <span class="p">(</span><span class="n">alpha_i</span> <span class="o">*</span> <span class="n">y_i</span><span class="p">)</span> <span class="o">**</span> <span class="n">mu_m</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">term_i</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">alpha_j</span> <span class="o">=</span> <span class="n">alphas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">alpha_j</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">term_j</span> <span class="o">=</span> <span class="p">(</span><span class="n">alpha_j</span> <span class="o">*</span> <span class="n">y_j</span><span class="p">)</span> <span class="o">**</span> <span class="n">mu_m</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">term_j</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">the_sum</span> <span class="o">=</span> <span class="n">term_i</span> <span class="o">+</span> <span class="n">term_j</span>
+                <span class="n">p1</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">mu_m</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">p2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">mu_m</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
+                <span class="n">g_sum</span> <span class="o">+=</span> <span class="n">the_sum</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">mu_m</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">alpha_i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">gi_sum</span> <span class="o">+=</span> <span class="n">alpha_i</span><span class="o">**</span><span class="n">mu_m</span> <span class="o">*</span> <span class="n">y_i</span> <span class="o">**</span> <span class="p">(</span><span class="n">mu_m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">the_sum</span><span class="o">**</span><span class="n">p1</span>
+                <span class="k">if</span> <span class="n">alpha_j</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">gj_sum</span> <span class="o">+=</span> <span class="n">alpha_j</span><span class="o">**</span><span class="n">mu_m</span> <span class="o">*</span> <span class="n">y_j</span> <span class="o">**</span> <span class="p">(</span><span class="n">mu_m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">the_sum</span><span class="o">**</span><span class="n">p1</span>
+                <span class="k">if</span> <span class="n">mu_m</span> <span class="o">!=</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="n">alpha_i</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">alpha_j</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">gij_sum</span> <span class="o">+=</span> <span class="p">(</span>
+                        <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">mu_m</span><span class="p">)</span>
+                        <span class="o">*</span> <span class="n">the_sum</span><span class="o">**</span><span class="n">p2</span>
+                        <span class="o">*</span> <span class="p">(</span><span class="n">alpha_i</span> <span class="o">*</span> <span class="n">alpha_j</span><span class="p">)</span> <span class="o">**</span> <span class="n">mu_m</span>
+                        <span class="o">*</span> <span class="p">(</span><span class="n">y_i</span> <span class="o">*</span> <span class="n">y_j</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">mu_m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="p">)</span>
+
+            <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">g_sum</span><span class="p">)</span>
+            <span class="n">f_second</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="n">y_i</span> <span class="o">*</span> <span class="n">y_j</span> <span class="o">*</span> <span class="p">(</span><span class="n">gi_sum</span> <span class="o">*</span> <span class="n">gj_sum</span> <span class="o">-</span> <span class="n">gij_sum</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">xi_i</span> <span class="o">*</span> <span class="n">xi_j</span> <span class="o">*</span> <span class="n">f_second</span> <span class="o">*</span> <span class="n">dxi_i</span> <span class="o">*</span> <span class="n">dxi_j</span>
+
+        <span class="n">integral</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">dblquad</span><span class="p">(</span><span class="n">integrand</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">integral</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">euler_gamma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">euler_gamma</span></div>
+
+
+<div class="viewcode-block" id="NestsForCrossNestedLogit.correlation">
+<a class="viewcode-back" href="../../code/biogeme/nests.html#biogeme.nests.NestsForCrossNestedLogit.correlation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">correlation</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">alternatives_names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the correlation matrix of the error terms of all</span>
+<span class="sd">            alternatives of cross-nested logit model.</span>
+
+<span class="sd">        :param parameters: values of the parameters.</span>
+<span class="sd">        :param alternatives_names: names of the alternative, for</span>
+<span class="sd">            better reporting. If not provided, the number are used.</span>
+<span class="sd">        :return: correlation matrix</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nbr_of_alternatives</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">alternatives_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">alternatives_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span><span class="p">}</span>
+
+        <span class="n">covar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">nbr_of_alternatives</span><span class="p">,</span> <span class="n">nbr_of_alternatives</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">alt_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">alt_j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choice_set</span><span class="p">):</span>
+                <span class="n">covar</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">(</span><span class="n">alt_i</span><span class="p">,</span> <span class="n">alt_j</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span><span class="p">:</span>
+                    <span class="n">covar</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">covar</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">covar</span><span class="p">))</span>
+        <span class="n">outer_v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">correlation</span> <span class="o">=</span> <span class="n">covar</span> <span class="o">/</span> <span class="n">outer_v</span>
+        <span class="n">correlation</span><span class="p">[</span><span class="n">covar</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">correlation</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">alternatives_names</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">alternatives_names</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

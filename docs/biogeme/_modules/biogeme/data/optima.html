@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.data.optima &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.data.optima</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.data.optima</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. _optima_data:</span>
+
+<span class="sd">Data preparation for Optima</span>
+<span class="sd">===========================</span>
+
+<span class="sd">Prepare data for the Optima case study.</span>
+
+<span class="sd">:author: Michel Bierlaire</span>
+<span class="sd">:date: Wed Apr 12 20:52:37 2023</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">biogeme.database</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">db</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Variable</span>
+
+<span class="c1"># Get the directory of the current file</span>
+<span class="n">module_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="c1"># Construct the path to the data file</span>
+<span class="n">data_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">module_dir</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;optima.dat&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># %%</span>
+<span class="c1"># Read the data</span>
+<div class="viewcode-block" id="read_data">
+<a class="viewcode-back" href="../../../code/biogeme/data/optima.html#biogeme.data.optima.read_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_data</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">db</span><span class="o">.</span><span class="n">Database</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the data from file&quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_file_path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># Exclude observations such that the chosen alternative is -1</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Choice&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Normalize the weights</span>
+    <span class="n">sum_weight</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">number_of_rows</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;normalized_weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">number_of_rows</span> <span class="o">/</span> <span class="n">sum_weight</span>
+    <span class="n">database</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Database</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">data_file_path</span><span class="p">,</span> <span class="n">pandas_database</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;ScaledIncome&#39;</span><span class="p">,</span> <span class="n">CalculatedIncome</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;age_65_more&#39;</span><span class="p">,</span> <span class="n">age</span> <span class="o">&gt;=</span> <span class="mi">65</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;moreThanOneCar&#39;</span><span class="p">,</span> <span class="n">NbCar</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;moreThanOneBike&#39;</span><span class="p">,</span> <span class="n">NbBicy</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;individualHouse&#39;</span><span class="p">,</span> <span class="n">HouseType</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;male&#39;</span><span class="p">,</span> <span class="n">Gender</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span>
+        <span class="s1">&#39;haveChildren&#39;</span><span class="p">,</span> <span class="p">((</span><span class="n">FamilSitu</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">FamilSitu</span> <span class="o">==</span> <span class="mi">4</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;haveGA&#39;</span><span class="p">,</span> <span class="n">GenAbST</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;highEducation&#39;</span><span class="p">,</span> <span class="n">Education</span> <span class="o">&gt;=</span> <span class="mi">6</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span>
+        <span class="s1">&#39;childCenter&#39;</span><span class="p">,</span> <span class="p">((</span><span class="n">ResidChild</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">ResidChild</span> <span class="o">==</span> <span class="mi">2</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="p">)</span>
+
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span>
+        <span class="s1">&#39;childSuburb&#39;</span><span class="p">,</span> <span class="p">((</span><span class="n">ResidChild</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">ResidChild</span> <span class="o">==</span> <span class="mi">4</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;TimePT_scaled&#39;</span><span class="p">,</span> <span class="n">TimePT</span> <span class="o">/</span> <span class="mi">200</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;TimeCar_scaled&#39;</span><span class="p">,</span> <span class="n">TimeCar</span> <span class="o">/</span> <span class="mi">200</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;MarginalCostPT_scaled&#39;</span><span class="p">,</span> <span class="n">MarginalCostPT</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;CostCarCHF_scaled&#39;</span><span class="p">,</span> <span class="n">CostCarCHF</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;distance_km_scaled&#39;</span><span class="p">,</span> <span class="n">distance_km</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;PurpHWH&#39;</span><span class="p">,</span> <span class="n">TripPurpose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;PurpOther&#39;</span><span class="p">,</span> <span class="n">TripPurpose</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">database</span></div>
+
+
+
+<span class="c1"># %%</span>
+<span class="c1"># Variables from the data</span>
+<span class="n">Choice</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Choice&#39;</span><span class="p">)</span>
+<span class="n">TimePT</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TimePT&#39;</span><span class="p">)</span>
+<span class="n">TimeCar</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TimeCar&#39;</span><span class="p">)</span>
+<span class="n">MarginalCostPT</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;MarginalCostPT&#39;</span><span class="p">)</span>
+<span class="n">CostCarCHF</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;CostCarCHF&#39;</span><span class="p">)</span>
+<span class="n">distance_km</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;distance_km&#39;</span><span class="p">)</span>
+<span class="n">Gender</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Gender&#39;</span><span class="p">)</span>
+<span class="n">OccupStat</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;OccupStat&#39;</span><span class="p">)</span>
+<span class="n">Weight</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Weight&#39;</span><span class="p">)</span>
+<span class="n">ID</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ID&#39;</span><span class="p">)</span>
+<span class="n">DestAct</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;DestAct&#39;</span><span class="p">)</span>
+<span class="n">NbTransf</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;NbTransf&#39;</span><span class="p">)</span>
+<span class="n">WalkingTimePT</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;WalkingTimePT&#39;</span><span class="p">)</span>
+<span class="n">WaitingTimePT</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;WaitingTimePT&#39;</span><span class="p">)</span>
+<span class="n">CostPT</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;CostPT&#39;</span><span class="p">)</span>
+<span class="n">CostCar</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;CostCar&#39;</span><span class="p">)</span>
+<span class="n">NbHousehold</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;NbHousehold&#39;</span><span class="p">)</span>
+<span class="n">NbChild</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;NbChild&#39;</span><span class="p">)</span>
+<span class="n">NbCar</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;NbCar&#39;</span><span class="p">)</span>
+<span class="n">NbMoto</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;NbMoto&#39;</span><span class="p">)</span>
+<span class="n">NbBicy</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;NbBicy&#39;</span><span class="p">)</span>
+<span class="n">NbBicyChild</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;NbBicyChild&#39;</span><span class="p">)</span>
+<span class="n">NbComp</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;NbComp&#39;</span><span class="p">)</span>
+<span class="n">NbTV</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;NbTV&#39;</span><span class="p">)</span>
+<span class="n">Internet</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Internet&#39;</span><span class="p">)</span>
+<span class="n">NewsPaperSubs</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;NewsPaperSubs&#39;</span><span class="p">)</span>
+<span class="n">NbCellPhones</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;NbCellPhones&#39;</span><span class="p">)</span>
+<span class="n">NbSmartPhone</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;NbSmartPhone&#39;</span><span class="p">)</span>
+<span class="n">HouseType</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;HouseType&#39;</span><span class="p">)</span>
+<span class="n">OwnHouse</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;OwnHouse&#39;</span><span class="p">)</span>
+<span class="n">NbRoomsHouse</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;NbRoomsHouse&#39;</span><span class="p">)</span>
+<span class="n">YearsInHouse</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;YearsInHouse&#39;</span><span class="p">)</span>
+<span class="n">Income</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Income&#39;</span><span class="p">)</span>
+<span class="n">BirthYear</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;BirthYear&#39;</span><span class="p">)</span>
+<span class="n">Mothertongue</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mothertongue&#39;</span><span class="p">)</span>
+<span class="n">FamilSitu</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;FamilSitu&#39;</span><span class="p">)</span>
+<span class="n">SocioProfCat</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;SocioProfCat&#39;</span><span class="p">)</span>
+<span class="n">CalculatedIncome</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;CalculatedIncome&#39;</span><span class="p">)</span>
+<span class="n">Education</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Education&#39;</span><span class="p">)</span>
+<span class="n">HalfFareST</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;HalfFareST&#39;</span><span class="p">)</span>
+<span class="n">LineRelST</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LineRelST&#39;</span><span class="p">)</span>
+<span class="n">GenAbST</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;GenAbST&#39;</span><span class="p">)</span>
+<span class="n">AreaRelST</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;AreaRelST&#39;</span><span class="p">)</span>
+<span class="n">OtherST</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;OtherST&#39;</span><span class="p">)</span>
+<span class="n">CarAvail</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;CarAvail&#39;</span><span class="p">)</span>
+<span class="n">Envir01</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Envir01&#39;</span><span class="p">)</span>
+<span class="n">Envir02</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Envir02&#39;</span><span class="p">)</span>
+<span class="n">Envir03</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Envir03&#39;</span><span class="p">)</span>
+<span class="n">Envir04</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Envir04&#39;</span><span class="p">)</span>
+<span class="n">Envir05</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Envir05&#39;</span><span class="p">)</span>
+<span class="n">Envir06</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Envir06&#39;</span><span class="p">)</span>
+<span class="n">Mobil01</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil01&#39;</span><span class="p">)</span>
+<span class="n">Mobil02</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil02&#39;</span><span class="p">)</span>
+<span class="n">Mobil03</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil03&#39;</span><span class="p">)</span>
+<span class="n">Mobil04</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil04&#39;</span><span class="p">)</span>
+<span class="n">Mobil05</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil05&#39;</span><span class="p">)</span>
+<span class="n">Mobil06</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil06&#39;</span><span class="p">)</span>
+<span class="n">Mobil07</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil07&#39;</span><span class="p">)</span>
+<span class="n">Mobil08</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil08&#39;</span><span class="p">)</span>
+<span class="n">Mobil09</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil09&#39;</span><span class="p">)</span>
+<span class="n">Mobil10</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil10&#39;</span><span class="p">)</span>
+<span class="n">Mobil11</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil11&#39;</span><span class="p">)</span>
+<span class="n">Mobil12</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil12&#39;</span><span class="p">)</span>
+<span class="n">Mobil13</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil13&#39;</span><span class="p">)</span>
+<span class="n">Mobil14</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil14&#39;</span><span class="p">)</span>
+<span class="n">Mobil15</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil15&#39;</span><span class="p">)</span>
+<span class="n">Mobil16</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil16&#39;</span><span class="p">)</span>
+<span class="n">Mobil17</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil17&#39;</span><span class="p">)</span>
+<span class="n">Mobil18</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil18&#39;</span><span class="p">)</span>
+<span class="n">Mobil19</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil19&#39;</span><span class="p">)</span>
+<span class="n">Mobil20</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil20&#39;</span><span class="p">)</span>
+<span class="n">Mobil21</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil21&#39;</span><span class="p">)</span>
+<span class="n">Mobil22</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil22&#39;</span><span class="p">)</span>
+<span class="n">Mobil23</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil23&#39;</span><span class="p">)</span>
+<span class="n">Mobil24</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil24&#39;</span><span class="p">)</span>
+<span class="n">Mobil25</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil25&#39;</span><span class="p">)</span>
+<span class="n">Mobil26</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil26&#39;</span><span class="p">)</span>
+<span class="n">Mobil27</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Mobil27&#39;</span><span class="p">)</span>
+<span class="n">ResidCh01</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ResidCh01&#39;</span><span class="p">)</span>
+<span class="n">ResidCh02</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ResidCh02&#39;</span><span class="p">)</span>
+<span class="n">ResidCh03</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ResidCh03&#39;</span><span class="p">)</span>
+<span class="n">ResidCh04</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ResidCh04&#39;</span><span class="p">)</span>
+<span class="n">ResidCh05</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ResidCh05&#39;</span><span class="p">)</span>
+<span class="n">ResidCh06</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ResidCh06&#39;</span><span class="p">)</span>
+<span class="n">ResidCh07</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ResidCh07&#39;</span><span class="p">)</span>
+<span class="n">LifSty01</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LifSty01&#39;</span><span class="p">)</span>
+<span class="n">LifSty02</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LifSty02&#39;</span><span class="p">)</span>
+<span class="n">LifSty03</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LifSty03&#39;</span><span class="p">)</span>
+<span class="n">LifSty04</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LifSty04&#39;</span><span class="p">)</span>
+<span class="n">LifSty05</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LifSty05&#39;</span><span class="p">)</span>
+<span class="n">LifSty06</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LifSty06&#39;</span><span class="p">)</span>
+<span class="n">LifSty07</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LifSty07&#39;</span><span class="p">)</span>
+<span class="n">LifSty08</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LifSty08&#39;</span><span class="p">)</span>
+<span class="n">LifSty09</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LifSty09&#39;</span><span class="p">)</span>
+<span class="n">LifSty10</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LifSty10&#39;</span><span class="p">)</span>
+<span class="n">LifSty11</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LifSty11&#39;</span><span class="p">)</span>
+<span class="n">LifSty12</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LifSty12&#39;</span><span class="p">)</span>
+<span class="n">LifSty13</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LifSty13&#39;</span><span class="p">)</span>
+<span class="n">LifSty14</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LifSty14&#39;</span><span class="p">)</span>
+<span class="n">TripPurpose</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TripPurpose&#39;</span><span class="p">)</span>
+<span class="n">TypeCommune</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TypeCommune&#39;</span><span class="p">)</span>
+<span class="n">UrbRur</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;UrbRur&#39;</span><span class="p">)</span>
+<span class="n">LangCode</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LangCode&#39;</span><span class="p">)</span>
+<span class="n">ClassifCodeLine</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ClassifCodeLine&#39;</span><span class="p">)</span>
+<span class="n">frequency</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;frequency&#39;</span><span class="p">)</span>
+<span class="n">ResidChild</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ResidChild&#39;</span><span class="p">)</span>
+<span class="n">NbTrajects</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;NbTrajects&#39;</span><span class="p">)</span>
+<span class="n">FreqCarPar</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;FreqCarPar&#39;</span><span class="p">)</span>
+<span class="n">FreqTrainPar</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;FreqTrainPar&#39;</span><span class="p">)</span>
+<span class="n">FreqOtherPar</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;FreqOtherPar&#39;</span><span class="p">)</span>
+<span class="n">FreqTripHouseh</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;FreqTripHouseh&#39;</span><span class="p">)</span>
+<span class="n">Region</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;Region&#39;</span><span class="p">)</span>
+<span class="n">InVehicleTime</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;InVehicleTime&#39;</span><span class="p">)</span>
+<span class="n">ModeToSchool</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ModeToSchool&#39;</span><span class="p">)</span>
+<span class="n">ReportedDuration</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ReportedDuration&#39;</span><span class="p">)</span>
+<span class="n">CoderegionCAR</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;CoderegionCAR&#39;</span><span class="p">)</span>
+<span class="n">age</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">)</span>
+<span class="n">normalized_weight</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;normalized_weight&#39;</span><span class="p">)</span>
+
+<span class="n">ScaledIncome</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ScaledIncome&#39;</span><span class="p">)</span>
+<span class="n">age_65_more</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;age_65_more&#39;</span><span class="p">)</span>
+<span class="n">moreThanOneCar</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;moreThanOneCar&#39;</span><span class="p">)</span>
+<span class="n">moreThanOneBike</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;moreThanOneBike&#39;</span><span class="p">)</span>
+<span class="n">individualHouse</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;individualHouse&#39;</span><span class="p">)</span>
+<span class="n">male</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;male&#39;</span><span class="p">)</span>
+<span class="n">haveChildren</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;haveChildren&#39;</span><span class="p">)</span>
+<span class="n">haveGA</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;haveGA&#39;</span><span class="p">)</span>
+<span class="n">highEducation</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;highEducation&#39;</span><span class="p">)</span>
+<span class="n">childCenter</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;childCenter&#39;</span><span class="p">)</span>
+<span class="n">childSuburb</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;childSuburb&#39;</span><span class="p">)</span>
+<span class="n">TimePT_scaled</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TimePT_scaled&#39;</span><span class="p">)</span>
+<span class="n">TimeCar_scaled</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TimeCar_scaled&#39;</span><span class="p">)</span>
+<span class="n">MarginalCostPT_scaled</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;MarginalCostPT_scaled&#39;</span><span class="p">)</span>
+<span class="n">CostCarCHF_scaled</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;CostCarCHF_scaled&#39;</span><span class="p">)</span>
+<span class="n">distance_km_scaled</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;distance_km_scaled&#39;</span><span class="p">)</span>
+<span class="n">PurpHWH</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;PurpHWH&#39;</span><span class="p">)</span>
+<span class="n">PurpOther</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;PurpOther&#39;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

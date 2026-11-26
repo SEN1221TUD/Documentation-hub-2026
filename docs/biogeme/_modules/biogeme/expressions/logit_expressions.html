@@ -1,0 +1,471 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.expressions.logit_expressions &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.expressions.logit_expressions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.expressions.logit_expressions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Arithmetic expressions accepted by Biogeme: logit</span>
+
+<span class="sd">:author: Michel Bierlaire</span>
+<span class="sd">:date: Sat Sep  9 15:28:39 2023</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base_expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Expression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.numeric_expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Numeric</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.convert</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_and_convert</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..deprecated</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiogemeError</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExpressionOrNumeric</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..database</span><span class="w"> </span><span class="kn">import</span> <span class="n">Database</span>
+<span class="n">logger</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="LogLogit">
+<a class="viewcode-back" href="../../../logit_expressions.html#biogeme.expressions.logit_expressions.LogLogit">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LogLogit</span><span class="p">(</span><span class="n">Expression</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expression capturing the logit formula.</span>
+
+<span class="sd">    It contains one formula for the target alternative, a dict of</span>
+<span class="sd">    formula for the availabilities and a dict of formulas for the</span>
+<span class="sd">    utilities</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">util</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">],</span>
+        <span class="n">av</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">choice</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param util: dictionary where the keys are the identifiers of</span>
+<span class="sd">                     the alternatives, and the elements are objects</span>
+<span class="sd">                     defining the utility functions.</span>
+
+<span class="sd">        :type util: dict(int:biogeme.expressions.Expression)</span>
+
+<span class="sd">        :param av: dictionary where the keys are the identifiers of</span>
+<span class="sd">                   the alternatives, and the elements are object of</span>
+<span class="sd">                   type biogeme.expressions.Expression defining the</span>
+<span class="sd">                   availability conditions. If av is None, all the</span>
+<span class="sd">                   alternatives are assumed to be always available</span>
+
+<span class="sd">        :type av: dict(int:biogeme.expressions.Expression)</span>
+
+<span class="sd">        :param choice: formula to obtain the alternative for which the</span>
+<span class="sd">                       logit probability must be calculated.</span>
+<span class="sd">        :type choice: biogeme.expressions.Expression</span>
+
+<span class="sd">        :raise BiogemeError: if one of the expressions is invalid, that is</span>
+<span class="sd">            neither a numeric value nor a</span>
+<span class="sd">            biogeme.expressions.Expression object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Expression</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">util</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">alt_id</span><span class="p">:</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">util_expression</span><span class="p">)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">alt_id</span><span class="p">,</span> <span class="n">util_expression</span><span class="p">)</span> <span class="ow">in</span> <span class="n">util</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="c1">#: dict of availability formulas</span>
+        <span class="k">if</span> <span class="n">av</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">av</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">Numeric</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">util</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">av</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">alt_id</span><span class="p">:</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">avail_expression</span><span class="p">)</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">alt_id</span><span class="p">,</span> <span class="n">avail_expression</span><span class="p">)</span> <span class="ow">in</span> <span class="n">av</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">choice</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">choice</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;expression for the chosen alternative&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">av</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LogLogit.audit">
+<a class="viewcode-back" href="../../../logit_expressions.html#biogeme.expressions.logit_expressions.LogLogit.audit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">audit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="n">Database</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs various checks on the expressions.</span>
+
+<span class="sd">        :param database: database object</span>
+<span class="sd">        :type database: biogeme.database.Database</span>
+
+<span class="sd">        :return: tuple list_of_errors, list_of_warnings</span>
+<span class="sd">        :rtype: list(string), list(string)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">list_of_errors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">list_of_warnings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="n">err</span><span class="p">,</span> <span class="n">war</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">audit</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
+            <span class="n">list_of_errors</span> <span class="o">+=</span> <span class="n">err</span>
+            <span class="n">list_of_warnings</span> <span class="o">+=</span> <span class="n">war</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">av</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">the_error</span> <span class="o">=</span> <span class="s1">&#39;Incompatible list of alternatives in logit expression. &#39;</span>
+            <span class="n">consistent</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">my_set</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">av</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">my_set</span><span class="p">:</span>
+                <span class="n">my_set_content</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="si">}</span><span class="s1"> &#39;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">my_set</span><span class="p">)</span>
+                <span class="n">the_error</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="s1">&#39;Id(s) used for utilities and not for &#39;</span> <span class="s1">&#39;availabilities: &#39;</span>
+                <span class="p">)</span> <span class="o">+</span> <span class="n">my_set_content</span>
+            <span class="n">my_set</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">av</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">my_set</span><span class="p">:</span>
+                <span class="n">my_set_content</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="si">}</span><span class="s1"> &#39;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">my_set</span><span class="p">)</span>
+                <span class="n">the_error</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="s1">&#39; Id(s) used for availabilities and not &#39;</span> <span class="s1">&#39;for utilities: &#39;</span>
+                <span class="p">)</span> <span class="o">+</span> <span class="n">my_set_content</span>
+            <span class="n">list_of_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_error</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">consistent</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">list_of_alternatives</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">database</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="o">.</span><span class="n">get_value_c</span><span class="p">()])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">choices</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">values_from_database</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="p">)</span>
+        <span class="n">correct_choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">choices</span><span class="p">,</span> <span class="n">list_of_alternatives</span><span class="p">)</span>
+        <span class="n">index_of_incorrect_choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="o">~</span><span class="n">correct_choices</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index_of_incorrect_choices</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">incorrect_choices</span> <span class="o">=</span> <span class="n">choices</span><span class="p">[</span><span class="n">index_of_incorrect_choices</span><span class="p">]</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">[</span><span class="si">{}</span><span class="s1">]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">t</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">index_of_incorrect_choices</span><span class="p">,</span> <span class="n">incorrect_choices</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">truncate</span> <span class="o">=</span> <span class="mi">100</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">truncate</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">content</span><span class="p">[:</span><span class="n">truncate</span><span class="p">]</span><span class="si">}</span><span class="s1">...&#39;</span>
+            <span class="n">the_error</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;The choice variable [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="si">}</span><span class="s1">] does not &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;correspond to a valid alternative for the &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;following observations (rownumber[choice]): &#39;</span>
+            <span class="p">)</span> <span class="o">+</span> <span class="n">content</span>
+            <span class="n">list_of_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_error</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">consistent</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">database</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">value_choice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="o">.</span><span class="n">get_value_c</span><span class="p">()</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">value_choice</span><span class="si">=}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">value_choice</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">av</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">the_error</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;The chosen alternative [</span><span class="si">{</span><span class="n">value_choice</span><span class="si">}</span><span class="s1">] &#39;</span> <span class="sa">f</span><span class="s1">&#39;is not available&#39;</span>
+                    <span class="p">)</span>
+                    <span class="n">list_of_warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_error</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">choice_availability</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">check_availability_of_chosen_alt</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">av</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice</span>
+                <span class="p">)</span>
+                <span class="n">index_of_unavailable_choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">choice_availability</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">index_of_unavailable_choices</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">incorrect_choices</span> <span class="o">=</span> <span class="n">choices</span><span class="p">[</span><span class="n">index_of_unavailable_choices</span><span class="p">]</span>
+                    <span class="n">content</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">[</span><span class="si">{}</span><span class="s1">]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">t</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">index_of_unavailable_choices</span><span class="p">,</span> <span class="n">incorrect_choices</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">truncate</span> <span class="o">=</span> <span class="mi">100</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">truncate</span><span class="p">:</span>
+                        <span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">content</span><span class="p">[:</span><span class="n">truncate</span><span class="p">]</span><span class="si">}</span><span class="s1">...&#39;</span>
+                    <span class="n">the_error</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;The chosen alternative [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="si">}</span><span class="s1">] &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;is not available for the following &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;observations (rownumber[choice]): &#39;</span>
+                    <span class="p">)</span> <span class="o">+</span> <span class="n">content</span>
+                    <span class="n">list_of_warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_error</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">list_of_errors</span><span class="p">,</span> <span class="n">list_of_warnings</span></div>
+
+
+<div class="viewcode-block" id="LogLogit.get_value">
+<a class="viewcode-back" href="../../../logit_expressions.html#biogeme.expressions.logit_expressions.LogLogit.get_value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluates the value of the expression</span>
+
+<span class="sd">        :return: value of the expression</span>
+<span class="sd">        :rtype: float</span>
+
+<span class="sd">        :raise BiogemeError: if the chosen alternative does not correspond</span>
+<span class="sd">            to any of the utility functions</span>
+
+<span class="sd">        :raise BiogemeError: if the chosen alternative does not correspond</span>
+<span class="sd">            to any of entry in the availability condition</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">choice</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="o">.</span><span class="n">get_value</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">choice</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Alternative </span><span class="si">{</span><span class="n">choice</span><span class="si">}</span><span class="s1"> does not appear in the list &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;of utility functions: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">choice</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">av</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Alternative </span><span class="si">{</span><span class="n">choice</span><span class="si">}</span><span class="s1"> does not appear in the list &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;of availabilities: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">av</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">av</span><span class="p">[</span><span class="n">choice</span><span class="p">]</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">v_chosen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="p">[</span><span class="n">choice</span><span class="p">]</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">V</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">av</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">denom</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">V</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span> <span class="o">-</span> <span class="n">v_chosen</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">denom</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LogLogit.getValue">
+<a class="viewcode-back" href="../../../logit_expressions.html#biogeme.expressions.logit_expressions.LogLogit.getValue">[docs]</a>
+    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">get_value</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getValue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_class_name</span><span class="p">()</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;[choice=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="si">}</span><span class="s1">]&#39;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;U=(&#39;</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">first</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;, </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;)&#39;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;av=(&#39;</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">av</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">first</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;, </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;)&#39;</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+<div class="viewcode-block" id="LogLogit.get_signature">
+<a class="viewcode-back" href="../../../logit_expressions.html#biogeme.expressions.logit_expressions.LogLogit.get_signature">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The signature of a string characterizing an expression.</span>
+
+<span class="sd">        This is designed to be communicated to C++, so that the</span>
+<span class="sd">        expression can be reconstructed in this environment.</span>
+
+<span class="sd">        The list contains the following elements:</span>
+
+<span class="sd">            1. the signatures of all the children expressions,</span>
+<span class="sd">            2. the name of the expression between &lt; &gt;</span>
+<span class="sd">            3. the id of the expression between { }</span>
+<span class="sd">            4. the number of alternatives between ( )</span>
+<span class="sd">            5. the id of the expression for the chosen alternative, preceeded</span>
+<span class="sd">               by a comma.</span>
+<span class="sd">            6. for each alternative, separated by commas:</span>
+
+<span class="sd">                 a. the number of the alternative, as defined by the user,</span>
+<span class="sd">                 b. the id of the expression for the utility,</span>
+<span class="sd">                 c. the id of the expression for the availability condition.</span>
+
+<span class="sd">        Consider the following expression:</span>
+
+<span class="sd">        .. math:: 2 \\beta_1  V_1 -</span>
+<span class="sd">          \\frac{\\exp(-\\beta_2 V_2) }{ \\beta_3  (\\beta_2 \\geq \\beta_1)}.</span>
+
+<span class="sd">        It is defined as::</span>
+
+<span class="sd">            2 * beta1 * Variable1 - expressions.exp(-beta2*Variable2) /</span>
+<span class="sd">                (beta3 * (beta2 &gt;= beta1))</span>
+
+<span class="sd">        And its signature is::</span>
+
+<span class="sd">            [b&#39;&lt;Numeric&gt;{4780527008},2&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277152}&quot;beta1&quot;[0],0,0&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780526952}(2),4780527008,4780277152&#39;,</span>
+<span class="sd">             b&#39;&lt;Variable&gt;{4511837152}&quot;Variable1&quot;,5,2&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527064}(2),4780526952,4511837152&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277656}&quot;beta2&quot;[0],1,1&#39;,</span>
+<span class="sd">             b&#39;&lt;UnaryMinus&gt;{4780527120}(1),4780277656&#39;,</span>
+<span class="sd">             b&#39;&lt;Variable&gt;{4511837712}&quot;Variable2&quot;,6,3&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527176}(2),4780527120,4511837712&#39;,</span>
+<span class="sd">             b&#39;&lt;exp&gt;{4780527232}(1),4780527176&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277264}&quot;beta3&quot;[1],2,0&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277656}&quot;beta2&quot;[0],1,1&#39;,</span>
+<span class="sd">             b&#39;&lt;Beta&gt;{4780277152}&quot;beta1&quot;[0],0,0&#39;,</span>
+<span class="sd">             b&#39;&lt;GreaterOrEqual&gt;{4780527288}(2),4780277656,4780277152&#39;,</span>
+<span class="sd">             b&#39;&lt;Times&gt;{4780527344}(2),4780277264,4780527288&#39;,</span>
+<span class="sd">             b&#39;&lt;Divide&gt;{4780527400}(2),4780527232,4780527344&#39;,</span>
+<span class="sd">             b&#39;&lt;Minus&gt;{4780527456}(2),4780527064,4780527400&#39;]</span>
+
+<span class="sd">        :return: list of the signatures of an expression and its children.</span>
+<span class="sd">        :rtype: list(string)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">list_of_signatures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_children</span><span class="p">():</span>
+            <span class="n">list_of_signatures</span> <span class="o">+=</span> <span class="n">e</span><span class="o">.</span><span class="n">get_signature</span><span class="p">()</span>
+        <span class="n">signature</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_class_name</span><span class="p">()</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
+        <span class="n">signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">{{</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span><span class="si">}</span><span class="se">}}</span><span class="s1">&#39;</span>
+        <span class="n">signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
+        <span class="n">signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;,</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">signature</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;,</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">av</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">list_of_signatures</span> <span class="o">+=</span> <span class="p">[</span><span class="n">signature</span><span class="o">.</span><span class="n">encode</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="n">list_of_signatures</span></div>
+</div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_bioLogLogit</span><span class="p">(</span><span class="n">LogLogit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;log of logit formula</span>
+
+<span class="sd">    This expression captures the logarithm of the logit formula. It</span>
+<span class="sd">    contains one formula for the target alternative, a dict of formula</span>
+<span class="sd">    for the availabilities and a dict of formulas for the utilities It</span>
+<span class="sd">    uses only the C++ implementation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_bioLogLogitFullChoiceSet</span><span class="p">(</span><span class="n">LogLogit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This expression captures the logarithm of the logit formula, where</span>
+<span class="sd">    all alternatives are supposed to be always available.</span>
+
+<span class="sd">       It contains one formula for the target alternative and a dict of</span>
+<span class="sd">       formulas for the utilities. It uses only the C++ implementation.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">util</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">],</span> <span class="n">choice</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param util: dictionary where the keys are the identifiers of</span>
+<span class="sd">                     the alternatives, and the elements are objects</span>
+<span class="sd">                     defining the utility functions.</span>
+
+<span class="sd">        :type util: dict(int:biogeme.expressions.Expression)</span>
+
+<span class="sd">        :param choice: formula to obtain the alternative for which the</span>
+<span class="sd">                       logit probability must be calculated.</span>
+<span class="sd">        :type choice: biogeme.expressions.Expression</span>
+
+<span class="sd">        :raise BiogemeError: if one of the expressions is invalid, that is</span>
+<span class="sd">            neither a numeric value nor a</span>
+<span class="sd">            biogeme.expressions.Expression object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">util</span><span class="o">=</span><span class="n">util</span><span class="p">,</span> <span class="n">av</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

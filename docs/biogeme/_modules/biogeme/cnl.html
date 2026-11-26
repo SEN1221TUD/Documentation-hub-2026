@@ -1,0 +1,283 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.cnl &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.cnl</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.cnl</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Implements the probability generating function and the CDF of a</span>
+<span class="sd">cross-nested logit model. This module is not used by Biogeme</span>
+<span class="sd">itself. It is essentially used for external use. It has been mainly</span>
+<span class="sd">implemented to verify the analytical derivatives of these functions.</span>
+
+<span class="sd">:author: Michel Bierlaire</span>
+<span class="sd">:date: Fri Apr 22 09:39:49 2022</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_dict_values</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.function_output</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionOutput</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.nests</span><span class="w"> </span><span class="kn">import</span> <span class="n">NestsForCrossNestedLogit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.deprecated</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
+
+
+<div class="viewcode-block" id="cnl_g">
+<a class="viewcode-back" href="../../code/biogeme/cnl.html#biogeme.cnl.cnl_g">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cnl_g</span><span class="p">(</span>
+    <span class="n">alternatives</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">nests</span><span class="p">:</span> <span class="n">NestsForCrossNestedLogit</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">FunctionOutput</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Probability generating function and its derivatives</span>
+
+<span class="sd">    :param alternatives: a list of alternatives in a given order. In</span>
+<span class="sd">        principle, the alternative ids should be integers (to be</span>
+<span class="sd">        consistent with Biogeme), but it may be actually be any object</span>
+<span class="sd">        for this specific function.</span>
+
+<span class="sd">    :param nests: the object describing the nests.</span>
+
+<span class="sd">    :return: function that calculates the G function, and its first</span>
+<span class="sd">        and second derivatives.</span>
+<span class="sd">    :rtype: f, g, H = fct(np.array(float))</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="p">{</span><span class="n">alt</span><span class="p">:</span> <span class="n">index</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">alt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">alternatives</span><span class="p">)}</span>
+    <span class="n">nbr_of_alternatives</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">alternatives</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">g_and_deriv</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FunctionOutput</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Probability generating function</span>
+
+<span class="sd">        :param y: vector of positive values</span>
+
+<span class="sd">        :return: value of the CDF and its derivatives</span>
+<span class="sd">        :rtype: floap, np.array(float), np.array(np.array(float))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">g</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">g_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nbr_of_alternatives</span><span class="p">)</span>
+        <span class="n">g_ij</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nbr_of_alternatives</span><span class="p">,</span> <span class="n">nbr_of_alternatives</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">nests</span><span class="p">:</span>
+            <span class="n">mu_m</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">nest_param</span>
+            <span class="n">alphas</span> <span class="o">=</span> <span class="n">get_dict_values</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">dict_of_alpha</span><span class="p">)</span>
+            <span class="n">nest_specific_sum</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">for</span> <span class="n">alpha_alt</span><span class="p">,</span> <span class="n">alpha_value</span> <span class="ow">in</span> <span class="n">alphas</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">alpha_value</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="n">order</span><span class="p">[</span><span class="n">alpha_alt</span><span class="p">]]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">nest_specific_sum</span> <span class="o">+=</span> <span class="p">(</span><span class="n">alpha_value</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="n">order</span><span class="p">[</span><span class="n">alpha_alt</span><span class="p">]])</span> <span class="o">**</span> <span class="n">mu_m</span>
+            <span class="n">p1</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">mu_m</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span>
+            <span class="n">p2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">mu_m</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.0</span>
+            <span class="n">g</span> <span class="o">+=</span> <span class="n">nest_specific_sum</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">mu_m</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbr_of_alternatives</span><span class="p">):</span>
+                <span class="n">alpha_i</span> <span class="o">=</span> <span class="n">alphas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alternatives</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">alpha_i</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">g_i</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">alpha_i</span><span class="o">**</span><span class="n">mu_m</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">**</span> <span class="p">(</span><span class="n">mu_m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">nest_specific_sum</span><span class="o">**</span><span class="n">p1</span>
+                    <span class="n">g_ij</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">mu_m</span><span class="p">)</span> <span class="o">*</span> <span class="n">nest_specific_sum</span><span class="o">**</span><span class="n">p2</span> <span class="o">*</span> <span class="n">alpha_i</span> <span class="o">**</span> <span class="p">(</span>
+                        <span class="mi">2</span> <span class="o">*</span> <span class="n">mu_m</span>
+                    <span class="p">)</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">**</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mu_m</span> <span class="o">-</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span>
+                        <span class="n">mu_m</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="p">)</span> <span class="o">*</span> <span class="n">nest_specific_sum</span><span class="o">**</span><span class="n">p1</span> <span class="o">*</span> <span class="n">alpha_i</span><span class="o">**</span><span class="n">mu_m</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span>
+                        <span class="n">i</span>
+                    <span class="p">]</span> <span class="o">**</span> <span class="p">(</span>
+                        <span class="n">mu_m</span> <span class="o">-</span> <span class="mi">2</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nbr_of_alternatives</span><span class="p">):</span>
+                        <span class="n">alpha_j</span> <span class="o">=</span> <span class="n">alphas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alternatives</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">alpha_j</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">g_ij</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span>
+                                <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">mu_m</span><span class="p">)</span>
+                                <span class="o">*</span> <span class="n">nest_specific_sum</span><span class="o">**</span><span class="n">p2</span>
+                                <span class="o">*</span> <span class="p">(</span><span class="n">alpha_i</span> <span class="o">*</span> <span class="n">alpha_j</span><span class="p">)</span> <span class="o">**</span> <span class="n">mu_m</span>
+                                <span class="o">*</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">**</span> <span class="p">(</span><span class="n">mu_m</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
+                            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbr_of_alternatives</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nbr_of_alternatives</span><span class="p">):</span>
+                <span class="n">g_ij</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">g_ij</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">FunctionOutput</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="n">g</span><span class="p">,</span> <span class="n">gradient</span><span class="o">=</span><span class="n">g_i</span><span class="p">,</span> <span class="n">hessian</span><span class="o">=</span><span class="n">g_ij</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">g_and_deriv</span></div>
+
+
+
+<div class="viewcode-block" id="cnl_G">
+<a class="viewcode-back" href="../../code/biogeme/cnl.html#biogeme.cnl.cnl_G">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">new_func</span><span class="o">=</span><span class="n">cnl_g</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cnl_G</span><span class="p">(</span>
+    <span class="n">alternatives</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">nests</span><span class="p">:</span> <span class="n">NestsForCrossNestedLogit</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">FunctionOutput</span><span class="p">]:</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="cnl_cdf">
+<a class="viewcode-back" href="../../code/biogeme/cnl.html#biogeme.cnl.cnl_cdf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cnl_cdf</span><span class="p">(</span>
+    <span class="n">alternatives</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">nests</span><span class="p">:</span> <span class="n">NestsForCrossNestedLogit</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">FunctionOutput</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cumulative distribution function and its derivatives</span>
+
+<span class="sd">    :param alternatives: a list of alternatives in a given order. In</span>
+<span class="sd">        principle, the alternative ids should be integers (to be</span>
+<span class="sd">        consistent with Biogeme), but it may be actually be any object</span>
+<span class="sd">        for this specific function.</span>
+
+<span class="sd">    :param nests: a tuple containing as many items as nests.</span>
+
+<span class="sd">    :return: function that calculates the CDF, and its first</span>
+<span class="sd">        and second derivatives.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nbr_of_alternatives</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">alternatives</span><span class="p">)</span>
+
+    <span class="n">g_fct</span> <span class="o">=</span> <span class="n">cnl_g</span><span class="p">(</span><span class="n">alternatives</span><span class="p">,</span> <span class="n">nests</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">f_and_deriv</span><span class="p">(</span><span class="n">xi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FunctionOutput</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cumulative distribution function</span>
+
+<span class="sd">        :param xi: vector of arguments</span>
+<span class="sd">        :type xi: np.array(float)</span>
+
+<span class="sd">        :return: value of the CDF and its derivatives</span>
+<span class="sd">        :rtype: float, np.array(float), np.array(np.array(float))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">xi</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">xi</span><span class="p">))</span>
+        <span class="n">g_output</span><span class="p">:</span> <span class="n">FunctionOutput</span> <span class="o">=</span> <span class="n">g_fct</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">g_output</span><span class="o">.</span><span class="n">function</span>
+        <span class="n">g_i</span> <span class="o">=</span> <span class="n">g_output</span><span class="o">.</span><span class="n">gradient</span>
+        <span class="n">g_ii</span> <span class="o">=</span> <span class="n">g_output</span><span class="o">.</span><span class="n">hessian</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">g</span><span class="p">)</span>
+        <span class="n">f_i</span> <span class="o">=</span> <span class="n">g_i</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">f</span>
+        <span class="n">f_ij</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nbr_of_alternatives</span><span class="p">,</span> <span class="n">nbr_of_alternatives</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbr_of_alternatives</span><span class="p">):</span>
+            <span class="n">f_ij</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">f</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">g_i</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">g_i</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">g_ii</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="n">f</span> <span class="o">*</span> <span class="n">g_i</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nbr_of_alternatives</span><span class="p">):</span>
+                <span class="n">f_ij</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">g_i</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">g_i</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">g_ii</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbr_of_alternatives</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nbr_of_alternatives</span><span class="p">):</span>
+                <span class="n">f_ij</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">f_ij</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">FunctionOutput</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">gradient</span><span class="o">=</span><span class="n">f_i</span><span class="p">,</span> <span class="n">hessian</span><span class="o">=</span><span class="n">f_ij</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">f_and_deriv</span></div>
+
+
+
+<div class="viewcode-block" id="cnl_CDF">
+<a class="viewcode-back" href="../../code/biogeme/cnl.html#biogeme.cnl.cnl_CDF">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">new_func</span><span class="o">=</span><span class="n">cnl_cdf</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cnl_CDF</span><span class="p">(</span>
+    <span class="n">alternatives</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">nests</span><span class="p">:</span> <span class="n">NestsForCrossNestedLogit</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">FunctionOutput</span><span class="p">]:</span>
+    <span class="k">pass</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

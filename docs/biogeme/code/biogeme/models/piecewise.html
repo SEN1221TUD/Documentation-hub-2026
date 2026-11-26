@@ -1,0 +1,435 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.models.piecewise module &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="biogeme.multiobjectives module" href="../multiobjectives.html" />
+    <link rel="prev" title="biogeme.models.ordered module" href="ordered.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../native_draws.html">Native draws</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../biogeme.html">.biogeme module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../assisted.html">biogeme.assisted module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../biogeme.html">biogeme.biogeme module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../biogeme_logging.html">biogeme.biogeme_logging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../catalog.html">biogeme.catalog module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../check_parameters.html">biogeme.check_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cnl.html">biogeme.cnl module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration.html">biogeme.configuration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../controller.html">biogeme.controller module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data.html">biogeme.data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database.html">biogeme.database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../default_parameters.html">biogeme.default_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deprecated.html">biogeme.deprecated module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dict_of_formulas.html">biogeme.dict_of_formulas module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../distributions.html">biogeme.distributions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../draws.html">biogeme.draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exceptions.html">biogeme.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../expressions.html">biogeme.expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../filenames.html">biogeme.filenames module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../function_output.html">biogeme.function_output module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../loglikelihood.html">biogeme.loglikelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lsh.html">biogeme.lsh module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mdcev.html">biogeme.mdcev module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../messaging.html">biogeme.messaging module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../models.html">biogeme.models module</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="boxcox.html">biogeme.models.boxcox module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cnl.html">biogeme.models.cnl module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="logit.html">biogeme.models.logit module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mev.html">biogeme.models.mev module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_orig.html">biogeme.models.models_orig module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nested.html">biogeme.models.nested module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ordered.html">biogeme.models.ordered module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">biogeme.models.piecewise module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.models.piecewise.piecewiseFormula"><code class="docutils literal notranslate"><span class="pre">piecewiseFormula()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.models.piecewise.piecewiseFunction"><code class="docutils literal notranslate"><span class="pre">piecewiseFunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.models.piecewise.piecewiseVariables"><code class="docutils literal notranslate"><span class="pre">piecewiseVariables()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.models.piecewise.piecewise_as_variable"><code class="docutils literal notranslate"><span class="pre">piecewise_as_variable()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.models.piecewise.piecewise_formula"><code class="docutils literal notranslate"><span class="pre">piecewise_formula()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.models.piecewise.piecewise_function"><code class="docutils literal notranslate"><span class="pre">piecewise_function()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.models.piecewise.piecewise_variables"><code class="docutils literal notranslate"><span class="pre">piecewise_variables()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../multiobjectives.html">biogeme.multiobjectives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../native_draws.html">biogeme.native_draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../negative_likelihood.html">biogeme.negative_likelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nests.html">biogeme.nests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optimization.html">biogeme.optimization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../parameters.html">biogeme.parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../partition.html">biogeme.partition module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../results.html">biogeme.results module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sampling_of_alternatives.html">biogeme.sampling_of_alternatives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../segmentation.html">biogeme.segmentation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../singleton.html">biogeme.singleton module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../specification.html">biogeme.specification module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools.html">biogeme.tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../validity.html">biogeme.validity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../version.html">biogeme.version module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../biogeme.html">.biogeme module</a></li>
+          <li class="breadcrumb-item"><a href="../models.html">biogeme.models module</a></li>
+      <li class="breadcrumb-item active">biogeme.models.piecewise module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/code/biogeme/models/piecewise.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-biogeme.models.piecewise">
+<span id="biogeme-models-piecewise-module"></span><h1>biogeme.models.piecewise module<a class="headerlink" href="#module-biogeme.models.piecewise" title="Link to this heading"></a></h1>
+<p>Implements piecewise linear formulation</p>
+<dl class="field-list simple">
+<dt class="field-odd">author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Michel Bierlaire</p>
+</dd>
+<dt class="field-even">date<span class="colon">:</span></dt>
+<dd class="field-even"><p>Wed Oct 25 09:43:41 2023</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.models.piecewise.piecewiseFormula">
+<span class="sig-prename descclassname"><span class="pre">biogeme.models.piecewise.</span></span><span class="sig-name descname"><span class="pre">piecewiseFormula</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">betas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/models/piecewise.html#piecewiseFormula"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.models.piecewise.piecewiseFormula" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="#biogeme.models.piecewise.piecewise_formula" title="biogeme.models.piecewise.piecewise_formula"><code class="xref py py-func docutils literal notranslate"><span class="pre">piecewise_formula()</span></code></a> instead.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>variable</strong> (<em>str</em><em> | </em><a class="reference internal" href="../../../elementary_expressions.html#biogeme.expressions.elementary_expressions.Variable" title="biogeme.expressions.elementary_expressions.Variable"><em>Variable</em></a>)</p></li>
+<li><p><strong>thresholds</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>)</p></li>
+<li><p><strong>betas</strong> (<em>list</em><em>[</em><a class="reference internal" href="../expressions/beta_parameters.html#biogeme.expressions.beta_parameters.Beta" title="biogeme.expressions.beta_parameters.Beta"><em>Beta</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.models.piecewise.piecewiseFunction">
+<span class="sig-prename descclassname"><span class="pre">biogeme.models.piecewise.</span></span><span class="sig-name descname"><span class="pre">piecewiseFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">betas</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/models/piecewise.html#piecewiseFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.models.piecewise.piecewiseFunction" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="#biogeme.models.piecewise.piecewise_function" title="biogeme.models.piecewise.piecewise_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">piecewise_function()</span></code></a> instead.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em>)</p></li>
+<li><p><strong>thresholds</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>)</p></li>
+<li><p><strong>betas</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.models.piecewise.piecewiseVariables">
+<span class="sig-prename descclassname"><span class="pre">biogeme.models.piecewise.</span></span><span class="sig-name descname"><span class="pre">piecewiseVariables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/models/piecewise.html#piecewiseVariables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.models.piecewise.piecewiseVariables" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="#biogeme.models.piecewise.piecewise_variables" title="biogeme.models.piecewise.piecewise_variables"><code class="xref py py-func docutils literal notranslate"><span class="pre">piecewise_variables()</span></code></a> instead.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>variable</strong> (<a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em> | </em><em>str</em>)</p></li>
+<li><p><strong>thresholds</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.models.piecewise.piecewise_as_variable">
+<span class="sig-prename descclassname"><span class="pre">biogeme.models.piecewise.</span></span><span class="sig-name descname"><span class="pre">piecewise_as_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">betas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/models/piecewise.html#piecewise_as_variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.models.piecewise.piecewise_as_variable" title="Link to this definition"></a></dt>
+<dd><p>Generate the formula for a piecewise linear specification, seen
+as a transformed variable.</p>
+<p>If there are K thresholds, K-1 variables are generated. The first
+and last thresholds can be defined as None, corresponding to
+<span class="math notranslate nohighlight">\(-\infty\)</span> and <span class="math notranslate nohighlight">\(+\infty\)</span>, respectively. If <span class="math notranslate nohighlight">\(t\)</span> is
+the variable of interest, for each interval <span class="math notranslate nohighlight">\([a:a+b[\)</span>, we
+define a variable defined as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}x_{Ti} =\left\{  \begin{array}{ll} 0 &amp; \text{if }
+t &lt; a \\ t-a &amp; \text{if } a \leq t &lt; a+b \\ b  &amp;
+\text{otherwise}  \end{array}\right. \;\;\;x_{Ti} =
+\max(0, \min(t-a, b))\end{split}\]</div>
+<p>The specification this is returned is</p>
+<div class="math notranslate nohighlight">
+\[x_{T1} + \sum_{i=2}^{K-1} eta_i x_{Ti}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variable</strong> (<em>string</em>) – name of the variable for which we need the
+piecewise linear transform.</p></li>
+<li><p><strong>thresholds</strong> (<em>list</em><em>(</em><em>float</em><em>)</em>) – list of thresholds</p></li>
+<li><p><strong>betas</strong> (<em>list</em><em>(</em><em>biogeme.expresssions.Beta</em><em>)</em>) – list of Beta parameters to be used in the
+specification.  The number of entries should be the number of
+thresholds, minus two. If None, for each interval, the
+parameter Beta(‘beta_VAR_interval’,0, None, None, 0) is used,
+where var is the name of the variable. Default: none.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>expression of  the piecewise linear specification.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>biogeme.expressions.expr.Expression</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="../exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if the thresholds are not defined properly,
+which means that only the first and the last threshold can be set
+to None.</p></li>
+<li><p><a class="reference internal" href="../exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if the length of list <code class="docutils literal notranslate"><span class="pre">initialexpr.Betas</span></code> is
+not equal to the length of <code class="docutils literal notranslate"><span class="pre">thresholds</span></code> minus one.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.models.piecewise.piecewise_formula">
+<span class="sig-prename descclassname"><span class="pre">biogeme.models.piecewise.</span></span><span class="sig-name descname"><span class="pre">piecewise_formula</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">betas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/models/piecewise.html#piecewise_formula"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.models.piecewise.piecewise_formula" title="Link to this definition"></a></dt>
+<dd><p>Generate the formula for a piecewise linear specification.</p>
+<p>If there are K thresholds, K-1 variables are generated. The first
+and last thresholds can be defined as None, corresponding to
+<span class="math notranslate nohighlight">\(-\infty\)</span> and <span class="math notranslate nohighlight">\(+\infty\)</span>, respectively. If <span class="math notranslate nohighlight">\(t\)</span> is
+the variable of interest, for each interval <span class="math notranslate nohighlight">\([a:a+b[\)</span>, we
+define a variable defined as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}x_{Ti} =\left\{  \begin{array}{ll} 0 &amp; \text{if }
+t &lt; a \\ t-a &amp; \text{if } a \leq t &lt; a+b \\ b  &amp;
+\text{otherwise}  \end{array}\right. \;\;\;x_{Ti} =
+\max(0, \min(t-a, b))\end{split}\]</div>
+<p>New variables and new parameters are automatically created to
+obtain the specification</p>
+<div class="math notranslate nohighlight">
+\[\sum_{i=1}^{K-1} \beta_i x_{Ti}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variable</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <a class="reference internal" href="../../../elementary_expressions.html#biogeme.expressions.elementary_expressions.Variable" title="biogeme.expressions.elementary_expressions.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a></span>) – name of the variable for which we need the
+piecewise linear transform.</p></li>
+<li><p><strong>thresholds</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – list of thresholds</p></li>
+<li><p><strong>betas</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a> | <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – list of Beta parameters to be used in the
+specification.  The number of entries should be the number of
+thresholds, minus one. If None, for each interval, the
+parameter Beta(‘beta_VAR_interval’,0, None, None, 0) is used,
+where var is the name of the variable. Default: none.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>expression of  the piecewise linear specification.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="../exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if the thresholds are not defined properly,
+which means that only the first and the last threshold can be set
+to None.</p></li>
+<li><p><a class="reference internal" href="../exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if the length of list <code class="docutils literal notranslate"><span class="pre">initialexpr.Betas</span></code> is
+not equal to the length of <code class="docutils literal notranslate"><span class="pre">thresholds</span></code> minus one.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#biogeme.models.piecewise.piecewiseVariables" title="biogeme.models.piecewise.piecewiseVariables"><code class="xref py py-meth docutils literal notranslate"><span class="pre">piecewiseVariables()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.models.piecewise.piecewise_function">
+<span class="sig-prename descclassname"><span class="pre">biogeme.models.piecewise.</span></span><span class="sig-name descname"><span class="pre">piecewise_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">betas</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/models/piecewise.html#piecewise_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.models.piecewise.piecewise_function" title="Link to this definition"></a></dt>
+<dd><p>Plot a piecewise linear specification.</p>
+<p>If there are K thresholds, K-1 variables are generated. The first
+and last thresholds can be defined as None, corresponding to
+<span class="math notranslate nohighlight">\(-\infty\)</span> and <span class="math notranslate nohighlight">\(+\infty\)</span>, respectively. If <span class="math notranslate nohighlight">\(t\)</span> is
+the variable of interest, for each interval <span class="math notranslate nohighlight">\([a:a+b[\)</span>, we
+define a variable defined as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}x_{Ti} =\left\{  \begin{array}{ll} 0 &amp; \text{if }
+t &lt; a \\ t-a &amp; \text{if } a \leq t &lt; a+b \\ b  &amp;
+\text{otherwise}  \end{array}\right. \;\;\;x_{Ti} =
+\max(0, \min(t-a, b))\end{split}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em>) – value at which the piecewise specification must be avaluated</p></li>
+<li><p><strong>thresholds</strong> (<em>list</em><em>(</em><em>float</em><em>)</em>) – list of thresholds</p></li>
+<li><p><strong>betas</strong> (<em>list</em><em>(</em><em>float</em><em>)</em>) – list of the Beta parameters.  The number of entries
+should be the number of thresholds, plus
+one.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>value of the numpy function</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>float</em></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if the thresholds are not defined properly,
+which means that only the first and the last threshold can be set
+to None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.models.piecewise.piecewise_variables">
+<span class="sig-prename descclassname"><span class="pre">biogeme.models.piecewise.</span></span><span class="sig-name descname"><span class="pre">piecewise_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/models/piecewise.html#piecewise_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.models.piecewise.piecewise_variables" title="Link to this definition"></a></dt>
+<dd><p>Generate the variables to include in a piecewise linear specification.</p>
+<p>If there are K thresholds, K-1 variables are generated. The first
+and last thresholds can be defined as None, corresponding to
+<span class="math notranslate nohighlight">\(-\infty\)</span> and <span class="math notranslate nohighlight">\(+\infty\)</span>,respectively. If <span class="math notranslate nohighlight">\(t\)</span> is
+the variable of interest, for each interval <span class="math notranslate nohighlight">\([a:a+b[\)</span>, we
+define a variable defined as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}x_{Ti} =\left\{  \begin{array}{ll} 0 &amp; \text{if }
+t &lt; a \\ t-a &amp; \text{if } a \leq t &lt; a+b \\ b  &amp;
+\text{otherwise}  \end{array}\right. \;\;\;x_{Ti} =
+\max(0, \min(t-a, b))\end{split}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variable</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – variable for which we need the piecewise linear
+transform. The expression itself or the name of the variable
+can be given.</p></li>
+<li><p><strong>thresholds</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – list of thresholds</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of variables to for the piecewise linear specification.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if the thresholds are not defined properly,
+as only the first and the last thresholds can be set
+to None.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#biogeme.models.piecewise.piecewiseFormula" title="biogeme.models.piecewise.piecewiseFormula"><code class="xref py py-meth docutils literal notranslate"><span class="pre">piecewiseFormula()</span></code></a></p>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ordered.html" class="btn btn-neutral float-left" title="biogeme.models.ordered module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../multiobjectives.html" class="btn btn-neutral float-right" title="biogeme.multiobjectives module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

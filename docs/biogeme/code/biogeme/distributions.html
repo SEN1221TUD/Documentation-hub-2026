@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.distributions module &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="biogeme.draws module" href="draws.html" />
+    <link rel="prev" title="biogeme.dict_of_formulas module" href="dict_of_formulas.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../native_draws.html">Native draws</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../biogeme.html">.biogeme module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="assisted.html">biogeme.assisted module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme.html">biogeme.biogeme module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme_logging.html">biogeme.biogeme_logging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog.html">biogeme.catalog module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="check_parameters.html">biogeme.check_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cnl.html">biogeme.cnl module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">biogeme.configuration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="controller.html">biogeme.controller module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html">biogeme.data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html">biogeme.database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="default_parameters.html">biogeme.default_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deprecated.html">biogeme.deprecated module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dict_of_formulas.html">biogeme.dict_of_formulas module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">biogeme.distributions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.distributions.logisticcdf"><code class="docutils literal notranslate"><span class="pre">logisticcdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.distributions.lognormalpdf"><code class="docutils literal notranslate"><span class="pre">lognormalpdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.distributions.normalpdf"><code class="docutils literal notranslate"><span class="pre">normalpdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.distributions.triangularpdf"><code class="docutils literal notranslate"><span class="pre">triangularpdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.distributions.uniformpdf"><code class="docutils literal notranslate"><span class="pre">uniformpdf()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="draws.html">biogeme.draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptions.html">biogeme.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expressions.html">biogeme.expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filenames.html">biogeme.filenames module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="function_output.html">biogeme.function_output module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loglikelihood.html">biogeme.loglikelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lsh.html">biogeme.lsh module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mdcev.html">biogeme.mdcev module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="messaging.html">biogeme.messaging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html">biogeme.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiobjectives.html">biogeme.multiobjectives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="native_draws.html">biogeme.native_draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="negative_likelihood.html">biogeme.negative_likelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nests.html">biogeme.nests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optimization.html">biogeme.optimization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameters.html">biogeme.parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition.html">biogeme.partition module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html">biogeme.results module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sampling_of_alternatives.html">biogeme.sampling_of_alternatives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="segmentation.html">biogeme.segmentation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="singleton.html">biogeme.singleton module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="specification.html">biogeme.specification module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html">biogeme.tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="validity.html">biogeme.validity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="version.html">biogeme.version module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../biogeme.html">.biogeme module</a></li>
+      <li class="breadcrumb-item active">biogeme.distributions module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/code/biogeme/distributions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-biogeme.distributions">
+<span id="biogeme-distributions-module"></span><h1>biogeme.distributions module<a class="headerlink" href="#module-biogeme.distributions" title="Link to this heading"></a></h1>
+<p>Implementation of the pdf and CDF of common distributions</p>
+<dl class="field-list simple">
+<dt class="field-odd">author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Michel Bierlaire</p>
+</dd>
+<dt class="field-even">date<span class="colon">:</span></dt>
+<dd class="field-even"><p>Thu Apr 23 12:01:49 2015</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.distributions.logisticcdf">
+<span class="sig-prename descclassname"><span class="pre">biogeme.distributions.</span></span><span class="sig-name descname"><span class="pre">logisticcdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu=`0.0`</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s=`1.0`</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/distributions.html#logisticcdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.distributions.logisticcdf" title="Link to this definition"></a></dt>
+<dd><p>Logistic CDF</p>
+<p>Cumulative distribution function of a logistic distribution</p>
+<div class="math notranslate nohighlight">
+\[f(x;\mu, \sigma) = \frac{1}
+{1+\exp\left(-\frac{x-\mu}{\sigma} \right)}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – value at which the CDF is evaluated.</p></li>
+<li><p><strong>mu</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – location parameter <span class="math notranslate nohighlight">\(\mu\)</span> of the logistic distribution.
+Default: 0.</p></li>
+<li><p><strong>s</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – scale parameter <span class="math notranslate nohighlight">\(\sigma\)</span> of the logistic distribution.
+Default: 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Note<span class="colon">:</span></dt>
+<dd class="field-even"><p>It is assumed that <span class="math notranslate nohighlight">\(\sigma &gt; 0\)</span>, but it is
+not verified by the code.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>value of the logistic CDF.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.distributions.lognormalpdf">
+<span class="sig-prename descclassname"><span class="pre">biogeme.distributions.</span></span><span class="sig-name descname"><span class="pre">lognormalpdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu=`0.0`</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s=`1.0`</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/distributions.html#lognormalpdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.distributions.lognormalpdf" title="Link to this definition"></a></dt>
+<dd><p>Log normal pdf</p>
+<p>Probability density function of a log normal distribution</p>
+<div class="math notranslate nohighlight">
+\[f(x;\mu, \sigma) =
+\frac{1}{x\sigma \sqrt{2\pi}}
+\exp{-\frac{(\ln x-\mu)^2}{2\sigma^2}}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – value at which the pdf is evaluated.</p></li>
+<li><p><strong>mu</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – location parameter <span class="math notranslate nohighlight">\(\mu\)</span> of the lognormal distribution.</p></li>
+<li><p><strong>s</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – scale parameter <span class="math notranslate nohighlight">\(\sigma\)</span> of the lognormal distribution.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Note<span class="colon">:</span></dt>
+<dd class="field-even"><p>It is assumed that <span class="math notranslate nohighlight">\(\sigma &gt; 0\)</span>, but it is not
+verified by the code.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>value of the lognormal pdf.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.distributions.normalpdf">
+<span class="sig-prename descclassname"><span class="pre">biogeme.distributions.</span></span><span class="sig-name descname"><span class="pre">normalpdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu=`0.0`</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s=`1.0`</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/distributions.html#normalpdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.distributions.normalpdf" title="Link to this definition"></a></dt>
+<dd><p>Normal pdf</p>
+<p>Probability density function of a normal distribution</p>
+<div class="math notranslate nohighlight">
+\[f(x;\mu, \sigma) =
+\frac{1}{\sigma \sqrt{2\pi}} \exp{-\frac{(x-\mu)^2}{2\sigma^2}}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – value at which the pdf is evaluated.</p></li>
+<li><p><strong>mu</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – location parameter <span class="math notranslate nohighlight">\(\mu\)</span> of the Normal distribution.</p></li>
+<li><p><strong>s</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – scale parameter <span class="math notranslate nohighlight">\(\sigma\)</span> of the Normal distribution.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Note<span class="colon">:</span></dt>
+<dd class="field-even"><p>It is assumed that <span class="math notranslate nohighlight">\(\sigma &gt; 0\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>value of the Normal pdf.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – if <span class="math notranslate nohighlight">\(\sigma \leq 0\)</span>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.distributions.triangularpdf">
+<span class="sig-prename descclassname"><span class="pre">biogeme.distributions.</span></span><span class="sig-name descname"><span class="pre">triangularpdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a=`-1.0`</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b=`1.0`</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c=`0.0`</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/distributions.html#triangularpdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.distributions.triangularpdf" title="Link to this definition"></a></dt>
+<dd><p>Triangular pdf</p>
+<p>Probability density function of a triangular distribution</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}f(x;a, b, c) = \left\{ \begin{array}{ll} 0 &amp;
+\text{if } x &lt; a \\\frac{2(x-a)}{(b-a)(c-a)} &amp;
+\text{if } a \leq x &lt; c \\\frac{2(b-x)}{(b-a)(b-c)} &amp;
+\text{if } c \leq x &lt; b \\0 &amp; \text{if } x \geq b.
+\end{array} \right.\end{split}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – argument of the pdf</p></li>
+<li><p><strong>a</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – lower bound <span class="math notranslate nohighlight">\(a\)</span> of the distribution. Default: -1.</p></li>
+<li><p><strong>b</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – upper bound <span class="math notranslate nohighlight">\(b\)</span> of the distribution. Default: 1.</p></li>
+<li><p><strong>c</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – mode <span class="math notranslate nohighlight">\(c\)</span> of the distribution. Default: 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Note<span class="colon">:</span></dt>
+<dd class="field-even"><p>It is assumed that <span class="math notranslate nohighlight">\(a &lt;  c &lt; b\)</span>, but it is
+not verified by the code.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>value of the triangular pdf.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.distributions.uniformpdf">
+<span class="sig-prename descclassname"><span class="pre">biogeme.distributions.</span></span><span class="sig-name descname"><span class="pre">uniformpdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a=`-1.0`</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b=`1.0`</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/distributions.html#uniformpdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.distributions.uniformpdf" title="Link to this definition"></a></dt>
+<dd><p>Uniform pdf</p>
+<p>Probability density function of a uniform distribution.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}f(x;a, b) = \left\{ \begin{array}{ll}
+\frac{1}{b-a} &amp; \text{for } x \in [a, b] \\
+0 &amp; \text{otherwise}\end{array} \right.\end{split}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – argument of the pdf</p></li>
+<li><p><strong>a</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – lower bound <span class="math notranslate nohighlight">\(a\)</span> of the distribution. Default: -1.</p></li>
+<li><p><strong>b</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – upper bound <span class="math notranslate nohighlight">\(b\)</span> of the distribution. Default: 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Note<span class="colon">:</span></dt>
+<dd class="field-even"><p>It is assumed that <span class="math notranslate nohighlight">\(a &lt; b\)</span>, but it is
+not verified by the code.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>value of the uniform pdf.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dict_of_formulas.html" class="btn btn-neutral float-left" title="biogeme.dict_of_formulas module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="draws.html" class="btn btn-neutral float-right" title="biogeme.draws module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

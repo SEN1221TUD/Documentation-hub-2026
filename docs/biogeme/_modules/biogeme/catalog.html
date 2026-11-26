@@ -1,0 +1,568 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.catalog &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.catalog</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.catalog</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Defines  a catalog of expressions that may be considered in a specification</span>
+
+<span class="sd">:author: Michel Bierlaire</span>
+<span class="sd">:date: Fri Mar 31 08:54:07 2023</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ex</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">biogeme.expressions.convert</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">biogeme.segmentation</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">seg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.configuration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SEPARATOR</span><span class="p">,</span>
+    <span class="n">SELECTION_SEPARATOR</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.controller</span><span class="w"> </span><span class="kn">import</span> <span class="n">Controller</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiogemeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Beta</span><span class="p">,</span> <span class="n">Expression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultipleExpression</span><span class="p">,</span> <span class="n">NamedExpression</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Catalog">
+<a class="viewcode-back" href="../../code/biogeme/catalog.html#biogeme.catalog.Catalog">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Catalog</span><span class="p">(</span><span class="n">MultipleExpression</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Catalog of expressions that are interchangeable. Only one of</span>
+<span class="sd">    them defines the specification. They are designed to be</span>
+<span class="sd">    modified algorithmically by a controller.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">catalog_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">named_expressions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">NamedExpression</span><span class="p">],</span>
+        <span class="n">controlled_by</span><span class="p">:</span> <span class="n">Controller</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ctor</span>
+
+<span class="sd">        :param catalog_name: name of the catalog of expressions</span>
+
+<span class="sd">        :param named_expressions: list of NamedExpression,</span>
+<span class="sd">            each containing a name and an expression.</span>
+
+<span class="sd">        :param controlled_by: Object controlling the selection of the specifications.</span>
+
+<span class="sd">        :raise BiogemeError: if list_of_named_expressions is empty</span>
+<span class="sd">        :raise BiogemeError: if incompatible Controller</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">catalog_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">named_expressions</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">catalog_name</span><span class="si">}</span><span class="s1">: cannot create a catalog from an empty list.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">controlled_by</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">controlled_by</span><span class="p">,</span> <span class="n">Controller</span><span class="p">):</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;The controller must be of type Controller and not &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">controlled_by</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">named_expressions</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">NamedExpression</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">named</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">expression</span><span class="o">=</span><span class="n">biogeme</span><span class="o">.</span><span class="n">expressions</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">validate_and_convert</span><span class="p">(</span>
+                    <span class="n">named</span><span class="o">.</span><span class="n">expression</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">named</span> <span class="ow">in</span> <span class="n">named_expressions</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Check if the name of the catalog was not already used.</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">named</span><span class="o">.</span><span class="n">expression</span><span class="o">.</span><span class="n">contains_catalog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">named</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">named_expressions</span>
+        <span class="p">):</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Catalog </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> cannot contain itself. Use different names&#39;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="c1"># Declare the expressions as children of the catalog</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">expression</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">named_expressions</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
+
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">named_expr</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">named_expr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">named_expressions</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">controlled_by</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">controller_name</span> <span class="o">=</span> <span class="n">catalog_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">controlled_by</span> <span class="o">=</span> <span class="n">Controller</span><span class="p">(</span>
+                <span class="n">controller_name</span><span class="o">=</span><span class="n">controller_name</span><span class="p">,</span> <span class="n">specification_names</span><span class="o">=</span><span class="n">names</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">controlled_by</span> <span class="o">=</span> <span class="n">controlled_by</span>
+            <span class="n">controller_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">controlled_by</span><span class="o">.</span><span class="n">specification_names</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">names</span> <span class="o">!=</span> <span class="n">controller_names</span><span class="p">:</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Incompatible IDs between catalog [</span><span class="si">{</span><span class="n">names</span><span class="si">}</span><span class="s1">] and controller &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="n">controller_names</span><span class="si">}</span><span class="s1">]&#39;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Catalog.get_all_controllers">
+<a class="viewcode-back" href="../../code/biogeme/catalog.html#biogeme.catalog.Catalog.get_all_controllers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_controllers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="n">Controller</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Provides all controllers controlling the specifications of</span>
+<span class="sd">            a multiple expression</span>
+
+<span class="sd">        :return: a set of controllers</span>
+<span class="sd">        :rtype: set(biogeme.controller.Controller)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_controllers</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">controlled_by</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="n">all_controllers</span> <span class="o">|=</span> <span class="n">e</span><span class="o">.</span><span class="n">get_all_controllers</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">all_controllers</span></div>
+
+
+<div class="viewcode-block" id="Catalog.from_dict">
+<a class="viewcode-back" href="../../code/biogeme/catalog.html#biogeme.catalog.Catalog.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">catalog_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dict_of_expressions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+        <span class="n">controlled_by</span><span class="p">:</span> <span class="n">Controller</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ctor using a dict instead of a list.</span>
+
+<span class="sd">        Python does not guarantee the order of elements of a dict,</span>
+<span class="sd">        although, in practice, it is always preserved. If the order is</span>
+<span class="sd">        critical, it is better to use the main constructor. If not,</span>
+<span class="sd">        this constructor provides a more readable code.</span>
+
+<span class="sd">        :param catalog_name: name of the catalog</span>
+<span class="sd">        :type catalog_name: str</span>
+
+<span class="sd">        :param dict_of_expressions: dict associating the name of an</span>
+<span class="sd">            expression and the expression itself.</span>
+<span class="sd">        :type dict_of_expressions: dict(str:biogeme.expressions.Expression)</span>
+
+<span class="sd">        :param controlled_by: Object controlling the selection of the specifications.</span>
+<span class="sd">        :type controlled_by: Controller</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">named_expressions</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">NamedExpression</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">expression</span><span class="o">=</span><span class="n">expression</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">dict_of_expressions</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">catalog_name</span><span class="o">=</span><span class="n">catalog_name</span><span class="p">,</span>
+            <span class="n">named_expressions</span><span class="o">=</span><span class="n">named_expressions</span><span class="p">,</span>
+            <span class="n">controlled_by</span><span class="o">=</span><span class="n">controlled_by</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Catalog.catalog_size">
+<a class="viewcode-back" href="../../code/biogeme/catalog.html#biogeme.catalog.Catalog.catalog_size">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">catalog_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the size of the catalog.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">named_expressions</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Catalog.get_iterator">
+<a class="viewcode-back" href="../../code/biogeme/catalog.html#biogeme.catalog.Catalog.get_iterator">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_iterator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">NamedExpression</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtain an iterator on the named expressions&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">named_expressions</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Catalog.selected">
+<a class="viewcode-back" href="../../code/biogeme/catalog.html#biogeme.catalog.Catalog.selected">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">selected</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NamedExpression</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the selected expression and its name</span>
+
+<span class="sd">        :return: the name and the selected expression</span>
+<span class="sd">        :rtype: NamedExpression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">named_expressions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">controlled_by</span><span class="o">.</span><span class="n">current_index</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Catalog.selected_name">
+<a class="viewcode-back" href="../../code/biogeme/catalog.html#biogeme.catalog.Catalog.selected_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">selected_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the name of the selected expression</span>
+
+<span class="sd">        :return: the name of the selected expression</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">named_expressions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">controlled_by</span><span class="o">.</span><span class="n">current_index</span><span class="p">]</span><span class="o">.</span><span class="n">name</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="segmentation_catalogs">
+<a class="viewcode-back" href="../../code/biogeme/catalog.html#biogeme.catalog.segmentation_catalogs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">segmentation_catalogs</span><span class="p">(</span>
+    <span class="n">generic_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">beta_parameters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">biogeme</span><span class="o">.</span><span class="n">expressions</span><span class="o">.</span><span class="n">Beta</span><span class="p">],</span>
+    <span class="n">potential_segmentations</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">seg</span><span class="o">.</span><span class="n">DiscreteSegmentationTuple</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">maximum_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate catalogs for potential segmentations of a parameter</span>
+
+<span class="sd">    :param generic_name: name used for the definition of the group of catalogs</span>
+<span class="sd">    :param beta_parameters: list of parameters to be segmented</span>
+<span class="sd">    :param potential_segmentations: tuple of potential segmentations</span>
+<span class="sd">    :param maximum_number: maximum number of segmentations to consider</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">segmentation</span> <span class="ow">in</span> <span class="n">potential_segmentations</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">segmentation</span><span class="o">.</span><span class="n">mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">SEPARATOR</span> <span class="ow">in</span> <span class="n">value</span> <span class="ow">or</span> <span class="n">SELECTION_SEPARATOR</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid segment name for variable </span><span class="si">{</span><span class="n">segmentation</span><span class="o">.</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">=&#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">: [</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">]. Characters [</span><span class="si">{</span><span class="n">SEPARATOR</span><span class="si">}</span><span class="s1">] and &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="n">SELECTION_SEPARATOR</span><span class="si">}</span><span class="s1">] are reserved for specification coding.&#39;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_name_from_combination</span><span class="p">(</span><span class="n">combination</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign a name to a combination&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">combination</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;no_seg&#39;</span>
+
+        <span class="k">return</span> <span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">segment</span><span class="o">.</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">for</span> <span class="n">keep</span><span class="p">,</span> <span class="n">segment</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">combination</span><span class="p">,</span> <span class="n">potential_segmentations</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">keep</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_expression_from_combination</span><span class="p">(</span>
+        <span class="n">the_beta_parameter</span><span class="p">:</span> <span class="n">Beta</span><span class="p">,</span> <span class="n">combination</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign an expression to a combination&quot;&quot;&quot;</span>
+        <span class="n">selected_expressions</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">segment</span>
+            <span class="k">for</span> <span class="n">keep</span><span class="p">,</span> <span class="n">segment</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">combination</span><span class="p">,</span> <span class="n">potential_segmentations</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">keep</span>
+        <span class="p">)</span>
+        <span class="n">the_segmentation</span> <span class="o">=</span> <span class="n">seg</span><span class="o">.</span><span class="n">Segmentation</span><span class="p">(</span><span class="n">the_beta_parameter</span><span class="p">,</span> <span class="n">selected_expressions</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">the_segmentation</span><span class="o">.</span><span class="n">segmented_beta</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">beta_parameters</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;A list is expected for beta_parameters, and not an object of type &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">beta_parameters</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="n">list_of_possibilities</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">combination</span>
+        <span class="k">for</span> <span class="n">combination</span> <span class="ow">in</span> <span class="n">product</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">repeat</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">potential_segmentations</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">combination</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">maximum_number</span>
+    <span class="p">]</span>
+    <span class="n">catalogs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">get_name_from_combination</span><span class="p">(</span><span class="n">combination</span><span class="p">)</span> <span class="k">for</span> <span class="n">combination</span> <span class="ow">in</span> <span class="n">list_of_possibilities</span>
+    <span class="p">]</span>
+    <span class="n">the_controller</span> <span class="o">=</span> <span class="n">Controller</span><span class="p">(</span><span class="n">controller_name</span><span class="o">=</span><span class="n">generic_name</span><span class="p">,</span> <span class="n">specification_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">beta_parameter</span> <span class="ow">in</span> <span class="n">beta_parameters</span><span class="p">:</span>
+        <span class="n">named_expressions</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">NamedExpression</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">get_name_from_combination</span><span class="p">(</span><span class="n">combination</span><span class="p">),</span>
+                <span class="n">expression</span><span class="o">=</span><span class="n">get_expression_from_combination</span><span class="p">(</span><span class="n">beta_parameter</span><span class="p">,</span> <span class="n">combination</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">combination</span> <span class="ow">in</span> <span class="n">list_of_possibilities</span>
+        <span class="p">]</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;segmented_</span><span class="si">{</span><span class="n">beta_parameter</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">catalog</span> <span class="o">=</span> <span class="n">Catalog</span><span class="p">(</span>
+            <span class="n">catalog_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">named_expressions</span><span class="o">=</span><span class="n">named_expressions</span><span class="p">,</span>
+            <span class="n">controlled_by</span><span class="o">=</span><span class="n">the_controller</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">catalogs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">catalog</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">catalogs</span></div>
+
+
+
+<div class="viewcode-block" id="SegmentedParameters">
+<a class="viewcode-back" href="../../code/biogeme/catalog.html#biogeme.catalog.SegmentedParameters">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SegmentedParameters</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class managing the names of segmented and alternative specific parameters&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta_parameters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Beta</span><span class="p">],</span> <span class="n">alternatives</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
+
+        <span class="c1"># The parameters are organized as follows:</span>
+        <span class="c1">#   - all generic parameters,</span>
+        <span class="c1">#   - all parameters associated with the first alternative,</span>
+        <span class="c1">#   - all parameters associated with the second alternative,</span>
+        <span class="c1">#   - etc.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta_parameters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Beta</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta_parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Beta</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta_parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">alternatives</span>
+        <span class="k">for</span> <span class="n">alternative</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_parameters</span> <span class="o">+=</span> <span class="p">[</span>
+                <span class="n">Beta</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">beta</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">alternative</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="n">value</span><span class="o">=</span><span class="n">beta</span><span class="o">.</span><span class="n">initValue</span><span class="p">,</span>
+                    <span class="n">lowerbound</span><span class="o">=</span><span class="n">beta</span><span class="o">.</span><span class="n">lb</span><span class="p">,</span>
+                    <span class="n">upperbound</span><span class="o">=</span><span class="n">beta</span><span class="o">.</span><span class="n">ub</span><span class="p">,</span>
+                    <span class="n">status</span><span class="o">=</span><span class="n">beta</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">beta</span> <span class="ow">in</span> <span class="n">beta_parameters</span>
+            <span class="p">]</span>
+
+<div class="viewcode-block" id="SegmentedParameters.get_index">
+<a class="viewcode-back" href="../../code/biogeme/catalog.html#biogeme.catalog.SegmentedParameters.get_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the index in the list of the Beta parameter with</span>
+<span class="sd">            the given index specific to the given alternative</span>
+
+<span class="sd">        :param beta_index: index of the Beta in the generic list</span>
+<span class="sd">        :type beta_index: int</span>
+
+<span class="sd">        :param alternative: name of the alternative, or None for the generic parameter</span>
+<span class="sd">        :type alternative: str or None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">alternative</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">beta_index</span>
+        <span class="n">alt_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">alternative</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">beta_index</span> <span class="o">+</span> <span class="p">(</span><span class="n">alt_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta_parameters</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SegmentedParameters.get_beta">
+<a class="viewcode-back" href="../../code/biogeme/catalog.html#biogeme.catalog.SegmentedParameters.get_beta">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_beta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the Beta parameters for the given index and given alternative</span>
+
+<span class="sd">        :param beta_index: index of the Beta in the generic list</span>
+<span class="sd">        :type beta_index: int</span>
+
+<span class="sd">        :param alternative: name of the alternative, or None for the generic parameter</span>
+<span class="sd">        :type alternative: str or None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_index</span><span class="p">(</span><span class="n">beta_index</span><span class="p">,</span> <span class="n">alternative</span><span class="p">)]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="generic_alt_specific_catalogs">
+<a class="viewcode-back" href="../../code/biogeme/catalog.html#biogeme.catalog.generic_alt_specific_catalogs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generic_alt_specific_catalogs</span><span class="p">(</span>
+    <span class="n">generic_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">beta_parameters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Beta</span><span class="p">],</span>
+    <span class="n">alternatives</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">potential_segmentations</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">seg</span><span class="o">.</span><span class="n">DiscreteSegmentationTuple</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">maximum_number</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate catalogs selecting generic or alternative specific coefficients</span>
+
+<span class="sd">    :param generic_name: name associated with all the parameters in the catalog</span>
+<span class="sd">    :type generic_name: str</span>
+
+<span class="sd">    :param beta_parameters: coefficients of interest</span>
+<span class="sd">    :type beta_parameters: list(biogeme.expressions.Beta)</span>
+
+<span class="sd">    :param alternatives: names of the alternatives</span>
+<span class="sd">    :type alternatives: tuple(str)</span>
+
+<span class="sd">    :param potential_segmentations: tuple of potential segmentations, or None</span>
+<span class="sd">    :type potential_segmentations: tuple(biogeme.segmentation.DiscreteSegmentationTuple)</span>
+
+<span class="sd">    :param maximum_number: maximum number of segmentations to consider</span>
+<span class="sd">    :type maximum_number: int</span>
+
+<span class="sd">    :return: a list of catalogs for each alternative</span>
+<span class="sd">    :rtype: list(dict(str: biogeme.catalog.Catalog))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">alternatives</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;An alternative specific specification requires at least 2 &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;alternatives, and not </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">alternatives</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">beta_parameters</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Argument &quot;beta_parameters&quot; of function &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">generic_alt_specific_catalogs</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&quot; must be a list.&#39;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="n">wrong_indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">beta</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">beta_parameters</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">Beta</span><span class="p">):</span>
+            <span class="n">wrong_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">wrong_indices</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;The entries at the following indices are not Beta expressions: &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">wrong_indices</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="c1"># We first generate the alternative specific versions of the parameters</span>
+    <span class="n">generic_parameters</span> <span class="o">=</span> <span class="n">beta_parameters</span>
+    <span class="n">the_segmented_parameters</span> <span class="o">=</span> <span class="n">SegmentedParameters</span><span class="p">(</span>
+        <span class="n">beta_parameters</span><span class="o">=</span><span class="n">generic_parameters</span><span class="p">,</span>
+        <span class="n">alternatives</span><span class="o">=</span><span class="n">alternatives</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># If applicable, we apply the potential segmentations</span>
+    <span class="k">if</span> <span class="n">potential_segmentations</span><span class="p">:</span>
+        <span class="n">segmented_catalogs</span> <span class="o">=</span> <span class="n">segmentation_catalogs</span><span class="p">(</span>
+            <span class="n">generic_name</span><span class="o">=</span><span class="n">generic_name</span><span class="p">,</span>
+            <span class="n">beta_parameters</span><span class="o">=</span><span class="n">the_segmented_parameters</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">,</span>
+            <span class="n">potential_segmentations</span><span class="o">=</span><span class="n">potential_segmentations</span><span class="p">,</span>
+            <span class="n">maximum_number</span><span class="o">=</span><span class="n">maximum_number</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_expression</span><span class="p">(</span><span class="n">param_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alternative</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns either the parameter, or the segmented version if applicable&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">potential_segmentations</span><span class="p">:</span>
+            <span class="n">the_index</span> <span class="o">=</span> <span class="n">the_segmented_parameters</span><span class="o">.</span><span class="n">get_index</span><span class="p">(</span><span class="n">param_index</span><span class="p">,</span> <span class="n">alternative</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">segmented_catalogs</span><span class="p">[</span><span class="n">the_index</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">the_segmented_parameters</span><span class="o">.</span><span class="n">get_beta</span><span class="p">(</span><span class="n">param_index</span><span class="p">,</span> <span class="n">alternative</span><span class="p">)</span>
+
+    <span class="c1"># We now control for generic or alternative specific with a single</span>
+    <span class="c1"># controller for all catalogs</span>
+    <span class="n">the_controller</span> <span class="o">=</span> <span class="n">Controller</span><span class="p">(</span>
+        <span class="n">controller_name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">generic_name</span><span class="si">}</span><span class="s1">_gen_altspec&#39;</span><span class="p">,</span>
+        <span class="n">specification_names</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;generic&#39;</span><span class="p">,</span> <span class="s1">&#39;altspec&#39;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># We organize the catalogs as a list of dict</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">beta</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">beta_parameters</span><span class="p">):</span>
+        <span class="n">the_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">alternative</span><span class="p">:</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+                <span class="n">catalog_name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">beta</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">alternative</span><span class="si">}</span><span class="s1">_gen_altspec&#39;</span><span class="p">,</span>
+                <span class="n">dict_of_expressions</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s1">&#39;generic&#39;</span><span class="p">:</span> <span class="n">get_expression</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                    <span class="s1">&#39;altspec&#39;</span><span class="p">:</span> <span class="n">get_expression</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">alternative</span><span class="p">),</span>
+                <span class="p">},</span>
+                <span class="n">controlled_by</span><span class="o">=</span><span class="n">the_controller</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">alternative</span> <span class="ow">in</span> <span class="n">alternatives</span>
+        <span class="p">}</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">results</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

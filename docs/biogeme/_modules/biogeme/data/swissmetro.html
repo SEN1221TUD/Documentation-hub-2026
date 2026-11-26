@@ -1,0 +1,203 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.data.swissmetro &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.data.swissmetro</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.data.swissmetro</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. _swissmetro_data:</span>
+
+<span class="sd">Data preparation for Swissmetro</span>
+<span class="sd">===============================</span>
+
+<span class="sd">Data preparation and definition of the variables.</span>
+
+<span class="sd">:author: Michel Bierlaire, EPFL</span>
+<span class="sd">:date: Mon Mar  6 15:17:03 2023</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">biogeme.database</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">db</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Variable</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+
+<div class="viewcode-block" id="read_data">
+<a class="viewcode-back" href="../../../code/biogeme/data/swissmetro.html#biogeme.data.swissmetro.read_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_data</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">db</span><span class="o">.</span><span class="n">Database</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the data from file&quot;&quot;&quot;</span>
+    <span class="c1"># Get the directory of the current file</span>
+    <span class="n">module_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+
+    <span class="c1"># Construct the path to the data file</span>
+    <span class="n">data_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">module_dir</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;swissmetro.dat&#39;</span><span class="p">)</span>
+
+    <span class="c1"># %%</span>
+    <span class="c1"># Read the data.</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_file_path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">database</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Database</span><span class="p">(</span><span class="s1">&#39;swissmetro&#39;</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+    <span class="n">exclude</span> <span class="o">=</span> <span class="n">CHOICE</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="c1"># exclude = ((PURPOSE != 1) * (PURPOSE != 3) + (CHOICE == 0)) &gt; 0</span>
+    <span class="n">database</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">exclude</span><span class="p">)</span>
+    <span class="c1"># Definition of new variables.</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;SM_COST&#39;</span><span class="p">,</span> <span class="n">SM_CO</span> <span class="o">*</span> <span class="p">(</span><span class="n">GA</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;TRAIN_COST&#39;</span><span class="p">,</span> <span class="n">TRAIN_CO</span> <span class="o">*</span> <span class="p">(</span><span class="n">GA</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;CAR_AV_SP&#39;</span><span class="p">,</span> <span class="n">CAR_AV</span> <span class="o">*</span> <span class="p">(</span><span class="n">SP</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;TRAIN_AV_SP&#39;</span><span class="p">,</span> <span class="n">TRAIN_AV</span> <span class="o">*</span> <span class="p">(</span><span class="n">SP</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;TRAIN_TT_SCALED&#39;</span><span class="p">,</span> <span class="n">TRAIN_TT</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;TRAIN_COST_SCALED&#39;</span><span class="p">,</span> <span class="n">TRAIN_COST</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;SM_TT_SCALED&#39;</span><span class="p">,</span> <span class="n">SM_TT</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;SM_COST_SCALED&#39;</span><span class="p">,</span> <span class="n">SM_COST</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;CAR_TT_SCALED&#39;</span><span class="p">,</span> <span class="n">CAR_TT</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">define_variable</span><span class="p">(</span><span class="s1">&#39;CAR_CO_SCALED&#39;</span><span class="p">,</span> <span class="n">CAR_CO</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">database</span></div>
+
+
+
+<span class="c1"># Definition of the variables.</span>
+<span class="n">GROUP</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;GROUP&#39;</span><span class="p">)</span>
+<span class="n">SURVEY</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;SURVEY&#39;</span><span class="p">)</span>
+<span class="n">SP</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;SP&#39;</span><span class="p">)</span>
+<span class="n">ID</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ID&#39;</span><span class="p">)</span>
+<span class="n">PURPOSE</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;PURPOSE&#39;</span><span class="p">)</span>
+<span class="n">FIRST</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;FIRST&#39;</span><span class="p">)</span>
+<span class="n">TICKET</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TICKET&#39;</span><span class="p">)</span>
+<span class="n">WHO</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;WHO&#39;</span><span class="p">)</span>
+<span class="n">LUGGAGE</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;LUGGAGE&#39;</span><span class="p">)</span>
+<span class="n">AGE</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;AGE&#39;</span><span class="p">)</span>
+<span class="n">MALE</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;MALE&#39;</span><span class="p">)</span>
+<span class="n">INCOME</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;INCOME&#39;</span><span class="p">)</span>
+<span class="n">GA</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;GA&#39;</span><span class="p">)</span>
+<span class="n">ORIGIN</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;ORIGIN&#39;</span><span class="p">)</span>
+<span class="n">DEST</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;DEST&#39;</span><span class="p">)</span>
+<span class="n">TRAIN_AV</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TRAIN_AV&#39;</span><span class="p">)</span>
+<span class="n">CAR_AV</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;CAR_AV&#39;</span><span class="p">)</span>
+<span class="n">SM_AV</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;SM_AV&#39;</span><span class="p">)</span>
+<span class="n">TRAIN_TT</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TRAIN_TT&#39;</span><span class="p">)</span>
+<span class="n">TRAIN_CO</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TRAIN_CO&#39;</span><span class="p">)</span>
+<span class="n">TRAIN_HE</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TRAIN_HE&#39;</span><span class="p">)</span>
+<span class="n">SM_TT</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;SM_TT&#39;</span><span class="p">)</span>
+<span class="n">SM_CO</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;SM_CO&#39;</span><span class="p">)</span>
+<span class="n">SM_HE</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;SM_HE&#39;</span><span class="p">)</span>
+<span class="n">SM_SEATS</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;SM_SEATS&#39;</span><span class="p">)</span>
+<span class="n">CAR_TT</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;CAR_TT&#39;</span><span class="p">)</span>
+<span class="n">CAR_CO</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;CAR_CO&#39;</span><span class="p">)</span>
+<span class="n">CHOICE</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;CHOICE&#39;</span><span class="p">)</span>
+<span class="n">SM_COST</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;SM_COST&#39;</span><span class="p">)</span>
+<span class="n">TRAIN_COST</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TRAIN_COST&#39;</span><span class="p">)</span>
+<span class="n">CAR_AV_SP</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;CAR_AV_SP&#39;</span><span class="p">)</span>
+<span class="n">TRAIN_AV_SP</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TRAIN_AV_SP&#39;</span><span class="p">)</span>
+<span class="n">TRAIN_TT_SCALED</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TRAIN_TT_SCALED&#39;</span><span class="p">)</span>
+<span class="n">TRAIN_COST_SCALED</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;TRAIN_COST_SCALED&#39;</span><span class="p">)</span>
+<span class="n">SM_TT_SCALED</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;SM_TT_SCALED&#39;</span><span class="p">)</span>
+<span class="n">SM_COST_SCALED</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;SM_COST_SCALED&#39;</span><span class="p">)</span>
+<span class="n">CAR_TT_SCALED</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;CAR_TT_SCALED&#39;</span><span class="p">)</span>
+<span class="n">CAR_CO_SCALED</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s1">&#39;CAR_CO_SCALED&#39;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

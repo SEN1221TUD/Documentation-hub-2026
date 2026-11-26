@@ -1,0 +1,330 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.configuration module &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="biogeme.controller module" href="controller.html" />
+    <link rel="prev" title="biogeme.cnl module" href="cnl.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../native_draws.html">Native draws</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../biogeme.html">.biogeme module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="assisted.html">biogeme.assisted module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme.html">biogeme.biogeme module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme_logging.html">biogeme.biogeme_logging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog.html">biogeme.catalog module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="check_parameters.html">biogeme.check_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cnl.html">biogeme.cnl module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">biogeme.configuration module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.configuration.Configuration"><code class="docutils literal notranslate"><span class="pre">Configuration</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.configuration.Configuration.from_dict"><code class="docutils literal notranslate"><span class="pre">Configuration.from_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.configuration.Configuration.from_string"><code class="docutils literal notranslate"><span class="pre">Configuration.from_string()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.configuration.Configuration.from_tuple_of_configurations"><code class="docutils literal notranslate"><span class="pre">Configuration.from_tuple_of_configurations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.configuration.Configuration.get_html"><code class="docutils literal notranslate"><span class="pre">Configuration.get_html()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.configuration.Configuration.get_selection"><code class="docutils literal notranslate"><span class="pre">Configuration.get_selection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.configuration.Configuration.get_string_id"><code class="docutils literal notranslate"><span class="pre">Configuration.get_string_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.configuration.Configuration.selections"><code class="docutils literal notranslate"><span class="pre">Configuration.selections</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.configuration.Configuration.set_of_controllers"><code class="docutils literal notranslate"><span class="pre">Configuration.set_of_controllers()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.configuration.SelectionTuple"><code class="docutils literal notranslate"><span class="pre">SelectionTuple</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.configuration.SelectionTuple.controller"><code class="docutils literal notranslate"><span class="pre">SelectionTuple.controller</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.configuration.SelectionTuple.selection"><code class="docutils literal notranslate"><span class="pre">SelectionTuple.selection</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="controller.html">biogeme.controller module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html">biogeme.data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html">biogeme.database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="default_parameters.html">biogeme.default_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deprecated.html">biogeme.deprecated module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dict_of_formulas.html">biogeme.dict_of_formulas module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distributions.html">biogeme.distributions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="draws.html">biogeme.draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptions.html">biogeme.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expressions.html">biogeme.expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filenames.html">biogeme.filenames module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="function_output.html">biogeme.function_output module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loglikelihood.html">biogeme.loglikelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lsh.html">biogeme.lsh module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mdcev.html">biogeme.mdcev module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="messaging.html">biogeme.messaging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html">biogeme.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiobjectives.html">biogeme.multiobjectives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="native_draws.html">biogeme.native_draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="negative_likelihood.html">biogeme.negative_likelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nests.html">biogeme.nests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optimization.html">biogeme.optimization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameters.html">biogeme.parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition.html">biogeme.partition module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html">biogeme.results module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sampling_of_alternatives.html">biogeme.sampling_of_alternatives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="segmentation.html">biogeme.segmentation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="singleton.html">biogeme.singleton module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="specification.html">biogeme.specification module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html">biogeme.tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="validity.html">biogeme.validity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="version.html">biogeme.version module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../biogeme.html">.biogeme module</a></li>
+      <li class="breadcrumb-item active">biogeme.configuration module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/code/biogeme/configuration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-biogeme.configuration">
+<span id="biogeme-configuration-module"></span><h1>biogeme.configuration module<a class="headerlink" href="#module-biogeme.configuration" title="Link to this heading"></a></h1>
+<p>Represents the configuration of a multiple expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Michel Bierlaire</p>
+</dd>
+<dt class="field-even">date<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sun Apr  2 14:15:17 2023</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.configuration.Configuration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.configuration.</span></span><span class="sig-name descname"><span class="pre">Configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selections</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/configuration.html#Configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.configuration.Configuration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents the configuration of a multiple expression. It is
+internally represented as a sorted list of tuples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>selections</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="#biogeme.configuration.SelectionTuple" title="biogeme.configuration.SelectionTuple"><em>SelectionTuple</em></a><em>] </em><em>| </em><em>None</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.configuration.Configuration.from_dict">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_of_selections</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/configuration.html#Configuration.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.configuration.Configuration.from_dict" title="Link to this definition"></a></dt>
+<dd><p>Ctor from dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dict_of_selections</strong> (<em>dict</em><em>(</em><em>str: str</em><em>)</em>) – dict associating a catalog name
+with the selected configuration</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.configuration.Configuration.from_string">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/configuration.html#Configuration.from_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.configuration.Configuration.from_string" title="Link to this definition"></a></dt>
+<dd><p>Ctor from a string representation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string_id</strong> (<em>str</em>) – string ID</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.configuration.Configuration.from_tuple_of_configurations">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_tuple_of_configurations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tuple_of_configurations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/configuration.html#Configuration.from_tuple_of_configurations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.configuration.Configuration.from_tuple_of_configurations" title="Link to this definition"></a></dt>
+<dd><p>Ctor from tuple of configurations that are merged together.</p>
+<p>In the presence of two different selections for the same
+catalog, the first one is selected,
+and the others ignored.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tuple_of_configurations</strong> (<em>tuple</em><em>(</em><a class="reference internal" href="#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><em>Configuration</em></a><em>)</em>) – tuple of configurations to merge</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.configuration.Configuration.get_html">
+<span class="sig-name descname"><span class="pre">get_html</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/configuration.html#Configuration.get_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.configuration.Configuration.get_html" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.configuration.Configuration.get_selection">
+<span class="sig-name descname"><span class="pre">get_selection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/configuration.html#Configuration.get_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.configuration.Configuration.get_selection" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the selection of a given controller</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>controller_name</strong> (<em>str</em>) – name of the controller</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>name of the selected config, or None if controller is not known</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>str</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.configuration.Configuration.get_string_id">
+<span class="sig-name descname"><span class="pre">get_string_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/configuration.html#Configuration.get_string_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.configuration.Configuration.get_string_id" title="Link to this definition"></a></dt>
+<dd><p>The string ID is a unique string representation of the configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string ID</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="biogeme.configuration.Configuration.selections">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">selections</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#biogeme.configuration.SelectionTuple" title="biogeme.configuration.SelectionTuple"><span class="pre">SelectionTuple</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#biogeme.configuration.Configuration.selections" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.configuration.Configuration.set_of_controllers">
+<span class="sig-name descname"><span class="pre">set_of_controllers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/configuration.html#Configuration.set_of_controllers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.configuration.Configuration.set_of_controllers" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.configuration.SelectionTuple">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.configuration.</span></span><span class="sig-name descname"><span class="pre">SelectionTuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/configuration.html#SelectionTuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.configuration.SelectionTuple" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>controller</strong> (<em>str</em>)</p></li>
+<li><p><strong>selection</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.configuration.SelectionTuple.controller">
+<span class="sig-name descname"><span class="pre">controller</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#biogeme.configuration.SelectionTuple.controller" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.configuration.SelectionTuple.selection">
+<span class="sig-name descname"><span class="pre">selection</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#biogeme.configuration.SelectionTuple.selection" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cnl.html" class="btn btn-neutral float-left" title="biogeme.cnl module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="controller.html" class="btn btn-neutral float-right" title="biogeme.controller module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

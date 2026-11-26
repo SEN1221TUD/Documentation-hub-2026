@@ -1,0 +1,416 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.distributions &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.distributions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.distributions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Implementation of the pdf and CDF of common distributions</span>
+
+<span class="sd">:author: Michel Bierlaire</span>
+
+<span class="sd">:date: Thu Apr 23 12:01:49 2015</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Expression</span><span class="p">,</span>
+    <span class="n">log</span><span class="p">,</span>
+    <span class="n">exp</span><span class="p">,</span>
+    <span class="n">Numeric</span><span class="p">,</span>
+    <span class="n">bioMultSum</span><span class="p">,</span>
+    <span class="n">validate_and_convert</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiogemeError</span>
+
+
+<div class="viewcode-block" id="normalpdf">
+<a class="viewcode-back" href="../../code/biogeme/distributions.html#biogeme.distributions.normalpdf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalpdf</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+    <span class="n">mu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+    <span class="n">s</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normal pdf</span>
+
+<span class="sd">    Probability density function of a normal distribution</span>
+
+<span class="sd">    .. math:: f(x;\\mu, \\sigma) =</span>
+<span class="sd">        \\frac{1}{\\sigma \\sqrt{2\\pi}} \\exp{-\\frac{(x-\\mu)^2}{2\\sigma^2}}</span>
+
+<span class="sd">    :param x: value at which the pdf is evaluated.</span>
+
+<span class="sd">    :param mu: location parameter :math:`\\mu` of the Normal distribution.</span>
+
+<span class="sd">    :param s: scale parameter :math:`\\sigma` of the Normal distribution.</span>
+
+<span class="sd">    :note: It is assumed that :math:`\\sigma &gt; 0`.</span>
+
+<span class="sd">    :return: value of the Normal pdf.</span>
+
+<span class="sd">    :raise ValueError: if :math:`\\sigma \\leq 0`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">mu_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+    <span class="n">s_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s_value</span> <span class="o">=</span> <span class="n">s_expr</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+        <span class="n">s_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">s_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">s_value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Scale parameter must be positive and not </span><span class="si">{</span><span class="n">s_value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">x_expr</span> <span class="o">-</span> <span class="n">mu_expr</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x_expr</span> <span class="o">-</span> <span class="n">mu_expr</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">s_expr</span> <span class="o">*</span> <span class="n">s_expr</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">d</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="n">s_expr</span> <span class="o">*</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">2.506628275</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
+    <span class="k">return</span> <span class="n">p</span></div>
+
+
+
+<div class="viewcode-block" id="lognormalpdf">
+<a class="viewcode-back" href="../../code/biogeme/distributions.html#biogeme.distributions.lognormalpdf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lognormalpdf</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+    <span class="n">mu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+    <span class="n">s</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Log normal pdf</span>
+
+<span class="sd">    Probability density function of a log normal distribution</span>
+
+<span class="sd">    .. math:: f(x;\\mu, \\sigma) =</span>
+<span class="sd">              \\frac{1}{x\\sigma \\sqrt{2\\pi}}</span>
+<span class="sd">              \\exp{-\\frac{(\\ln x-\\mu)^2}{2\\sigma^2}}</span>
+
+
+<span class="sd">    :param x: value at which the pdf is evaluated.</span>
+
+<span class="sd">    :param mu: location parameter :math:`\\mu` of the lognormal distribution.</span>
+
+<span class="sd">    :param s: scale parameter :math:`\\sigma` of the lognormal distribution.</span>
+
+<span class="sd">    :note: It is assumed that :math:`\\sigma &gt; 0`, but it is not</span>
+<span class="sd">        verified by the code.</span>
+
+<span class="sd">    :return: value of the lognormal pdf.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">mu_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+    <span class="n">s_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">x_value</span> <span class="o">=</span> <span class="n">x_expr</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">,</span> <span class="n">BiogemeError</span><span class="p">):</span>
+        <span class="n">x_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">x_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">x_value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Argument must be positive and not </span><span class="si">{</span><span class="n">x_value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s_value</span> <span class="o">=</span> <span class="n">s_expr</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">,</span> <span class="n">BiogemeError</span><span class="p">):</span>
+        <span class="n">s_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">s_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">s_value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Scale parameter must be positive and not </span><span class="si">{</span><span class="n">s_value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="n">x_expr</span><span class="p">)</span> <span class="o">-</span> <span class="n">mu_expr</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="n">x_expr</span><span class="p">)</span> <span class="o">-</span> <span class="n">mu_expr</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">s_expr</span> <span class="o">*</span> <span class="n">s_expr</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">d</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="n">x_expr</span> <span class="o">*</span> <span class="n">s_expr</span> <span class="o">*</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">2.506628275</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_expr</span> <span class="o">&gt;</span> <span class="n">Numeric</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">*</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
+    <span class="k">return</span> <span class="n">p</span></div>
+
+
+
+<div class="viewcode-block" id="uniformpdf">
+<a class="viewcode-back" href="../../code/biogeme/distributions.html#biogeme.distributions.uniformpdf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">uniformpdf</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+    <span class="n">a</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">b</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uniform pdf</span>
+
+<span class="sd">    Probability density function of a uniform distribution.</span>
+
+<span class="sd">    .. math::  f(x;a, b) = \\left\\{ \\begin{array}{ll}</span>
+<span class="sd">              \\frac{1}{b-a} &amp; \\text{for } x \\in [a, b] \\\\</span>
+<span class="sd">              0 &amp; \\text{otherwise}\\end{array} \\right.</span>
+
+<span class="sd">    :param x: argument of the pdf</span>
+<span class="sd">    :param a: lower bound :math:`a` of the distribution. Default: -1.</span>
+
+<span class="sd">    :param b: upper bound :math:`b` of the distribution. Default: 1.</span>
+
+<span class="sd">    :note: It is assumed that :math:`a &lt; b`, but it is</span>
+<span class="sd">        not verified by the code.</span>
+<span class="sd">    :return: value of the uniform pdf.</span>
+
+<span class="sd"> &quot;&quot;&quot;</span>
+    <span class="n">x_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">a_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">b_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">a_value</span> <span class="o">=</span> <span class="n">a_expr</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+        <span class="n">a_value</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">b_value</span> <span class="o">=</span> <span class="n">b_expr</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+        <span class="n">b_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">a_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">b_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">a_value</span> <span class="o">&gt;</span> <span class="n">b_value</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Condition </span><span class="si">{</span><span class="n">a_value</span><span class="si">}</span><span class="s1"> &lt;= </span><span class="si">{</span><span class="n">b_value</span><span class="si">}</span><span class="s1"> is not verified.&#39;</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">x_expr</span> <span class="o">&lt;</span> <span class="n">a_expr</span><span class="p">)</span> <span class="o">*</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="o">+</span> <span class="p">(</span><span class="n">x_expr</span> <span class="o">&gt;</span> <span class="n">b_expr</span><span class="p">)</span> <span class="o">*</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="o">+</span> <span class="p">(</span><span class="n">x_expr</span> <span class="o">&gt;=</span> <span class="n">a_expr</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x_expr</span> <span class="o">&lt;=</span> <span class="n">b_expr</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">b_expr</span> <span class="o">-</span> <span class="n">a_expr</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="triangularpdf">
+<a class="viewcode-back" href="../../code/biogeme/distributions.html#biogeme.distributions.triangularpdf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">triangularpdf</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+    <span class="n">a</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="n">b</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="n">c</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Triangular pdf</span>
+
+<span class="sd">    Probability density function of a triangular distribution</span>
+
+<span class="sd">    .. math:: f(x;a, b, c) = \\left\\{ \\begin{array}{ll} 0 &amp;</span>
+<span class="sd">             \\text{if } x &lt; a \\\\\\frac{2(x-a)}{(b-a)(c-a)} &amp;</span>
+<span class="sd">             \\text{if } a \\leq x &lt; c \\\\\\frac{2(b-x)}{(b-a)(b-c)} &amp;</span>
+<span class="sd">             \\text{if } c \\leq x &lt; b \\\\0 &amp; \\text{if } x \\geq b.</span>
+<span class="sd">             \\end{array} \\right.</span>
+
+<span class="sd">    :param x: argument of the pdf</span>
+
+<span class="sd">    :param a: lower bound :math:`a` of the distribution. Default: -1.</span>
+
+<span class="sd">    :param b: upper bound :math:`b` of the distribution. Default: 1.</span>
+
+<span class="sd">    :param c: mode :math:`c` of the distribution. Default: 0.</span>
+
+<span class="sd">    :note: It is assumed that :math:`a &lt;  c &lt; b`, but it is</span>
+<span class="sd">        not verified by the code.</span>
+<span class="sd">    :return: value of the triangular pdf.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">a_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">b_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">c_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">a_value</span> <span class="o">=</span> <span class="n">a_expr</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">,</span> <span class="n">BiogemeError</span><span class="p">):</span>
+        <span class="n">a_value</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">b_value</span> <span class="o">=</span> <span class="n">b_expr</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">,</span> <span class="n">BiogemeError</span><span class="p">):</span>
+        <span class="n">b_value</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">c_value</span> <span class="o">=</span> <span class="n">c_expr</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">,</span> <span class="n">BiogemeError</span><span class="p">):</span>
+        <span class="n">c_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">(</span><span class="n">a_value</span><span class="p">,</span> <span class="n">b_value</span><span class="p">,</span> <span class="n">c_value</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">c_value</span> <span class="o">&lt;=</span> <span class="n">a_value</span> <span class="ow">or</span> <span class="n">c_value</span> <span class="o">&gt;=</span> <span class="n">b_value</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;The following condition is not verified: a [</span><span class="si">{</span><span class="n">a_value</span><span class="si">}</span><span class="s1">] &lt; &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;c [</span><span class="si">{</span><span class="n">c_value</span><span class="si">}</span><span class="s1"> &lt; b [</span><span class="si">{</span><span class="n">b_value</span><span class="si">}</span><span class="s1">]]&#39;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="c1"># x &lt; a</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_expr</span> <span class="o">&lt;</span> <span class="n">a_expr</span><span class="p">)</span> <span class="o">*</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="c1"># a &lt;= x &lt; c</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">x_expr</span> <span class="o">&gt;=</span> <span class="n">a_expr</span><span class="p">)</span>
+        <span class="o">*</span> <span class="p">(</span><span class="n">x_expr</span> <span class="o">&lt;</span> <span class="n">c_expr</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+        <span class="o">*</span> <span class="p">((</span><span class="n">x_expr</span> <span class="o">-</span> <span class="n">a_expr</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">b_expr</span> <span class="o">-</span> <span class="n">a_expr</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">c_expr</span> <span class="o">-</span> <span class="n">a_expr</span><span class="p">)))</span>
+    <span class="p">)</span>
+    <span class="c1">#  x == c</span>
+    <span class="n">r3</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_expr</span> <span class="o">==</span> <span class="n">c_expr</span><span class="p">)</span> <span class="o">*</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">b_expr</span> <span class="o">-</span> <span class="n">a_expr</span><span class="p">)</span>
+
+    <span class="c1"># c &lt; x &lt;= b</span>
+    <span class="n">r4</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">x_expr</span> <span class="o">&gt;</span> <span class="n">c_expr</span><span class="p">)</span>
+        <span class="o">*</span> <span class="p">(</span><span class="n">x_expr</span> <span class="o">&lt;=</span> <span class="n">b_expr</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+        <span class="o">*</span> <span class="p">(</span><span class="n">b_expr</span> <span class="o">-</span> <span class="n">x_expr</span><span class="p">)</span>
+        <span class="o">/</span> <span class="p">((</span><span class="n">b_expr</span> <span class="o">-</span> <span class="n">a_expr</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">b_expr</span> <span class="o">-</span> <span class="n">c_expr</span><span class="p">))</span>
+    <span class="p">)</span>
+
+    <span class="c1"># b &lt; x</span>
+    <span class="n">r5</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_expr</span> <span class="o">&gt;</span> <span class="n">b_expr</span><span class="p">)</span> <span class="o">*</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">bioMultSum</span><span class="p">([</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">r3</span><span class="p">,</span> <span class="n">r4</span><span class="p">,</span> <span class="n">r5</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="logisticcdf">
+<a class="viewcode-back" href="../../code/biogeme/distributions.html#biogeme.distributions.logisticcdf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">logisticcdf</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+    <span class="n">mu</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+    <span class="n">s</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Logistic CDF</span>
+
+<span class="sd">    Cumulative distribution function of a logistic distribution</span>
+
+<span class="sd">    .. math:: f(x;\\mu, \\sigma) = \\frac{1}</span>
+<span class="sd">        {1+\\exp\\left(-\\frac{x-\\mu}{\\sigma} \\right)}</span>
+
+<span class="sd">    :param x: value at which the CDF is evaluated.</span>
+
+<span class="sd">    :param mu: location parameter :math:`\\mu` of the logistic distribution.</span>
+<span class="sd">        Default: 0.</span>
+
+<span class="sd">    :param s: scale parameter :math:`\\sigma` of the logistic distribution.</span>
+<span class="sd">        Default: 1.</span>
+
+<span class="sd">    :note: It is assumed that :math:`\\sigma &gt; 0`, but it is</span>
+<span class="sd">        not verified by the code.</span>
+
+<span class="sd">    :return: value of the logistic CDF.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">mu_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+    <span class="n">s_expr</span> <span class="o">=</span> <span class="n">validate_and_convert</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s_value</span> <span class="o">=</span> <span class="n">s_expr</span><span class="o">.</span><span class="n">get_value</span><span class="p">()</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">,</span> <span class="n">BiogemeError</span><span class="p">):</span>
+        <span class="n">s_value</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">s_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">s_value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Scale parameter must be positive and not </span><span class="si">{</span><span class="n">s_value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Numeric</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x_expr</span> <span class="o">-</span> <span class="n">mu_expr</span><span class="p">)</span> <span class="o">/</span> <span class="n">s_expr</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

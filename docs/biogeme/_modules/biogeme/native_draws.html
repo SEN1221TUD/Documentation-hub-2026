@@ -1,0 +1,433 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.native_draws &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.native_draws</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.native_draws</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Callable</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme</span><span class="w"> </span><span class="kn">import</span> <span class="n">draws</span>
+
+<span class="n">RandomNumberGenerator</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="RandomNumberGeneratorTuple">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.RandomNumberGeneratorTuple">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RandomNumberGeneratorTuple</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">generator</span><span class="p">:</span> <span class="n">RandomNumberGenerator</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+
+<div class="viewcode-block" id="RandomNumberGeneratorTuple.from_tuple">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.RandomNumberGeneratorTuple.from_tuple">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_tuple</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">the_tuple</span><span class="p">:</span> <span class="p">[</span><span class="n">RandomNumberGenerator</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;For backward compatibility, this constructor accepts a regular tuple as input&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">the_tuple</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="convert_random_generator_tuple">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.convert_random_generator_tuple">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_random_generator_tuple</span><span class="p">(</span>
+    <span class="n">the_tuple</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">RandomNumberGenerator</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates an object of the correct type. Designed for backward compatibility</span>
+
+<span class="sd">    :param the_tuple: the tuple in the old or new format.</span>
+<span class="sd">    :return: the tuple in the new format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">the_tuple</span><span class="p">,</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">the_tuple</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">the_tuple</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expecting a tuple, not a {type(the_tuple)}&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">RandomNumberGeneratorTuple</span><span class="o">.</span><span class="n">from_tuple</span><span class="p">(</span><span class="n">the_tuple</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="uniform_antithetic">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.uniform_antithetic">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">uniform_antithetic</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_antithetic</span><span class="p">(</span><span class="n">draws</span><span class="o">.</span><span class="n">get_uniform</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="halton2">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.halton2">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">halton2</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_halton_draws</span><span class="p">(</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="halton3">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.halton3">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">halton3</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_halton_draws</span><span class="p">(</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="halton5">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.halton5">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">halton5</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_halton_draws</span><span class="p">(</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MLHS_anti">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.MLHS_anti">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">MLHS_anti</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_antithetic</span><span class="p">(</span>
+        <span class="n">draws</span><span class="o">.</span><span class="n">get_latin_hypercube_draws</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="symm_uniform">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.symm_uniform">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">symm_uniform</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_uniform</span><span class="p">(</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">,</span> <span class="n">symmetric</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="symm_uniform_antithetic">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.symm_uniform_antithetic">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">symm_uniform_antithetic</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="n">number_local_draws</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">number_of_draws</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">local_draws</span> <span class="o">=</span> <span class="n">symm_uniform</span><span class="p">(</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">number_local_draws</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">local_draws</span><span class="p">,</span> <span class="o">-</span><span class="n">local_draws</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="symm_halton2">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.symm_halton2">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">symm_halton2</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_halton_draws</span><span class="p">(</span>
+        <span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">,</span> <span class="n">symmetric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">10</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="symm_halton3">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.symm_halton3">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">symm_halton3</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_halton_draws</span><span class="p">(</span>
+        <span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">,</span> <span class="n">symmetric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">10</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="symm_halton5">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.symm_halton5">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">symm_halton5</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_halton_draws</span><span class="p">(</span>
+        <span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">,</span> <span class="n">symmetric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">10</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="symm_MLHS">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.symm_MLHS">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">symm_MLHS</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_latin_hypercube_draws</span><span class="p">(</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">,</span> <span class="n">symmetric</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="symm_MLHS_anti">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.symm_MLHS_anti">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">symm_MLHS_anti</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="n">number_local_draws</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">number_of_draws</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">local_draws</span> <span class="o">=</span> <span class="n">symm_MLHS</span><span class="p">(</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">number_local_draws</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">local_draws</span><span class="p">,</span> <span class="o">-</span><span class="n">local_draws</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="normal_antithetic">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.normal_antithetic">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normal_antithetic</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_normal_wichura_draws</span><span class="p">(</span>
+        <span class="n">sample_size</span><span class="o">=</span><span class="n">sample_size</span><span class="p">,</span>
+        <span class="n">number_of_draws</span><span class="o">=</span><span class="n">number_of_draws</span><span class="p">,</span>
+        <span class="n">antithetic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="normal_halton2">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.normal_halton2">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normal_halton2</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="n">unif</span> <span class="o">=</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_halton_draws</span><span class="p">(</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_normal_wichura_draws</span><span class="p">(</span>
+        <span class="n">sample_size</span><span class="p">,</span>
+        <span class="n">number_of_draws</span><span class="p">,</span>
+        <span class="n">uniform_numbers</span><span class="o">=</span><span class="n">unif</span><span class="p">,</span>
+        <span class="n">antithetic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="normal_halton3">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.normal_halton3">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normal_halton3</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="n">unif</span> <span class="o">=</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_halton_draws</span><span class="p">(</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_normal_wichura_draws</span><span class="p">(</span>
+        <span class="n">sample_size</span><span class="p">,</span>
+        <span class="n">number_of_draws</span><span class="p">,</span>
+        <span class="n">uniform_numbers</span><span class="o">=</span><span class="n">unif</span><span class="p">,</span>
+        <span class="n">antithetic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="normal_halton5">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.normal_halton5">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normal_halton5</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="n">unif</span> <span class="o">=</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_halton_draws</span><span class="p">(</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_normal_wichura_draws</span><span class="p">(</span>
+        <span class="n">sample_size</span><span class="p">,</span>
+        <span class="n">number_of_draws</span><span class="p">,</span>
+        <span class="n">uniform_numbers</span><span class="o">=</span><span class="n">unif</span><span class="p">,</span>
+        <span class="n">antithetic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="normal_MLHS">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.normal_MLHS">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normal_MLHS</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="n">unif</span> <span class="o">=</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_latin_hypercube_draws</span><span class="p">(</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_normal_wichura_draws</span><span class="p">(</span>
+        <span class="n">sample_size</span><span class="p">,</span>
+        <span class="n">number_of_draws</span><span class="p">,</span>
+        <span class="n">uniform_numbers</span><span class="o">=</span><span class="n">unif</span><span class="p">,</span>
+        <span class="n">antithetic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="normal_MLHS_anti">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.normal_MLHS_anti">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normal_MLHS_anti</span><span class="p">(</span><span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="n">unif</span> <span class="o">=</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_latin_hypercube_draws</span><span class="p">(</span><span class="n">sample_size</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">number_of_draws</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">draws</span><span class="o">.</span><span class="n">get_normal_wichura_draws</span><span class="p">(</span>
+        <span class="n">sample_size</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">,</span> <span class="n">uniform_numbers</span><span class="o">=</span><span class="n">unif</span><span class="p">,</span> <span class="n">antithetic</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># Dictionary containing native random number generators. Class attribute</span>
+<span class="n">native_random_number_generators</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;UNIFORM&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">draws</span><span class="o">.</span><span class="n">get_uniform</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Uniform U[0, 1]&#39;</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;UNIFORM_ANTI&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">uniform_antithetic</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Antithetic uniform U[0, 1]&#39;</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;UNIFORM_HALTON2&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">halton2</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Halton draws with base 2, skipping the first 10&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;UNIFORM_HALTON3&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">halton3</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Halton draws with base 3, skipping the first 10&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;UNIFORM_HALTON5&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">halton5</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Halton draws with base 5, skipping the first 10&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;UNIFORM_MLHS&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">draws</span><span class="o">.</span><span class="n">get_latin_hypercube_draws</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Modified Latin Hypercube Sampling on [0, 1]&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;UNIFORM_MLHS_ANTI&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">MLHS_anti</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Antithetic Modified Latin Hypercube Sampling on [0, 1]&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;UNIFORMSYM&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">symm_uniform</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Uniform U[-1, 1]&#39;</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;UNIFORMSYM_ANTI&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">symm_uniform_antithetic</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Antithetic uniform U[-1, 1]&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;UNIFORMSYM_HALTON2&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">symm_halton2</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Halton draws on [-1, 1] with base 2, skipping the first 10&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;UNIFORMSYM_HALTON3&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">symm_halton3</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Halton draws on [-1, 1] with base 3, skipping the first 10&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;UNIFORMSYM_HALTON5&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">symm_halton5</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Halton draws on [-1, 1] with base 5, skipping the first 10&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;UNIFORMSYM_MLHS&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">symm_MLHS</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Modified Latin Hypercube Sampling on [-1, 1]&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;UNIFORMSYM_MLHS_ANTI&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">symm_MLHS_anti</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Antithetic Modified Latin Hypercube Sampling on [-1, 1]&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;NORMAL&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">draws</span><span class="o">.</span><span class="n">get_normal_wichura_draws</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Normal N(0, 1) draws&#39;</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;NORMAL_ANTI&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">normal_antithetic</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Antithetic normal draws&#39;</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;NORMAL_HALTON2&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">normal_halton2</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Normal draws from Halton base 2 sequence&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;NORMAL_HALTON3&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">normal_halton3</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Normal draws from Halton base 3 sequence&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;NORMAL_HALTON5&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">normal_halton5</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Normal draws from Halton base 5 sequence&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;NORMAL_MLHS&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">normal_MLHS</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Normal draws from Modified Latin Hypercube Sampling&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;NORMAL_MLHS_ANTI&#39;</span><span class="p">:</span> <span class="n">RandomNumberGeneratorTuple</span><span class="p">(</span>
+        <span class="n">generator</span><span class="o">=</span><span class="n">normal_MLHS_anti</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Antithetic normal draws from Modified Latin Hypercube Sampling&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="description_of_native_draws">
+<a class="viewcode-back" href="../../code/biogeme/native_draws.html#biogeme.native_draws.description_of_native_draws">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">description_of_native_draws</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Describe the draws available draws with Biogeme</span>
+
+<span class="sd">    :return: dict, where the keys are the names of the draws,</span>
+<span class="sd">             and the value their description</span>
+
+<span class="sd">    Example of output::</span>
+
+<span class="sd">        {&#39;UNIFORM: Uniform U[0, 1]&#39;,</span>
+<span class="sd">         &#39;UNIFORM_ANTI: Antithetic uniform U[0, 1]&#39;],</span>
+<span class="sd">         &#39;NORMAL: Normal N(0, 1) draws&#39;}</span>
+
+<span class="sd">    :rtype: dict</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="n">key</span><span class="p">:</span> <span class="n">the_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">the_tuple</span> <span class="ow">in</span> <span class="n">native_random_number_generators</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

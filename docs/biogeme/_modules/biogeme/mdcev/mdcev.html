@@ -1,0 +1,1346 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.mdcev.mdcev &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.mdcev.mdcev</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.mdcev.mdcev</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Implements the MDCEV model as a generic class</span>
+
+<span class="sd">Michel Bierlaire</span>
+<span class="sd">Sun Apr 7 16:52:33 2024</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.biogeme</span><span class="w"> </span><span class="kn">import</span> <span class="n">BIOGEME</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.database</span><span class="w"> </span><span class="kn">import</span> <span class="n">Database</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiogemeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">Elem</span><span class="p">,</span> <span class="n">bioMultSum</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">Beta</span><span class="p">,</span> <span class="n">Numeric</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.function_output</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionOutput</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">bioResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.tools.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_dict_types</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">SMALLEST_NON_ZERO_NUMBER</span> <span class="o">=</span> <span class="mf">1.0e-6</span>
+
+
+<div class="viewcode-block" id="MdcevConfiguration">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.MdcevConfiguration">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MdcevConfiguration</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify various configurations of the model&quot;&quot;&quot;</span>
+
+    <span class="n">gamma_is_none</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">price_is_none</span><span class="p">:</span> <span class="nb">bool</span></div>
+
+
+
+<div class="viewcode-block" id="Mdcev">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mdcev</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">baseline_utilities</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+        <span class="n">gamma_parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">alpha_parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scale_parameter</span><span class="p">:</span> <span class="n">Expression</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">weights</span><span class="p">:</span> <span class="n">Expression</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">model_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">baseline_utilities</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">=</span> <span class="n">baseline_utilities</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma_parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">gamma_parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">alpha_parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span><span class="p">:</span> <span class="n">Expression</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">scale_parameter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">:</span> <span class="n">Expression</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">weights</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_estimation_results</span><span class="p">:</span> <span class="n">bioResults</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">:</span> <span class="n">Database</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Check the numbering</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_utilities</span><span class="p">)</span>
+        <span class="c1"># Map the indices with the keys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index_to_key</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key_to_index</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">index</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_to_key</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_utilities</span><span class="p">)):</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Some alternatives appear more than once in baseline utilities: &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_utilities</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">error_messages</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verify_dict_keys_against_set</span><span class="p">(</span>
+            <span class="n">dict_to_check</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma_parameters</span>
+        <span class="p">):</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Gamma parameters: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">error_messages</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">error_messages</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verify_dict_keys_against_set</span><span class="p">(</span>
+                <span class="n">dict_to_check</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span>
+            <span class="p">):</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Alpha parameters: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">error_messages</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="c1"># Check if there is an outside good. It correspond to a gamma parameter set to None.</span>
+        <span class="n">none_keys</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">none_keys</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Only one outside good is allowed, not </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">none_keys</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outside_good_key</span> <span class="o">=</span> <span class="n">none_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">none_keys</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="n">validate_dict_types</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_utilities</span><span class="p">,</span> <span class="s1">&#39;baseline_utilities&#39;</span><span class="p">,</span> <span class="n">Expression</span><span class="p">)</span>
+        <span class="n">validate_dict_types</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma_parameters</span><span class="p">,</span> <span class="s1">&#39;gamma_parameters&#39;</span><span class="p">,</span> <span class="n">Expression</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">validate_dict_types</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="p">,</span> <span class="s1">&#39;alpha_parameters&#39;</span><span class="p">,</span> <span class="n">Expression</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span><span class="p">,</span> <span class="n">Expression</span><span class="p">):</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Expecting a Biogeme expression and not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">outside_good_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtain  the index of the outside good.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outside_good_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_to_index</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">outside_good_key</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">estimation_results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">bioResults</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Property for the estimation results&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimation_results</span>
+
+    <span class="nd">@estimation_results</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">estimation_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">the_results</span><span class="p">:</span> <span class="n">bioResults</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_estimation_results</span> <span class="o">=</span> <span class="n">the_results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_parameters_in_expressions</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">number_of_alternatives</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_verify_dict_keys_against_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_to_check</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="c1"># Convert dictionary keys to a set</span>
+        <span class="n">dict_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">dict_to_check</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="c1"># Find keys in the dictionary that are not in the reference set</span>
+        <span class="n">extra_keys</span> <span class="o">=</span> <span class="n">dict_keys</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span>
+
+        <span class="c1"># Find keys in the reference set that are not in the dictionary</span>
+        <span class="n">missing_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span> <span class="o">-</span> <span class="n">dict_keys</span>
+
+        <span class="c1"># Constructing the error message based on the findings</span>
+        <span class="n">error_messages</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">extra_keys</span><span class="p">:</span>
+            <span class="n">error_messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Extra alternatives in dictionary: </span><span class="si">{</span><span class="n">extra_keys</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">missing_keys</span><span class="p">:</span>
+            <span class="n">error_messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Missing alternatives from dictionary: </span><span class="si">{</span><span class="n">missing_keys</span><span class="si">}</span><span class="s1">.&#39;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">error_messages</span>
+
+<div class="viewcode-block" id="Mdcev.calculate_baseline_utility">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.calculate_baseline_utility">[docs]</a>
+    <span class="nd">@lru_cache</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_baseline_utility</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">alternative_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">one_observation</span><span class="p">:</span> <span class="n">Database</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;As this function may be called many times with the same input in forecasting mode, we use the</span>
+<span class="sd">        lru_cache decorator.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">one_observation</span><span class="o">.</span><span class="n">get_sample_size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimation_results</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">baseline_utilities</span><span class="p">[</span><span class="n">alternative_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_value_c</span><span class="p">(</span>
+                <span class="n">database</span><span class="o">=</span><span class="n">one_observation</span><span class="p">,</span>
+                <span class="n">betas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">estimation_results</span><span class="o">.</span><span class="n">get_beta_values</span><span class="p">(),</span>
+                <span class="n">prepare_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">baseline_utilities</span><span class="p">[</span><span class="n">alternative_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_value_c</span><span class="p">(</span>
+            <span class="n">database</span><span class="o">=</span><span class="n">one_observation</span><span class="p">,</span>
+            <span class="n">prepare_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.transformed_utility">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.transformed_utility">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transformed_utility</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">the_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">the_consumption</span><span class="p">:</span> <span class="n">Expression</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the transformed utility for one alternative. Used for estimation&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.calculate_utilities">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.calculate_utilities">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_utilities</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">consumption</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]:</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">alt_id</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformed_utility</span><span class="p">(</span><span class="n">alt_id</span><span class="p">,</span> <span class="n">the_consumption</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">alt_id</span><span class="p">,</span> <span class="n">the_consumption</span> <span class="ow">in</span> <span class="n">consumption</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.calculate_log_determinant_one_alternative">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.calculate_log_determinant_one_alternative">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_log_determinant_one_alternative</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">the_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">consumption</span><span class="p">:</span> <span class="n">Expression</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.calculate_log_determinant_entries">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.calculate_log_determinant_entries">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_log_determinant_entries</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">consumption</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">alt_id</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_log_determinant_one_alternative</span><span class="p">(</span>
+                <span class="n">alt_id</span><span class="p">,</span> <span class="n">the_consumption</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">alt_id</span><span class="p">,</span> <span class="n">the_consumption</span> <span class="ow">in</span> <span class="n">consumption</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.calculate_inverse_of_determinant_one_alternative">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.calculate_inverse_of_determinant_one_alternative">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_inverse_of_determinant_one_alternative</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">the_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">consumption</span><span class="p">:</span> <span class="n">Expression</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.calculate_inverse_of_determinant_entries">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.calculate_inverse_of_determinant_entries">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_inverse_of_determinant_entries</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">consumption</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">alt_id</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_inverse_of_determinant_one_alternative</span><span class="p">(</span>
+                <span class="n">alt_id</span><span class="p">,</span> <span class="n">the_consumption</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">alt_id</span><span class="p">,</span> <span class="n">the_consumption</span> <span class="ow">in</span> <span class="n">consumption</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.info_gamma_parameters">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.info_gamma_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">info_gamma_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Provides logging information about the outside good&quot;&quot;&quot;</span>
+        <span class="n">none_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">none_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">report</span> <span class="o">=</span> <span class="s1">&#39;No outside good is included in the model.&#39;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">report</span>
+        <span class="k">if</span> <span class="n">none_count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">report</span> <span class="o">=</span> <span class="s1">&#39;One outside good is included in the model.&#39;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">report</span>
+
+        <span class="n">report</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;Several outside goods are included in the model. If it is intentional, ignore this warning. &#39;</span>
+            <span class="s1">&#39;If not, update the definition of the gamma parameters. The outside good, if any, must be associated with &#39;</span>
+            <span class="s1">&#39;None, and all other alternative with a gamma parameter.&#39;</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">report</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.loglikelihood">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.loglikelihood">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loglikelihood</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">number_of_chosen_alternatives</span><span class="p">:</span> <span class="n">Expression</span><span class="p">,</span>
+        <span class="n">consumed_quantities</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the Biogeme formula for the log probability of the MDCEV model</span>
+
+<span class="sd">        :param number_of_chosen_alternatives: see the module documentation :mod:`biogeme.mdcev_no_outside_good`</span>
+<span class="sd">        :param consumed_quantities: see the module documentation :mod:`biogeme.mdcev_no_outside_good`</span>
+
+<span class="sd">        A detailed explanation is provided in the technical report</span>
+<span class="sd">        &quot;Estimating the MDCEV model with Biogeme&quot;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">validate_dict_types</span><span class="p">(</span><span class="n">consumed_quantities</span><span class="p">,</span> <span class="s1">&#39;consumed_quantities&#39;</span><span class="p">,</span> <span class="n">Expression</span><span class="p">)</span>
+
+        <span class="n">utilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_utilities</span><span class="p">(</span><span class="n">consumption</span><span class="o">=</span><span class="n">consumed_quantities</span><span class="p">)</span>
+        <span class="n">log_determinant_entries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_log_determinant_entries</span><span class="p">(</span>
+            <span class="n">consumption</span><span class="o">=</span><span class="n">consumed_quantities</span>
+        <span class="p">)</span>
+        <span class="n">inverse_of_determinant_entries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_inverse_of_determinant_entries</span><span class="p">(</span>
+            <span class="n">consumption</span><span class="o">=</span><span class="n">consumed_quantities</span>
+        <span class="p">)</span>
+
+        <span class="c1"># utility of chosen goods</span>
+        <span class="n">utility_terms</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Elem</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="n">util</span><span class="p">},</span> <span class="n">consumed_quantities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">util</span> <span class="ow">in</span> <span class="n">utilities</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">baseline_term</span> <span class="o">=</span> <span class="n">bioMultSum</span><span class="p">(</span><span class="n">utility_terms</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">baseline_term</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span> <span class="o">*</span> <span class="n">bioMultSum</span><span class="p">(</span><span class="n">utility_terms</span><span class="p">)</span>
+
+        <span class="c1"># Determinant: first term</span>
+        <span class="n">first_determinant_terms</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Elem</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="n">z</span><span class="p">},</span> <span class="n">consumed_quantities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">log_determinant_entries</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">]</span>
+        <span class="n">first_determinant</span> <span class="o">=</span> <span class="n">bioMultSum</span><span class="p">(</span><span class="n">first_determinant_terms</span><span class="p">)</span>
+
+        <span class="c1"># Determinant: second term</span>
+        <span class="n">second_determinant_terms</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Elem</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="n">z</span><span class="p">},</span> <span class="n">consumed_quantities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">inverse_of_determinant_entries</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">]</span>
+        <span class="n">second_determinant</span> <span class="o">=</span> <span class="n">log</span><span class="p">(</span><span class="n">bioMultSum</span><span class="p">(</span><span class="n">second_determinant_terms</span><span class="p">))</span>
+
+        <span class="c1"># Logsum</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">terms_for_logsum</span> <span class="o">=</span> <span class="p">[</span><span class="n">exp</span><span class="p">(</span><span class="n">util</span><span class="p">)</span> <span class="k">for</span> <span class="n">util</span> <span class="ow">in</span> <span class="n">utilities</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">terms_for_logsum</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span> <span class="o">*</span> <span class="n">util</span><span class="p">)</span> <span class="k">for</span> <span class="n">util</span> <span class="ow">in</span> <span class="n">utilities</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">]</span>
+        <span class="n">logsum_term</span> <span class="o">=</span> <span class="n">number_of_chosen_alternatives</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">bioMultSum</span><span class="p">(</span><span class="n">terms_for_logsum</span><span class="p">))</span>
+
+        <span class="n">log_prob</span> <span class="o">=</span> <span class="n">baseline_term</span> <span class="o">+</span> <span class="n">first_determinant</span> <span class="o">+</span> <span class="n">second_determinant</span> <span class="o">-</span> <span class="n">logsum_term</span>
+        <span class="c1"># Scale parameter</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log_prob</span> <span class="o">+=</span> <span class="p">(</span><span class="n">number_of_chosen_alternatives</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">log_prob</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.estimate_parameters">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.estimate_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">estimate_parameters</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">database</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+        <span class="n">number_of_chosen_alternatives</span><span class="p">:</span> <span class="n">Expression</span><span class="p">,</span>
+        <span class="n">consumed_quantities</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">bioResults</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the Biogeme formula for the log probability of the MDCEV model</span>
+
+<span class="sd">        :param database: data needed for the estimation of the parameters, in Biogeme format.</span>
+<span class="sd">        :param number_of_chosen_alternatives: see the module documentation :mod:`biogeme.mdcev_no_outside_good`</span>
+<span class="sd">        :param consumed_quantities: see the module documentation :mod:`biogeme.mdcev_no_outside_good`</span>
+<span class="sd">        :param **kwargs: additional parameters that are transmitted as such to the constructor of the Biogeme object.</span>
+
+
+<span class="sd">        A detailed explanation is provided in the technical report</span>
+<span class="sd">        &quot;Estimating the MDCEV model with Biogeme&quot;:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logprob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood</span><span class="p">(</span>
+            <span class="n">number_of_chosen_alternatives</span><span class="o">=</span><span class="n">number_of_chosen_alternatives</span><span class="p">,</span>
+            <span class="n">consumed_quantities</span><span class="o">=</span><span class="n">consumed_quantities</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Create the Biogeme object</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">the_biogeme</span> <span class="o">=</span> <span class="n">BIOGEME</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">logprob</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">formulas</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;log_like&#39;</span><span class="p">:</span> <span class="n">logprob</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">}</span>
+            <span class="n">the_biogeme</span> <span class="o">=</span> <span class="n">BIOGEME</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">formulas</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">the_biogeme</span><span class="o">.</span><span class="n">modelName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimation_results</span> <span class="o">=</span> <span class="n">the_biogeme</span><span class="o">.</span><span class="n">estimate</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimation_results</span></div>
+
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_list_of_expressions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Expression</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract the list of expressions involved in the model&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_parameters_in_expressions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the value of the unknown parameters in expression, after estimation&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimation_results</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="s1">&#39;No estimation result is available&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="n">betas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimation_results</span><span class="o">.</span><span class="n">get_beta_values</span><span class="p">()</span>
+        <span class="n">all_expressions</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">expression</span>
+            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">baseline_utilities</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">gamma_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="k">else</span> <span class="p">[]</span>
+                <span class="p">),</span>
+                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_parameter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[],</span>
+                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[],</span>
+            <span class="p">]</span>
+            <span class="k">for</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">group</span>
+            <span class="k">if</span> <span class="n">expression</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+
+        <span class="c1"># ADd the expressions from the child class</span>
+        <span class="n">all_expressions</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list_of_expressions</span><span class="p">()</span>
+
+        <span class="c1"># Update each expression with the new beta values</span>
+        <span class="k">for</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">all_expressions</span><span class="p">:</span>
+            <span class="n">expression</span><span class="o">.</span><span class="n">change_init_values</span><span class="p">(</span><span class="n">betas</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Mdcev.utility_one_alternative">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.utility_one_alternative">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">utility_one_alternative</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">the_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">the_consumption</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">one_observation</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Utility needed for forecasting&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.utility_expression_one_alternative">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.utility_expression_one_alternative">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">utility_expression_one_alternative</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">the_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">the_consumption</span><span class="p">:</span> <span class="n">Expression</span><span class="p">,</span>
+        <span class="n">unscaled_epsilon</span><span class="p">:</span> <span class="n">Expression</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Utility expression. Used only for code validation.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.sum_of_utilities">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.sum_of_utilities">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sum_of_utilities</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">consumptions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">data_row</span><span class="p">:</span> <span class="n">Database</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the sum of all utilities. Used for forecasting.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">utilities</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">utility_one_alternative</span><span class="p">(</span>
+                    <span class="n">the_id</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+                    <span class="n">the_consumption</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">consumptions</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span>
+                    <span class="n">epsilon</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">epsilon</span><span class="p">[</span><span class="n">index</span><span class="p">]),</span>
+                    <span class="n">one_observation</span><span class="o">=</span><span class="n">data_row</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_to_key</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">e</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">utilities</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.forecast_bruteforce_one_draw">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.forecast_bruteforce_one_draw">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forecast_bruteforce_one_draw</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">one_row_database</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span> <span class="n">total_budget</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forecast the optimal expenditures given a budget and one realization of epsilon for each alternative.</span>
+<span class="sd">        If there is an issue with the optimization algorithm, None is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_alternatives</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;epsilon must be a vector of size </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_alternatives</span><span class="si">}</span><span class="s1">, not </span><span class="si">{</span><span class="n">epsilon</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">one_row_database</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Expecting exactly one row, not </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">one_row_database</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">one_row_database</span>
+
+        <span class="c1"># If there is an outside good, we need to impose that the corresponding consumption is not zero.</span>
+        <span class="c1"># To do that, we impose that it is equal to the exponential of a new variable.</span>
+
+        <span class="n">outside_good</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outside_good_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">objective_function</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Objective function. The number of variables is the number of</span>
+<span class="sd">            alternatives&quot;&quot;&quot;</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_of_utilities</span><span class="p">(</span>
+                <span class="n">consumptions</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span> <span class="n">data_row</span><span class="o">=</span><span class="n">one_row_database</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">result</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">budget_constraint</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Budget constraint when there is no outside good. The number of variables is the number of</span>
+<span class="sd">            alternatives&quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="n">total_budget</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">opposite_budget_constraint</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Budget constraint when there is no outside good. The number of variables is the number of</span>
+<span class="sd">            alternatives&quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="n">total_budget</span>
+
+        <span class="n">constraints</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;ineq&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;fun&#39;</span><span class="p">:</span> <span class="n">budget_constraint</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;ineq&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;fun&#39;</span><span class="p">:</span> <span class="n">opposite_budget_constraint</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">]</span>
+
+        <span class="n">number_of_alternatives</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">)</span>
+
+        <span class="c1"># Bounds</span>
+        <span class="n">bounds</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">total_budget</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_alternatives</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outside_good_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bounds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">outside_good_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">SMALLEST_NON_ZERO_NUMBER</span><span class="p">,</span> <span class="n">total_budget</span><span class="p">)</span>
+
+        <span class="c1"># Starting point</span>
+        <span class="c1"># We split the budget equally across alternatives</span>
+        <span class="n">initial_consumption</span> <span class="o">=</span> <span class="n">total_budget</span> <span class="o">/</span> <span class="n">number_of_alternatives</span>
+        <span class="c1"># We split equally across alternatives</span>
+        <span class="n">initial_guess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">initial_consumption</span><span class="p">]</span> <span class="o">*</span> <span class="n">number_of_alternatives</span><span class="p">)</span>
+
+        <span class="c1"># There is a bug in the minimize function. It generates a warning that crashes the script.</span>
+        <span class="c1"># We are converting this warning into an exception in order to catch it.</span>
+        <span class="c1"># Convert specific warnings to exceptions</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span>
+            <span class="s1">&#39;error&#39;</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Values in x were outside bounds during a minimize step, clipping to bounds&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">optimization_result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                <span class="n">objective_function</span><span class="p">,</span>
+                <span class="n">initial_guess</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span>
+                <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span>
+                <span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">optimal_consumption</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">index_to_key</span><span class="p">[</span><span class="n">index</span><span class="p">]:</span> <span class="n">optimization_result</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_alternatives</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">alternative</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">alternative</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">optimal_consumption</span><span class="p">:</span>
+                    <span class="n">optimal_consumption</span><span class="p">[</span><span class="n">alternative</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">return</span> <span class="n">optimal_consumption</span>
+        <span class="k">except</span> <span class="ne">RuntimeWarning</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.derivative_utility_one_alternative">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.derivative_utility_one_alternative">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">derivative_utility_one_alternative</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">the_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">the_consumption</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">one_observation</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Used in the optimization problem solved for forecasting tp calculate the dual variable.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.optimal_consumption">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.optimal_consumption">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">optimal_consumption</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chosen_alternatives</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">dual_variable</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">one_observation</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Analytical calculation of the optimal consumption if the dual variable is known.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">alt_id</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimal_consumption_one_alternative</span><span class="p">(</span>
+                    <span class="n">the_id</span><span class="o">=</span><span class="n">alt_id</span><span class="p">,</span>
+                    <span class="n">dual_variable</span><span class="o">=</span><span class="n">dual_variable</span><span class="p">,</span>
+                    <span class="n">epsilon</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">epsilon</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key_to_index</span><span class="p">[</span><span class="n">alt_id</span><span class="p">]]),</span>
+                    <span class="n">one_observation</span><span class="o">=</span><span class="n">one_observation</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">alt_id</span> <span class="ow">in</span> <span class="n">chosen_alternatives</span>
+            <span class="p">}</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">e</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.optimal_consumption_one_alternative">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.optimal_consumption_one_alternative">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">optimal_consumption_one_alternative</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">the_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">dual_variable</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">one_observation</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Analytical calculation of the optimal consumption if the dual variable is known.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.lower_bound_dual_variable">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.lower_bound_dual_variable">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lower_bound_dual_variable</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chosen_alternatives</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">one_observation</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Method providing model specific bounds on the dual variable. It not overloaded,</span>
+<span class="sd">        default values are used.</span>
+
+<span class="sd">        :param chosen_alternatives: list of alternatives that are chosen at the optimal solution</span>
+<span class="sd">        :param one_observation: data for one observation.</span>
+<span class="sd">        :param epsilon: draws from the error term.</span>
+<span class="sd">        :return: a lower bound on the dual variable, such that the expenditure calculated for any larger value is</span>
+<span class="sd">        well-defined and non negative.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.is_next_alternative_chosen">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.is_next_alternative_chosen">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_next_alternative_chosen</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chosen_alternatives</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">candidate_alternative</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">derivative_zero_expenditure_candidate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">database</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+        <span class="n">total_budget</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="c1"># If the candidate alternative is the outside good, it is in the choice set by definition.</span>
+        <span class="n">model_lower_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower_bound_dual_variable</span><span class="p">(</span>
+            <span class="n">chosen_alternatives</span><span class="o">=</span><span class="n">chosen_alternatives</span><span class="p">,</span>
+            <span class="n">one_observation</span><span class="o">=</span><span class="n">database</span><span class="p">,</span>
+            <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">derivative_zero_expenditure_candidate</span> <span class="o">&lt;</span> <span class="n">model_lower_bound</span><span class="p">:</span>
+            <span class="c1"># Lower bound is violated. Alternative not in choice set.</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">model_lower_bound</span>
+
+        <span class="n">candidate_set</span> <span class="o">=</span> <span class="n">chosen_alternatives</span> <span class="o">|</span> <span class="p">{</span><span class="n">candidate_alternative</span><span class="p">}</span>
+        <span class="c1"># Derive the optimal consumption</span>
+        <span class="n">estimate_optimal_consumption_candidate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimal_consumption</span><span class="p">(</span>
+            <span class="n">chosen_alternatives</span><span class="o">=</span><span class="n">candidate_set</span><span class="p">,</span>
+            <span class="n">dual_variable</span><span class="o">=</span><span class="n">derivative_zero_expenditure_candidate</span><span class="p">,</span>
+            <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+            <span class="n">one_observation</span><span class="o">=</span><span class="n">database</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">total_consumption_candidate</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="n">estimate_optimal_consumption_candidate</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">total_budget</span> <span class="o">&lt;=</span> <span class="n">total_consumption_candidate</span><span class="p">:</span>
+            <span class="c1"># Total budget is overpassed. Alternative not in the choice set.</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">derivative_zero_expenditure_candidate</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.identification_chosen_alternatives">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.identification_chosen_alternatives">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">identification_chosen_alternatives</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">database</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+        <span class="n">total_budget</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Algorithm identifying the chosen alternatives at the optimal solution</span>
+
+<span class="sd">        :param database: one row of the database.</span>
+<span class="sd">        :param total_budget: total budget for the constraint.</span>
+<span class="sd">        :param epsilon: vector of draws from the error term.</span>
+<span class="sd">        :return: the set of chosen alternatives, as well as a lower and an upper bound on the dual variable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">the_unsorted_w</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">alt_id</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">derivative_utility_one_alternative</span><span class="p">(</span>
+                <span class="n">the_id</span><span class="o">=</span><span class="n">alt_id</span><span class="p">,</span>
+                <span class="n">one_observation</span><span class="o">=</span><span class="n">database</span><span class="p">,</span>
+                <span class="n">the_consumption</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">epsilon</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">epsilon</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key_to_index</span><span class="p">[</span><span class="n">alt_id</span><span class="p">]]),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">alt_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span>
+            <span class="k">if</span> <span class="n">alt_id</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outside_good_key</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Sort the dictionary by values (descending order)</span>
+
+        <span class="n">ordered_alternatives</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">alt_id</span>
+            <span class="k">for</span> <span class="n">alt_id</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span>
+                <span class="n">the_unsorted_w</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="n">chosen_alternatives</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">set</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outside_good_key</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">outside_good_key</span><span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="n">last_chosen_alternative</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">candidate_alternative_id</span> <span class="ow">in</span> <span class="n">ordered_alternatives</span><span class="p">:</span>
+            <span class="n">derivative_zero_expenditure_candidate</span> <span class="o">=</span> <span class="n">the_unsorted_w</span><span class="p">[</span>
+                <span class="n">candidate_alternative_id</span>
+            <span class="p">]</span>
+            <span class="n">next_chosen</span><span class="p">,</span> <span class="n">lower_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_next_alternative_chosen</span><span class="p">(</span>
+                <span class="n">chosen_alternatives</span><span class="o">=</span><span class="n">chosen_alternatives</span><span class="p">,</span>
+                <span class="n">candidate_alternative</span><span class="o">=</span><span class="n">candidate_alternative_id</span><span class="p">,</span>
+                <span class="n">derivative_zero_expenditure_candidate</span><span class="o">=</span><span class="n">derivative_zero_expenditure_candidate</span><span class="p">,</span>
+                <span class="n">database</span><span class="o">=</span><span class="n">database</span><span class="p">,</span>
+                <span class="n">total_budget</span><span class="o">=</span><span class="n">total_budget</span><span class="p">,</span>
+                <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">next_chosen</span><span class="p">:</span>
+                <span class="n">upper_bound</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">max</span>
+                    <span class="k">if</span> <span class="n">last_chosen_alternative</span> <span class="ow">is</span> <span class="kc">None</span>
+                    <span class="k">else</span> <span class="n">the_unsorted_w</span><span class="p">[</span><span class="n">last_chosen_alternative</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="n">chosen_alternatives</span><span class="p">,</span>
+                    <span class="n">lower_bound</span><span class="p">,</span>
+                    <span class="n">upper_bound</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">chosen_alternatives</span> <span class="o">|=</span> <span class="p">{</span><span class="n">candidate_alternative_id</span><span class="p">}</span>
+            <span class="n">last_chosen_alternative</span> <span class="o">=</span> <span class="n">candidate_alternative_id</span>
+        <span class="c1"># The full choice set is chosen</span>
+        <span class="n">lower_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower_bound_dual_variable</span><span class="p">(</span>
+            <span class="n">chosen_alternatives</span><span class="o">=</span><span class="n">chosen_alternatives</span><span class="p">,</span>
+            <span class="n">one_observation</span><span class="o">=</span><span class="n">database</span><span class="p">,</span>
+            <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">the_unsorted_w</span><span class="p">[</span><span class="n">ordered_alternatives</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">chosen_alternatives</span><span class="p">,</span> <span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.forecast_bisection_one_draw">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.forecast_bisection_one_draw">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forecast_bisection_one_draw</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">one_row_of_database</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+        <span class="n">total_budget</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">tolerance_dual</span><span class="o">=</span><span class="mf">1.0e-13</span><span class="p">,</span>
+        <span class="n">tolerance_budget</span><span class="o">=</span><span class="mf">1.0e-13</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="n">chosen_alternatives</span><span class="p">,</span> <span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">identification_chosen_alternatives</span><span class="p">(</span>
+                <span class="n">database</span><span class="o">=</span><span class="n">one_row_of_database</span><span class="p">,</span> <span class="n">total_budget</span><span class="o">=</span><span class="n">total_budget</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">lower_bound</span> <span class="o">&gt;</span> <span class="n">upper_bound</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Lower bound: </span><span class="si">{</span><span class="n">lower_bound</span><span class="si">}</span><span class="s1"> larger than upper bound: </span><span class="si">{</span><span class="n">upper_bound</span><span class="si">}</span><span class="s1">. &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;Chosen alternatives: </span><span class="si">{</span><span class="n">chosen_alternatives</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="c1"># Estimate the dual variable by bisection</span>
+        <span class="n">total_consumption</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">continue_iterations</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5000</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">continue_iterations</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">dual_variable</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower_bound</span> <span class="o">+</span> <span class="n">upper_bound</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">optimal_consumption</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimal_consumption</span><span class="p">(</span>
+                <span class="n">chosen_alternatives</span><span class="o">=</span><span class="n">chosen_alternatives</span><span class="p">,</span>
+                <span class="n">dual_variable</span><span class="o">=</span><span class="n">dual_variable</span><span class="p">,</span>
+                <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+                <span class="n">one_observation</span><span class="o">=</span><span class="n">one_row_of_database</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">negative_consumption</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">optimal_consumption</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">negative_consumption</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Negative consumption&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">negative_consumption</span><span class="p">:</span>
+                <span class="c1"># If any consumption is negative, we update the upper bound</span>
+                <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">dual_variable</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">total_consumption</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">optimal_consumption</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+                <span class="k">if</span> <span class="n">total_consumption</span> <span class="o">&lt;</span> <span class="n">total_budget</span><span class="p">:</span>
+                    <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">dual_variable</span>
+
+                <span class="k">elif</span> <span class="n">total_consumption</span> <span class="o">&gt;</span> <span class="n">total_budget</span><span class="p">:</span>
+                    <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">dual_variable</span>
+                <span class="c1"># Stopping criteria</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">upper_bound</span> <span class="o">-</span> <span class="n">lower_bound</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tolerance_dual</span><span class="p">:</span>
+                    <span class="n">continue_iterations</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">total_consumption</span> <span class="o">-</span> <span class="n">total_budget</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tolerance_budget</span><span class="p">:</span>
+                    <span class="n">continue_iterations</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">dual_variable</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower_bound</span> <span class="o">+</span> <span class="n">upper_bound</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">optimal_consumption</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimal_consumption</span><span class="p">(</span>
+            <span class="n">chosen_alternatives</span><span class="o">=</span><span class="n">chosen_alternatives</span><span class="p">,</span>
+            <span class="n">dual_variable</span><span class="o">=</span><span class="n">dual_variable</span><span class="p">,</span>
+            <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+            <span class="n">one_observation</span><span class="o">=</span><span class="n">one_row_of_database</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">alternative</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">alternative</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">optimal_consumption</span><span class="p">:</span>
+                <span class="n">optimal_consumption</span><span class="p">[</span><span class="n">alternative</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">optimal_consumption</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.validation_one_alternative_one_consumption">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.validation_one_alternative_one_consumption">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validation_one_alternative_one_consumption</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">alternative_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value_consumption</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">one_row</span><span class="p">:</span> <span class="n">Database</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validation of some of the abstract methods.&quot;&quot;&quot;</span>
+        <span class="n">error_messages</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">value_epsilon</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="n">consumption</span> <span class="o">=</span> <span class="n">Beta</span><span class="p">(</span><span class="s1">&#39;consumption&#39;</span><span class="p">,</span> <span class="n">value_consumption</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">unscaled_epsilon</span> <span class="o">=</span> <span class="n">Numeric</span><span class="p">(</span><span class="n">value_epsilon</span><span class="p">)</span>
+        <span class="n">utility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">utility_expression_one_alternative</span><span class="p">(</span>
+            <span class="n">the_id</span><span class="o">=</span><span class="n">alternative_id</span><span class="p">,</span>
+            <span class="n">the_consumption</span><span class="o">=</span><span class="n">consumption</span><span class="p">,</span>
+            <span class="n">unscaled_epsilon</span><span class="o">=</span><span class="n">unscaled_epsilon</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">FunctionOutput</span> <span class="o">=</span> <span class="n">utility</span><span class="o">.</span><span class="n">get_value_and_derivatives</span><span class="p">(</span>
+            <span class="n">database</span><span class="o">=</span><span class="n">one_row</span><span class="p">,</span> <span class="n">prepare_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">named_results</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Validate the utility calculation</span>
+
+        <span class="n">calculated_utility_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">utility_one_alternative</span><span class="p">(</span>
+            <span class="n">the_id</span><span class="o">=</span><span class="n">alternative_id</span><span class="p">,</span>
+            <span class="n">the_consumption</span><span class="o">=</span><span class="n">value_consumption</span><span class="p">,</span>
+            <span class="n">epsilon</span><span class="o">=</span><span class="n">value_epsilon</span><span class="p">,</span>
+            <span class="n">one_observation</span><span class="o">=</span><span class="n">one_row</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="n">calculated_utility_value</span><span class="p">):</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Inconsistent utility values for alt. </span><span class="si">{</span><span class="n">alternative_id</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">function</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">calculated_utility_value</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">error_messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="c1"># Validate the derivative</span>
+
+        <span class="n">calculated_derivative</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derivative_utility_one_alternative</span><span class="p">(</span>
+            <span class="n">the_id</span><span class="o">=</span><span class="n">alternative_id</span><span class="p">,</span>
+            <span class="n">the_consumption</span><span class="o">=</span><span class="n">value_consumption</span><span class="p">,</span>
+            <span class="n">epsilon</span><span class="o">=</span><span class="n">value_epsilon</span><span class="p">,</span>
+            <span class="n">one_observation</span><span class="o">=</span><span class="n">one_row</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">the_gradient</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">gradient</span><span class="p">[</span><span class="s1">&#39;consumption&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">the_gradient</span><span class="p">,</span> <span class="n">calculated_derivative</span><span class="p">):</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Inconsistent derivatives for alt. </span><span class="si">{</span><span class="n">alternative_id</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">the_gradient</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">calculated_derivative</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">error_messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">error_messages</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.validation_one_alternative">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.validation_one_alternative">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validation_one_alternative</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">alternative_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">one_row</span><span class="p">:</span> <span class="n">Database</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+        <span class="n">error_messages</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">validation_one_alternative_one_consumption</span><span class="p">(</span>
+                    <span class="n">alternative_id</span><span class="o">=</span><span class="n">alternative_id</span><span class="p">,</span>
+                    <span class="n">value_consumption</span><span class="o">=</span><span class="n">consumption_value</span><span class="p">,</span>
+                    <span class="n">one_row</span><span class="o">=</span><span class="n">one_row</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">consumption_value</span> <span class="ow">in</span> <span class="n">values</span>
+            <span class="p">),</span>
+            <span class="p">[],</span>
+        <span class="p">)</span>
+        <span class="c1"># Validate the optimal consumption</span>
+
+        <span class="n">dual_variable</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="n">value_epsilon</span> <span class="o">=</span> <span class="mf">0.01</span>
+
+        <span class="n">optimal_consumption</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimal_consumption_one_alternative</span><span class="p">(</span>
+            <span class="n">the_id</span><span class="o">=</span><span class="n">alternative_id</span><span class="p">,</span>
+            <span class="n">dual_variable</span><span class="o">=</span><span class="n">dual_variable</span><span class="p">,</span>
+            <span class="n">epsilon</span><span class="o">=</span><span class="n">value_epsilon</span><span class="p">,</span>
+            <span class="n">one_observation</span><span class="o">=</span><span class="n">one_row</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># If we calculate the derivative for this level of consumption, we should find the dual variable.</span>
+        <span class="n">calculated_derivative</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derivative_utility_one_alternative</span><span class="p">(</span>
+            <span class="n">the_id</span><span class="o">=</span><span class="n">alternative_id</span><span class="p">,</span>
+            <span class="n">the_consumption</span><span class="o">=</span><span class="n">optimal_consumption</span><span class="p">,</span>
+            <span class="n">epsilon</span><span class="o">=</span><span class="n">value_epsilon</span><span class="p">,</span>
+            <span class="n">one_observation</span><span class="o">=</span><span class="n">one_row</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">calculated_derivative</span><span class="p">,</span> <span class="n">dual_variable</span><span class="p">):</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Inconsistent dual variables for alt. </span><span class="si">{</span><span class="n">alternative_id</span><span class="si">}</span><span class="s1">: &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">calculated_derivative</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">dual_variable</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="n">error_messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">error_messages</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.validation">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.validation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">one_row</span><span class="p">:</span> <span class="n">Database</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validation of some abstract methods for all alternatives.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">validation_one_alternative</span><span class="p">(</span><span class="n">alternative_id</span><span class="o">=</span><span class="n">the_id</span><span class="p">,</span> <span class="n">one_row</span><span class="o">=</span><span class="n">one_row</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">the_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span>
+            <span class="p">),</span>
+            <span class="p">[],</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.forecast">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.forecast">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forecast</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">database</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+        <span class="n">total_budget</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilons</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">brute_force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">tolerance_dual</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e-10</span><span class="p">,</span>
+        <span class="n">tolerance_budget</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e-10</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forecast the optimal expenditures given a budget and one realization of epsilon for each alternative</span>
+
+<span class="sd">        :param database: database containing the values of the explanatory variables.</span>
+<span class="sd">        :param total_budget: total budget.</span>
+<span class="sd">        :param epsilons: draws from the error terms provided by the user. Each entry of the list corresponds</span>
+<span class="sd">             to an observation in the database, and consists of a data frame of</span>
+<span class="sd">             size=(number_of_draws, self.number_of_alternatives).</span>
+<span class="sd">        :param brute_force: if True, the brute force algorithm is applied. It solves each optimization problem using</span>
+<span class="sd">            the scipy optimization algorithm. If False, the method proposed by Pinjari and Bhat (2021) is used.</span>
+<span class="sd">        :param tolerance_dual: convergence criterion for the estimate of the dual variable.</span>
+<span class="sd">        :param tolerance_budget: convergence criterion for the estimate of the total budget.</span>
+<span class="sd">        :return: a list of data frames, each containing the results for each draw</span>
+
+<span class="sd">        .. [PinjBhat21] A. R. Pinjari, C. Bhat, Computationally efficient forecasting procedures for Kuhn-Tucker</span>
+<span class="sd">            consumer demand model systems: Application to residential energy consumption analysis, Journal of Choice</span>
+<span class="sd">            Modelling, Volume 39, 2021, 100283.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">rows_of_database</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Database</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;row_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">pandas_database</span><span class="o">=</span><span class="n">database</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="n">i</span><span class="p">]])</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">database</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows_of_database</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="s1">&#39;Empty database&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">epsilons</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows_of_database</span><span class="p">):</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;User provided draws have </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">epsilons</span><span class="p">)</span><span class="si">}</span><span class="s1"> entries while there are &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows_of_database</span><span class="p">)</span><span class="si">}</span><span class="s1"> observations in the sample.&#39;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="n">number_of_draws</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">epsilon</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">epsilons</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">number_of_draws</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">number_of_draws</span> <span class="o">=</span> <span class="n">epsilon</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">epsilon</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">number_of_draws</span><span class="p">:</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;User defined draws for obs. </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1"> contains </span><span class="si">{</span><span class="n">epsilon</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;draws instead of </span><span class="si">{</span><span class="n">number_of_draws</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">error_msg</span>
+            <span class="k">if</span> <span class="n">epsilon</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_alternatives</span><span class="p">:</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;User defined draws for obs. </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1"> contains </span><span class="si">{</span><span class="n">epsilon</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;alternatives instead of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_alternatives</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">error_msg</span>
+
+        <span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rows_of_database</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Forecasting observation </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1"> / </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows_of_database</span><span class="p">)</span><span class="si">}</span><span class="s1"> [</span><span class="si">{</span><span class="n">number_of_draws</span><span class="si">}</span><span class="s1"> draws]&#39;</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Forecasting</span>
+
+            <span class="n">optimal_expenditures</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">forecast_bruteforce_one_draw</span><span class="p">(</span>
+                        <span class="n">one_row_database</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">total_budget</span><span class="o">=</span><span class="n">total_budget</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">epsilon</span> <span class="ow">in</span> <span class="n">epsilons</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="n">brute_force</span>
+                <span class="k">else</span> <span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">forecast_bisection_one_draw</span><span class="p">(</span>
+                        <span class="n">one_row_of_database</span><span class="o">=</span><span class="n">row</span><span class="p">,</span>
+                        <span class="n">total_budget</span><span class="o">=</span><span class="n">total_budget</span><span class="p">,</span>
+                        <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+                        <span class="n">tolerance_budget</span><span class="o">=</span><span class="n">tolerance_budget</span><span class="p">,</span>
+                        <span class="n">tolerance_dual</span><span class="o">=</span><span class="n">tolerance_dual</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">epsilon</span> <span class="ow">in</span> <span class="n">epsilons</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="n">gather_data</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+            <span class="c1"># Collecting values for each key</span>
+            <span class="k">for</span> <span class="n">optimal_solution</span> <span class="ow">in</span> <span class="n">optimal_expenditures</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">optimal_solution</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">optimal_solution</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="n">gather_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+            <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">gather_data</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;columns&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">all_results</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.forecast_comparison_one_draw">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.forecast_comparison_one_draw">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forecast_comparison_one_draw</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">one_row_of_database</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+        <span class="n">total_budget</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+        <span class="n">tolerance_dual</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e-10</span><span class="p">,</span>
+        <span class="n">tolerance_budget</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e-10</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compares the results from each of the two forecasting algorithms.</span>
+<span class="sd">        :param one_row_of_database: list of rows from the database containing the values of the explanatory variables.</span>
+<span class="sd">        :param total_budget: total budget.</span>
+<span class="sd">        :param epsilon: draws from the error terms provided by the user. Length: self.number_of_alternatives.</span>
+<span class="sd">        :param tolerance_dual: convergence criterion for the estimate of the dual variable.</span>
+<span class="sd">        :param tolerance_budget: convergence criterion for the estimate of the total budget.</span>
+<span class="sd">        :return: None. Warning are triggered if discrepancies are observed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_alternatives</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;There are </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_alternatives</span><span class="si">}</span><span class="s1"> alternatives and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">epsilon</span><span class="p">)</span><span class="si">}</span><span class="s1"> epsilons&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;============ Comparison ===================&#39;</span><span class="p">)</span>
+        <span class="n">brute_force</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_bruteforce_one_draw</span><span class="p">(</span>
+            <span class="n">one_row_database</span><span class="o">=</span><span class="n">one_row_of_database</span><span class="p">,</span>
+            <span class="n">total_budget</span><span class="o">=</span><span class="n">total_budget</span><span class="p">,</span>
+            <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">consumption_brute_force</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">brute_force</span><span class="o">.</span><span class="n">items</span><span class="p">())])</span>
+            <span class="k">if</span> <span class="n">brute_force</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">obj_brute_force</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sum_of_utilities</span><span class="p">(</span>
+                <span class="n">consumptions</span><span class="o">=</span><span class="n">consumption_brute_force</span><span class="p">,</span>
+                <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+                <span class="n">data_row</span><span class="o">=</span><span class="n">one_row_of_database</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">brute_force</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">constraint_brute_force</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">sum</span><span class="p">(</span><span class="n">consumption_brute_force</span><span class="p">)</span> <span class="k">if</span> <span class="n">brute_force</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">choice_set_brute_force</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">brute_force</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Brute force algorithm failed&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">choice_set_brute_force</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">brute_force</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+            <span class="p">)</span>
+            <span class="n">formatted_brute_force</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s1">.3g</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">brute_force</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Brute force: </span><span class="si">{</span><span class="n">formatted_brute_force</span><span class="si">}</span><span class="s1"> objective </span><span class="si">{</span><span class="n">obj_brute_force</span><span class="si">:</span><span class="s1">.3g</span><span class="si">}</span><span class="s1">, constraint </span><span class="si">{</span><span class="n">constraint_brute_force</span><span class="si">:</span><span class="s1">.3g</span><span class="si">}</span><span class="s1">, choice set </span><span class="si">{</span><span class="n">choice_set_brute_force</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+        <span class="n">analytical</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_bisection_one_draw</span><span class="p">(</span>
+            <span class="n">one_row_of_database</span><span class="o">=</span><span class="n">one_row_of_database</span><span class="p">,</span>
+            <span class="n">total_budget</span><span class="o">=</span><span class="n">total_budget</span><span class="p">,</span>
+            <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+            <span class="n">tolerance_budget</span><span class="o">=</span><span class="n">tolerance_budget</span><span class="p">,</span>
+            <span class="n">tolerance_dual</span><span class="o">=</span><span class="n">tolerance_dual</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">choice_set_analytical</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">analytical</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+        <span class="p">)</span>
+        <span class="n">consumption_analytical</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">analytical</span><span class="o">.</span><span class="n">items</span><span class="p">())])</span>
+            <span class="k">if</span> <span class="n">analytical</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">obj_analytical</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sum_of_utilities</span><span class="p">(</span>
+                    <span class="n">consumptions</span><span class="o">=</span><span class="n">consumption_analytical</span><span class="p">,</span>
+                    <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+                    <span class="n">data_row</span><span class="o">=</span><span class="n">one_row_of_database</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">analytical</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">RuntimeWarning</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">analytical</span><span class="si">=}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">consumption_analytical</span><span class="si">=}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+
+        <span class="n">constraint_analytical</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">sum</span><span class="p">(</span><span class="n">consumption_analytical</span><span class="p">)</span> <span class="k">if</span> <span class="n">analytical</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">analytical</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Analytical algorithm failed&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">formatted_analytical</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s1">.3g</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">analytical</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Analytical:  </span><span class="si">{</span><span class="n">formatted_analytical</span><span class="si">}</span><span class="s1"> objective </span><span class="si">{</span><span class="n">obj_analytical</span><span class="si">:</span><span class="s1">.3g</span><span class="si">}</span><span class="s1">, constraint </span><span class="si">{</span><span class="n">constraint_analytical</span><span class="si">:</span><span class="s1">.3g</span><span class="si">}</span><span class="s1">, choice set </span><span class="si">{</span><span class="n">choice_set_analytical</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">brute_force</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">analytical</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Both algorithms failed.&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">brute_force</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Brute force algorithm failed.&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">analytical</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Analytical algorithm failed.&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">choice_set_brute_force</span> <span class="o">!=</span> <span class="n">choice_set_analytical</span>
+            <span class="ow">and</span> <span class="n">choice_set_brute_force</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Different optimal choice sets: analytical </span><span class="si">{</span><span class="n">choice_set_analytical</span><span class="si">}</span><span class="s1">, brute force </span><span class="si">{</span><span class="n">choice_set_brute_force</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">obj_analytical</span><span class="p">,</span> <span class="n">obj_brute_force</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Difference between optimal utility with analytical [</span><span class="si">{</span><span class="n">obj_analytical</span><span class="si">:</span><span class="s1">.4g</span><span class="si">}</span><span class="s1">] and brute &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;force [</span><span class="si">{</span><span class="n">obj_brute_force</span><span class="si">:</span><span class="s1">.4g</span><span class="si">}</span><span class="s1">] algorithms.&#39;</span>
+            <span class="p">)</span>
+            <span class="n">brute_force_results</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s1">.3g</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">brute_force</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+            <span class="p">)</span>
+            <span class="n">analytical_results</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s1">.3g</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">analytical</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Solution with brute force: </span><span class="si">{</span><span class="n">brute_force_results</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Solution with analytical: </span><span class="si">{</span><span class="n">analytical_results</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">constraint_analytical</span><span class="p">,</span> <span class="n">constraint_brute_force</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Difference between constraint with analytical [</span><span class="si">{</span><span class="n">constraint_analytical</span><span class="si">}</span><span class="s1">] and brute force &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="n">constraint_brute_force</span><span class="si">}</span><span class="s1">] algorithms.&#39;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.generate_epsilons">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.generate_epsilons">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_epsilons</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">number_of_observations</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">number_of_draws</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate draws for the error terms.</span>
+
+<span class="sd">        :param number_of_observations: number of entries in the database.</span>
+<span class="sd">        :param number_of_draws: number of draws to generate</span>
+<span class="sd">        :return: a list of length &quot;number_of_observations&quot;. Each element is a</span>
+<span class="sd">        number_of_draws x self.number_of_alternatives array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">gumbel</span><span class="p">(</span>
+                <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">number_of_draws</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_alternatives</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_observations</span><span class="p">)</span>
+        <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Mdcev.validate_forecast">
+<a class="viewcode-back" href="../../../code/biogeme/mdcev/mdcev.html#biogeme.mdcev.mdcev.Mdcev.validate_forecast">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_forecast</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">database</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+        <span class="n">total_budget</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilons</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">tolerance_dual</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e-13</span><span class="p">,</span>
+        <span class="n">tolerance_budget</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e-13</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compare the two algorithms to forecast the optimal expenditures given a budget and one realization of</span>
+<span class="sd">        epsilon for each alternative</span>
+
+<span class="sd">        :param database: database containing the values of the explanatory variables.</span>
+<span class="sd">        :param total_budget: total budget.</span>
+<span class="sd">        :param epsilons: draws from the error terms. Each entry of the list corresponds</span>
+<span class="sd">             to an observation in the database, and consists of a data frame of</span>
+<span class="sd">             size=(number_of_draws, self.number_of_alternatives).</span>
+<span class="sd">        :param tolerance_dual: convergence criterion for the estimate of the dual variable.</span>
+<span class="sd">        :param tolerance_budget: convergence criterion for the estimate of the total budget.</span>
+
+<span class="sd">        :return: None. Warning are triggered if discrepancies are observed</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">rows_of_database</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">mdcev_row_split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows_of_database</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="s1">&#39;Empty database&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">epsilons</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows_of_database</span><span class="p">):</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;User provided draws have </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">epsilons</span><span class="p">)</span><span class="si">}</span><span class="s1"> entries while there are &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows_of_database</span><span class="p">)</span><span class="si">}</span><span class="s1"> observations in the sample.&#39;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="n">number_of_draws</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">epsilons</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rows_of_database</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Forecasting observation </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1"> / </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows_of_database</span><span class="p">)</span><span class="si">}</span><span class="s1"> [</span><span class="si">{</span><span class="n">number_of_draws</span><span class="si">}</span><span class="s1"> draws]&#39;</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Forecasting</span>
+            <span class="k">for</span> <span class="n">epsilon</span> <span class="ow">in</span> <span class="n">epsilons</span><span class="p">[</span><span class="n">index</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">forecast_comparison_one_draw</span><span class="p">(</span>
+                    <span class="n">total_budget</span><span class="o">=</span><span class="n">total_budget</span><span class="p">,</span>
+                    <span class="n">one_row_of_database</span><span class="o">=</span><span class="n">row</span><span class="p">,</span>
+                    <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span>
+                    <span class="n">tolerance_budget</span><span class="o">=</span><span class="n">tolerance_budget</span><span class="p">,</span>
+                    <span class="n">tolerance_dual</span><span class="o">=</span><span class="n">tolerance_dual</span><span class="p">,</span>
+                <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

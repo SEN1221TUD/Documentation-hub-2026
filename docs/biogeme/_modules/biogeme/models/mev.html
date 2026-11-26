@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.models.mev &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.models.mev</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.models.mev</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Implements the Multivariate Extreme Value models.</span>
+
+<span class="sd">:author: Michel Bierlaire</span>
+<span class="sd">:date: Wed Oct 25 11:35:34 2023</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Expression</span><span class="p">,</span>
+    <span class="n">exp</span><span class="p">,</span>
+    <span class="n">ExpressionOrNumeric</span><span class="p">,</span>
+    <span class="n">_bioLogLogitFullChoiceSet</span><span class="p">,</span>
+    <span class="n">_bioLogLogit</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.deprecated</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="logmev">
+<a class="viewcode-back" href="../../../code/biogeme/models/mev.html#biogeme.models.mev.logmev">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">logmev</span><span class="p">(</span>
+    <span class="n">util</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">],</span>
+    <span class="n">log_gi</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">],</span>
+    <span class="n">av</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">],</span>
+    <span class="n">choice</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Log of the choice probability for a MEV model.</span>
+
+<span class="sd">    :param util: dict of objects representing the utility functions of</span>
+<span class="sd">              each alternative, indexed by numerical ids.</span>
+
+<span class="sd">    :param log_gi: a dictionary mapping each alternative id with the function</span>
+
+<span class="sd">        .. math:: \\ln \\frac{\\partial G}{\\partial y_i}</span>
+<span class="sd">            (e^{V_1},\\ldots,e^{V_J})</span>
+
+<span class="sd">        where :math:`G` is the MEV generating function. If an alternative</span>
+<span class="sd">        :math:`i` is not available, then :math:`G_i = 0`.</span>
+
+<span class="sd">    :param av: dict of objects representing the availability of each</span>
+<span class="sd">               alternative (:math:`a_i` in the above formula), indexed</span>
+<span class="sd">               by numerical ids. Must be consistent with util, or</span>
+<span class="sd">               None. In this case, all alternatives are supposed to be</span>
+<span class="sd">               always available.</span>
+
+<span class="sd">    :param choice: id of the alternative for which the probability must be</span>
+<span class="sd">              calculated.</span>
+
+<span class="sd">    :return: log of the choice probability of the MEV model, given by</span>
+
+<span class="sd">    .. math:: V_i + \\ln G_i(e^{V_1},\\ldots,e^{V_J}) -</span>
+<span class="sd">              \\ln\\left(\\sum_j e^{V_j + \\ln G_j(e^{V_1},</span>
+<span class="sd">              \\ldots,e^{V_J})}\\right)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">v</span> <span class="o">+</span> <span class="n">log_gi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">util</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">if</span> <span class="n">av</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">log_p</span> <span class="o">=</span> <span class="n">_bioLogLogitFullChoiceSet</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">log_p</span> <span class="o">=</span> <span class="n">_bioLogLogit</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">av</span><span class="p">,</span> <span class="n">choice</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">log_p</span></div>
+
+
+
+<div class="viewcode-block" id="mev">
+<a class="viewcode-back" href="../../../code/biogeme/models/mev.html#biogeme.models.mev.mev">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mev</span><span class="p">(</span>
+    <span class="n">util</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">],</span>
+    <span class="n">log_gi</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+    <span class="n">av</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">choice</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Choice probability for a MEV model.</span>
+
+<span class="sd">    :param util: dict of objects representing the utility functions of</span>
+<span class="sd">              each alternative, indexed by numerical ids.</span>
+
+<span class="sd">    :type util: dict(int:biogeme.expressions.expr.Expression)</span>
+
+
+<span class="sd">    :param log_gi: a dictionary mapping each alternative id with the function</span>
+
+<span class="sd">        .. math:: \\ln \\frac{\\partial G}{\\partial y_i}</span>
+<span class="sd">              (e^{V_1}, \\ldots, e^{V_J})</span>
+
+<span class="sd">        where :math:`G` is the MEV generating function. If an alternative</span>
+<span class="sd">        :math:`i` is not available, then :math:`G_i = 0`.</span>
+
+<span class="sd">    :type log_gi: dict(int:biogeme.expressions.expr.Expression)</span>
+
+<span class="sd">    :param av: dict of objects representing the availability of each</span>
+<span class="sd">               alternative (:math:`a_i` in the above formula), indexed</span>
+<span class="sd">               by numerical ids. Must be consistent with util, or</span>
+<span class="sd">               None. In this case, all alternatives are supposed to be</span>
+<span class="sd">               always available.</span>
+
+<span class="sd">    :type av: dict(int:biogeme.expressions.expr.Expression)</span>
+
+<span class="sd">    :param choice: id of the alternative for which the probability must be</span>
+<span class="sd">              calculated.</span>
+<span class="sd">    :type choice: biogeme.expressions.expr.Expression</span>
+
+<span class="sd">    :return: Choice probability of the   MEV model, given by</span>
+
+<span class="sd">    .. math:: \\frac{e^{V_i + \\ln G_i(e^{V_1},</span>
+<span class="sd">              \\ldots,e^{V_J})}}{\\sum_j e^{V_j +</span>
+<span class="sd">              \\ln G_j(e^{V_1},\\ldots,e^{V_J})}}</span>
+
+<span class="sd">    :rtype: biogeme.expressions.expr.Expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">exp</span><span class="p">(</span><span class="n">logmev</span><span class="p">(</span><span class="n">util</span><span class="p">,</span> <span class="n">log_gi</span><span class="p">,</span> <span class="n">av</span><span class="p">,</span> <span class="n">choice</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="logmev_endogenous_sampling">
+<a class="viewcode-back" href="../../../code/biogeme/models/mev.html#biogeme.models.mev.logmev_endogenous_sampling">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">logmev_endogenous_sampling</span><span class="p">(</span>
+    <span class="n">util</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">],</span>
+    <span class="n">log_gi</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+    <span class="n">av</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">correction</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">],</span>
+    <span class="n">choice</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Log of choice probability for a MEV model, including the</span>
+<span class="sd">    correction for endogenous sampling as proposed by `Bierlaire, Bolduc</span>
+<span class="sd">    and McFadden (2008)`_.</span>
+
+<span class="sd">    .. _`Bierlaire, Bolduc and McFadden (2008)`:</span>
+<span class="sd">       http://dx.doi.org/10.1016/j.trb.2007.09.003</span>
+
+<span class="sd">    :param util: dict of objects representing the utility functions of</span>
+<span class="sd">              each alternative, indexed by numerical ids.</span>
+
+<span class="sd">    :type util: dict(int:biogeme.expressions.expr.Expression)</span>
+
+<span class="sd">    :param log_gi: a dictionary mapping each alternative id with the function</span>
+
+<span class="sd">        .. math:: \\ln \\frac{\\partial G}{\\partial y_i}</span>
+<span class="sd">                  (e^{V_1}, \\ldots, e^{V_J})</span>
+
+<span class="sd">        where :math:`G` is the MEV generating function. If an alternative</span>
+<span class="sd">        :math:`i` is not available, then :math:`G_i = 0`.</span>
+
+<span class="sd">    :type log_gi: dict(int:biogeme.expressions.expr.Expression)</span>
+
+<span class="sd">    :param av: dict of objects representing the availability of each</span>
+<span class="sd">               alternative (:math:`a_i` in the above formula), indexed</span>
+<span class="sd">               by numerical ids. Must be consistent with util, or</span>
+<span class="sd">               None. In this case, all alternatives are supposed to be</span>
+<span class="sd">               always available.</span>
+
+<span class="sd">    :type av: dict(int:biogeme.expressions.expr.Expression)</span>
+
+
+<span class="sd">    :param correction: a dict of expressions for the correstion terms</span>
+<span class="sd">                       of each alternative.</span>
+<span class="sd">    :type correction: dict(int:biogeme.expressions.expr.Expression)</span>
+
+<span class="sd">    :param choice: id of the alternative for which the probability must be</span>
+<span class="sd">              calculated.</span>
+<span class="sd">    :type choice: biogeme.expressions.expr.Expression</span>
+
+<span class="sd">    :return: log of the choice probability of the MEV model, given by</span>
+
+<span class="sd">    .. math:: V_i + \\ln G_i(e^{V_1}, \\ldots,e^{V_J}) + \\omega_i -</span>
+<span class="sd">              \\ln\\left(\\sum_j e^{V_j +</span>
+<span class="sd">              \\ln G_j(e^{V_1}, \\ldots, e^{V_J})+ \\omega_j}\\right)</span>
+
+<span class="sd">    where :math:`\\omega_i` is the correction term for alternative :math:`i`.</span>
+
+<span class="sd">    :rtype: biogeme.expressions.expr.Expression</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">v</span> <span class="o">+</span> <span class="n">log_gi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">correction</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">util</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">log_p</span> <span class="o">=</span> <span class="n">_bioLogLogit</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">av</span><span class="p">,</span> <span class="n">choice</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">log_p</span></div>
+
+
+
+<div class="viewcode-block" id="logmev_endogenousSampling">
+<a class="viewcode-back" href="../../../code/biogeme/models/mev.html#biogeme.models.mev.logmev_endogenousSampling">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">new_func</span><span class="o">=</span><span class="n">logmev_endogenous_sampling</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">logmev_endogenousSampling</span><span class="p">(</span>
+    <span class="n">util</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">],</span>
+    <span class="n">log_gi</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+    <span class="n">av</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">correction</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">],</span>
+    <span class="n">choice</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="mev_endogenous_sampling">
+<a class="viewcode-back" href="../../../code/biogeme/models/mev.html#biogeme.models.mev.mev_endogenous_sampling">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mev_endogenous_sampling</span><span class="p">(</span>
+    <span class="n">util</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">],</span>
+    <span class="n">log_gi</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+    <span class="n">av</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">correction</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">],</span>
+    <span class="n">choice</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Choice probability for a MEV model, including the correction</span>
+<span class="sd">    for endogenous sampling as proposed by</span>
+<span class="sd">    `Bierlaire, Bolduc and McFadden (2008)`_.</span>
+
+<span class="sd">    .. _`Bierlaire, Bolduc and McFadden (2008)`:</span>
+<span class="sd">           http://dx.doi.org/10.1016/j.trb.2007.09.003</span>
+
+<span class="sd">    :param util: dict of objects representing the utility functions of</span>
+<span class="sd">              each alternative, indexed by numerical ids.</span>
+
+<span class="sd">    :type util: dict(int:biogeme.expressions.expr.Expression)</span>
+
+<span class="sd">    :param log_gi: a dictionary mapping each alternative id with the function</span>
+
+<span class="sd">        .. math:: \\ln \\frac{\\partial G}{\\partial y_i}</span>
+<span class="sd">              (e^{V_1}, \\ldots, e^{V_J})</span>
+
+<span class="sd">        where :math:`G` is the MEV generating function. If an alternative</span>
+<span class="sd">        :math:`i` is not available, then :math:`G_i = 0`.</span>
+
+<span class="sd">    :type log_gi: dict(int:biogeme.expressions.expr.Expression)</span>
+
+<span class="sd">    :param av: dict of objects representing the availability of each</span>
+<span class="sd">               alternative (:math:`a_i` in the above formula), indexed</span>
+<span class="sd">               by numerical ids. Must be consistent with util, or</span>
+<span class="sd">               None. In this case, all alternatives are supposed to be</span>
+<span class="sd">               always available.</span>
+
+<span class="sd">    :type av: dict(int:biogeme.expressions.expr.Expression)</span>
+
+
+<span class="sd">    :param correction: a dict of expressions for the correstion terms</span>
+<span class="sd">                       of each alternative.</span>
+<span class="sd">    :type correction: dict(int:biogeme.expressions.expr.Expression)</span>
+
+<span class="sd">    :param choice: id of the alternative for which the probability must be</span>
+<span class="sd">              calculated.</span>
+<span class="sd">    :type choice: biogeme.expressions.expr.Expression</span>
+
+<span class="sd">    :return: log of the choice probability of the MEV model, given by</span>
+
+<span class="sd">    .. math:: V_i + \\ln G_i(e^{V_1}, \\ldots, e^{V_J}) + \\omega_i -</span>
+<span class="sd">              \\ln\\left(\\sum_j e^{V_j + \\ln G_j(e^{V_1},\\ldots,e^{V_J})+</span>
+<span class="sd">              \\omega_j}\\right)</span>
+
+<span class="sd">    where :math:`\\omega_i` is the correction term for alternative :math:`i`.</span>
+
+<span class="sd">    :rtype: biogeme.expressions.expr.Expression</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">exp</span><span class="p">(</span><span class="n">logmev_endogenous_sampling</span><span class="p">(</span><span class="n">util</span><span class="p">,</span> <span class="n">log_gi</span><span class="p">,</span> <span class="n">av</span><span class="p">,</span> <span class="n">correction</span><span class="p">,</span> <span class="n">choice</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="mev_endogenousSampling">
+<a class="viewcode-back" href="../../../code/biogeme/models/mev.html#biogeme.models.mev.mev_endogenousSampling">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">new_func</span><span class="o">=</span><span class="n">mev_endogenous_sampling</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mev_endogenousSampling</span><span class="p">(</span>
+    <span class="n">util</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">],</span>
+    <span class="n">log_gi</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">],</span>
+    <span class="n">av</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">correction</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ExpressionOrNumeric</span><span class="p">],</span>
+    <span class="n">choice</span><span class="p">:</span> <span class="n">ExpressionOrNumeric</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">pass</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

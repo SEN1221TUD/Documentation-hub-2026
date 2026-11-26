@@ -1,0 +1,591 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.expressions.multiple_expressions module &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=0b773b56"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">biogeme.expressions.multiple_expressions module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/multiple_expressions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-biogeme.expressions.multiple_expressions">
+<span id="biogeme-expressions-multiple-expressions-module"></span><h1>biogeme.expressions.multiple_expressions module<a class="headerlink" href="#module-biogeme.expressions.multiple_expressions" title="Link to this heading"></a></h1>
+<p>Defines the interface for a catalog of expressions that may be
+considered in a specification</p>
+<dl class="field-list simple">
+<dt class="field-odd">author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Michel Bierlaire</p>
+</dd>
+<dt class="field-even">date<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sun Feb  5 15:34:56 2023</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.CatalogItem">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.multiple_expressions.</span></span><span class="sig-name descname"><span class="pre">CatalogItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catalog_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#CatalogItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.CatalogItem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>catalog_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>item_index</strong> (<em>int</em>)</p></li>
+<li><p><strong>item_name</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.CatalogItem.catalog_name">
+<span class="sig-name descname"><span class="pre">catalog_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#biogeme.expressions.multiple_expressions.CatalogItem.catalog_name" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.CatalogItem.item_index">
+<span class="sig-name descname"><span class="pre">item_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#biogeme.expressions.multiple_expressions.CatalogItem.item_index" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.CatalogItem.item_name">
+<span class="sig-name descname"><span class="pre">item_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#biogeme.expressions.multiple_expressions.CatalogItem.item_name" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.multiple_expressions.</span></span><span class="sig-name descname"><span class="pre">MultipleExpression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></p>
+<p>Interface for catalog of expressions that are interchangeable. Only one of
+them defines the specification. They are designed to be
+modified algorithmically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.catalog_size">
+<span class="sig-name descname"><span class="pre">catalog_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.catalog_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.catalog_size" title="Link to this definition"></a></dt>
+<dd><p>Provide the size of the catalog</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>number of expressions in the catalog</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>int</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.change_init_values">
+<span class="sig-name descname"><span class="pre">change_init_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">betas</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.change_init_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.change_init_values" title="Link to this definition"></a></dt>
+<dd><p>Modifies the initial values of the Beta parameters.</p>
+<p>The fact that the parameters are fixed or free is irrelevant here.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>betas</strong> (<em>dict</em><em>(</em><em>string:float</em><em>)</em>) – dictionary where the keys are the names of the
+parameters, and the values are the new value for
+the parameters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.check_draws">
+<span class="sig-name descname"><span class="pre">check_draws</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.check_draws"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.check_draws" title="Link to this definition"></a></dt>
+<dd><p>Set of draws defined outside of ‘MonteCarlo’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of names of variables</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>set</em>(<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.check_panel_trajectory">
+<span class="sig-name descname"><span class="pre">check_panel_trajectory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.check_panel_trajectory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.check_panel_trajectory" title="Link to this definition"></a></dt>
+<dd><p>Set of variables defined outside of ‘PanelLikelihoodTrajectory’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of names of variables</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>set</em>(<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.check_rv">
+<span class="sig-name descname"><span class="pre">check_rv</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.check_rv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.check_rv" title="Link to this definition"></a></dt>
+<dd><p>Set of random variables defined outside of ‘Integrate’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of names of variables</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>set</em>(<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.count_panel_trajectory_expressions">
+<span class="sig-name descname"><span class="pre">count_panel_trajectory_expressions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.count_panel_trajectory_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.count_panel_trajectory_expressions" title="Link to this definition"></a></dt>
+<dd><p>Count the number of times the PanelLikelihoodTrajectory
+is used in the formula. It should trigger an error if it
+is used more than once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>number of times the PanelLikelihoodTrajectory
+is used in the formula</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>int</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.dict_of_elementary_expression">
+<span class="sig-name descname"><span class="pre">dict_of_elementary_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.dict_of_elementary_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.dict_of_elementary_expression" title="Link to this definition"></a></dt>
+<dd><p>Extract a dict with all elementary expressions of a specific type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>the_type</strong> (<a class="reference internal" href="elementary_types.html#biogeme.expressions.elementary_types.TypeOfElementaryExpression" title="biogeme.expressions.elementary_types.TypeOfElementaryExpression"><em>TypeOfElementaryExpression</em></a>) – the type of expression</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>returns a dict with the variables appearing in the
+expression the keys being their names.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em>(string:biogeme.expressions.Expression)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.embed_expression">
+<span class="sig-name descname"><span class="pre">embed_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.embed_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.embed_expression" title="Link to this definition"></a></dt>
+<dd><p>Check if the expression contains an expression of type t.</p>
+<p>Typically, this would be used to check that a MonteCarlo
+expression contains a bioDraws expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the expression contains an expression of type t.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>bool</em></p>
+</dd>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.fix_betas">
+<span class="sig-name descname"><span class="pre">fix_betas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.fix_betas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.fix_betas" title="Link to this definition"></a></dt>
+<dd><p>Fix all the values of the Beta parameters appearing in the
+dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>beta_values</strong> (<em>dict</em><em>(</em><em>str: float</em><em>)</em>) – dictionary containing the betas to be
+fixed (as key) and their value.</p></li>
+<li><p><strong>prefix</strong> (<em>str</em>) – if not None, the parameter is renamed, with a
+prefix defined by this argument.</p></li>
+<li><p><strong>suffix</strong> (<em>str</em>) – if not None, the parameter is renamed, with a
+suffix defined by this argument.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.getValue">
+<span class="sig-name descname"><span class="pre">getValue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.getValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.getValue" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="#biogeme.expressions.multiple_expressions.MultipleExpression.get_value" title="biogeme.expressions.multiple_expressions.MultipleExpression.get_value"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.get_children">
+<span class="sig-name descname"><span class="pre">get_children</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.get_children"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.get_children" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the list of children</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of children</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list</em>(<a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.get_elementary_expression">
+<span class="sig-name descname"><span class="pre">get_elementary_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.get_elementary_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.get_elementary_expression" title="Link to this definition"></a></dt>
+<dd><p>Return: an elementary expression from its name if it appears in the
+expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>string</em>) – name of the elementary expression.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the expression if it exists. None otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>biogeme.expressions.Expression</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.get_id">
+<span class="sig-name descname"><span class="pre">get_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.get_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.get_id" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the id of the expression used in the signature</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>id of the object</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>int</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.get_iterator">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_iterator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.get_iterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.get_iterator" title="Link to this definition"></a></dt>
+<dd><p>Returns an iterator on NamedExpression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<a class="reference internal" href="#biogeme.expressions.multiple_expressions.NamedExpression" title="biogeme.expressions.multiple_expressions.NamedExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">NamedExpression</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.get_signature">
+<span class="sig-name descname"><span class="pre">get_signature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.get_signature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.get_signature" title="Link to this definition"></a></dt>
+<dd><p>The signature of a string characterizing an expression.</p>
+<p>This is designed to be communicated to C++, so that the
+expression can be reconstructed in this environment.</p>
+<p>The list contains the following elements:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>the signatures of all the children expressions,</p></li>
+<li><p>the name of the expression between &lt; &gt;</p></li>
+<li><p>the id of the expression between { }</p></li>
+<li><p>the number of children between ( )</p></li>
+<li><p>the ids of each child, preceded by a comma.</p></li>
+</ol>
+</div></blockquote>
+<p>Consider the following expression:</p>
+<div class="math notranslate nohighlight">
+\[2 \beta_1  V_1 -
+\frac{\exp(-\beta_2 V_2) }
+{ \beta_3  (\beta_2 \geq \beta_1)}.\]</div>
+<p>It is defined as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta1</span> <span class="o">*</span> <span class="n">Variable1</span> <span class="o">-</span> <span class="n">expressions</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta2</span><span class="o">*</span><span class="n">Variable2</span><span class="p">)</span> <span class="o">/</span>
+     <span class="p">(</span><span class="n">beta3</span> <span class="o">*</span> <span class="p">(</span><span class="n">beta2</span> <span class="o">&gt;=</span> <span class="n">beta1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>And its signature is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;&lt;Numeric&gt;</span><span class="si">{4780527008}</span><span class="s1">,2&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277152}</span><span class="s1">&quot;beta1&quot;[0],0,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780526952}</span><span class="s1">(2),4780527008,4780277152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Variable&gt;</span><span class="si">{4511837152}</span><span class="s1">&quot;Variable1&quot;,5,2&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527064}</span><span class="s1">(2),4780526952,4511837152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277656}</span><span class="s1">&quot;beta2&quot;[0],1,1&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;UnaryMinus&gt;</span><span class="si">{4780527120}</span><span class="s1">(1),4780277656&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Variable&gt;</span><span class="si">{4511837712}</span><span class="s1">&quot;Variable2&quot;,6,3&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527176}</span><span class="s1">(2),4780527120,4511837712&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;exp&gt;</span><span class="si">{4780527232}</span><span class="s1">(1),4780527176&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277264}</span><span class="s1">&quot;beta3&quot;[1],2,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277656}</span><span class="s1">&quot;beta2&quot;[0],1,1&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277152}</span><span class="s1">&quot;beta1&quot;[0],0,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;GreaterOrEqual&gt;</span><span class="si">{4780527288}</span><span class="s1">(2),4780277656,4780277152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527344}</span><span class="s1">(2),4780277264,4780527288&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Divide&gt;</span><span class="si">{4780527400}</span><span class="s1">(2),4780527232,4780527344&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Minus&gt;</span><span class="si">{4780527456}</span><span class="s1">(2),4780527064,4780527400&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of the signatures of an expression and its children.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list</em>(string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.get_status_id_manager">
+<span class="sig-name descname"><span class="pre">get_status_id_manager</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.get_status_id_manager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.get_status_id_manager" title="Link to this definition"></a></dt>
+<dd><p>Check the elementary expressions that are associated with
+an ID manager.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>two sets of elementary expressions, those with and
+without an ID manager.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>tuple</em>(<em>set</em>(<em>str</em>), <em>set</em>(<em>str</em>))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.get_value" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the value of the expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value of the expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.rename_elementary">
+<span class="sig-name descname"><span class="pre">rename_elementary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.rename_elementary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.rename_elementary" title="Link to this definition"></a></dt>
+<dd><p>Rename elementary expressions by adding a prefix and/or a suffix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>names</strong> (<em>list</em><em>(</em><em>str</em><em>)</em>) – names of expressions to rename</p></li>
+<li><p><strong>prefix</strong> (<em>str</em>) – if not None, the expression is renamed, with a
+prefix defined by this argument.</p></li>
+<li><p><strong>suffix</strong> (<em>str</em>) – if not None, the expression is renamed, with a
+suffix defined by this argument.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.selected">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">selected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.selected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.selected" title="Link to this definition"></a></dt>
+<dd><p>Return the selected expression and its name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the name and the selected expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>tuple</em>(<em>str</em>, biogeme.expressions.Expression)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.selected_expression">
+<span class="sig-name descname"><span class="pre">selected_expression</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.selected_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.selected_expression" title="Link to this definition"></a></dt>
+<dd><p>Obtain the selected expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the selected expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>biogeme.expressions.Expression</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.selected_name">
+<span class="sig-name descname"><span class="pre">selected_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.selected_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.selected_name" title="Link to this definition"></a></dt>
+<dd><p>Obtain the name of the selection</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the name of the selected expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.set_id_manager">
+<span class="sig-name descname"><span class="pre">set_id_manager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.set_id_manager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.set_id_manager" title="Link to this definition"></a></dt>
+<dd><p>The ID manager contains the IDs of the elementary expressions.</p>
+<p>It is externally created, as it may nee to coordinate the
+numbering of several expressions. It is stored only in the
+expressions of type Elementary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id_manager</strong> (<em>class IdManager</em>) – ID manager to be propagated to the
+elementary expressions. If None, all the IDs are set to None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.MultipleExpression.set_of_elementary_expression">
+<span class="sig-name descname"><span class="pre">set_of_elementary_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#MultipleExpression.set_of_elementary_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.MultipleExpression.set_of_elementary_expression" title="Link to this definition"></a></dt>
+<dd><p>Extract a dict with all elementary expressions of a specific type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>the_type</strong> (<a class="reference internal" href="elementary_types.html#biogeme.expressions.elementary_types.TypeOfElementaryExpression" title="biogeme.expressions.elementary_types.TypeOfElementaryExpression"><em>TypeOfElementaryExpression</em></a>) – the type of expression</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>returns a set with the names of the elementary expressions</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>set</em>(string.Expression)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.NamedExpression">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.multiple_expressions.</span></span><span class="sig-name descname"><span class="pre">NamedExpression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expression</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/multiple_expressions.html#NamedExpression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.multiple_expressions.NamedExpression" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>expression</strong> (<a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.NamedExpression.expression">
+<span class="sig-name descname"><span class="pre">expression</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></em><a class="headerlink" href="#biogeme.expressions.multiple_expressions.NamedExpression.expression" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.multiple_expressions.NamedExpression.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#biogeme.expressions.multiple_expressions.NamedExpression.name" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

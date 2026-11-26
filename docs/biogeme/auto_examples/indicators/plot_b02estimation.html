@@ -1,0 +1,322 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estimation and simulation of a nested logit model &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Estimation and simulation of a nested logit model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/auto_examples/indicators/plot_b02estimation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-indicators-plot-b02estimation-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="estimation-and-simulation-of-a-nested-logit-model">
+<span id="sphx-glr-auto-examples-indicators-plot-b02estimation-py"></span><h1>Estimation and simulation of a nested logit model<a class="headerlink" href="#estimation-and-simulation-of-a-nested-logit-model" title="Link to this heading"></a></h1>
+<blockquote>
+<div><p>We estimate a nested logit model and we perform simulation using the
+estimated model.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Michel Bierlaire, EPFL</p>
+</dd>
+<dt class="field-even">date<span class="colon">:</span></dt>
+<dd class="field-even"><p>Wed Apr 12 21:05:16 2023</p>
+</dd>
+</dl>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">IPython.core.display_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">biogeme.biogeme</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">bio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.data.optima</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scenarios</span><span class="w"> </span><span class="kn">import</span> <span class="n">scenario</span>
+</pre></div>
+</div>
+<p>Obtain the specification for the default scenario.
+The definition of the scenarios is available in <span class="xref std std-ref">scenarios</span>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">V</span><span class="p">,</span> <span class="n">nests</span><span class="p">,</span> <span class="n">Choice</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scenario</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The choice model is a nested logit, with availability conditions
+For estimation, we need the log of the probability.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">logprob</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">lognested</span><span class="p">(</span><span class="n">util</span><span class="o">=</span><span class="n">V</span><span class="p">,</span> <span class="n">availability</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nests</span><span class="o">=</span><span class="n">nests</span><span class="p">,</span> <span class="n">choice</span><span class="o">=</span><span class="n">Choice</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Get the database</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">database</span> <span class="o">=</span> <span class="n">read_data</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Create the Biogeme object for estimation.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">the_biogeme</span> <span class="o">=</span> <span class="n">bio</span><span class="o">.</span><span class="n">BIOGEME</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">logprob</span><span class="p">)</span>
+<span class="n">the_biogeme</span><span class="o">.</span><span class="n">modelName</span> <span class="o">=</span> <span class="s1">&#39;b02estimation&#39;</span>
+</pre></div>
+</div>
+<p>Estimate the parameters. Perform bootstrapping.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">the_biogeme</span><span class="o">.</span><span class="n">bootstrap_samples</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">the_biogeme</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">run_bootstrap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/100 [00:00&lt;?, ?it/s]
+  1%|          | 1/100 [00:00&lt;00:26,  3.71it/s]
+  2%|▏         | 2/100 [00:00&lt;00:22,  4.28it/s]
+  3%|▎         | 3/100 [00:00&lt;00:21,  4.54it/s]
+  4%|▍         | 4/100 [00:00&lt;00:21,  4.53it/s]
+  5%|▌         | 5/100 [00:01&lt;00:22,  4.17it/s]
+  6%|▌         | 6/100 [00:01&lt;00:23,  3.94it/s]
+  7%|▋         | 7/100 [00:01&lt;00:24,  3.77it/s]
+  8%|▊         | 8/100 [00:02&lt;00:24,  3.74it/s]
+  9%|▉         | 9/100 [00:02&lt;00:28,  3.22it/s]
+ 10%|█         | 10/100 [00:02&lt;00:25,  3.58it/s]
+ 11%|█         | 11/100 [00:02&lt;00:24,  3.63it/s]
+ 12%|█▏        | 12/100 [00:03&lt;00:24,  3.58it/s]
+ 13%|█▎        | 13/100 [00:03&lt;00:22,  3.87it/s]
+ 14%|█▍        | 14/100 [00:03&lt;00:21,  4.08it/s]
+ 15%|█▌        | 15/100 [00:03&lt;00:21,  3.96it/s]
+ 16%|█▌        | 16/100 [00:04&lt;00:23,  3.62it/s]
+ 17%|█▋        | 17/100 [00:04&lt;00:21,  3.87it/s]
+ 18%|█▊        | 18/100 [00:04&lt;00:21,  3.73it/s]
+ 19%|█▉        | 19/100 [00:04&lt;00:20,  3.98it/s]
+ 20%|██        | 20/100 [00:05&lt;00:20,  3.85it/s]
+ 21%|██        | 21/100 [00:05&lt;00:20,  3.83it/s]
+ 22%|██▏       | 22/100 [00:05&lt;00:19,  4.08it/s]
+ 23%|██▎       | 23/100 [00:05&lt;00:19,  3.91it/s]
+ 24%|██▍       | 24/100 [00:06&lt;00:19,  3.85it/s]
+ 25%|██▌       | 25/100 [00:06&lt;00:19,  3.76it/s]
+ 26%|██▌       | 26/100 [00:06&lt;00:18,  4.03it/s]
+ 27%|██▋       | 27/100 [00:07&lt;00:19,  3.67it/s]
+ 28%|██▊       | 28/100 [00:07&lt;00:19,  3.64it/s]
+ 29%|██▉       | 29/100 [00:07&lt;00:18,  3.91it/s]
+ 30%|███       | 30/100 [00:07&lt;00:20,  3.34it/s]
+ 31%|███       | 31/100 [00:08&lt;00:18,  3.68it/s]
+ 32%|███▏      | 32/100 [00:08&lt;00:19,  3.48it/s]
+ 33%|███▎      | 33/100 [00:08&lt;00:17,  3.77it/s]
+ 34%|███▍      | 34/100 [00:08&lt;00:16,  4.02it/s]
+ 35%|███▌      | 35/100 [00:09&lt;00:17,  3.62it/s]
+ 36%|███▌      | 36/100 [00:09&lt;00:16,  3.89it/s]
+ 37%|███▋      | 37/100 [00:09&lt;00:16,  3.83it/s]
+ 38%|███▊      | 38/100 [00:10&lt;00:16,  3.73it/s]
+ 39%|███▉      | 39/100 [00:10&lt;00:16,  3.70it/s]
+ 40%|████      | 40/100 [00:10&lt;00:15,  3.98it/s]
+ 41%|████      | 41/100 [00:10&lt;00:14,  4.19it/s]
+ 42%|████▏     | 42/100 [00:10&lt;00:13,  4.34it/s]
+ 43%|████▎     | 43/100 [00:11&lt;00:12,  4.46it/s]
+ 44%|████▍     | 44/100 [00:11&lt;00:13,  4.23it/s]
+ 45%|████▌     | 45/100 [00:11&lt;00:12,  4.38it/s]
+ 46%|████▌     | 46/100 [00:11&lt;00:13,  4.14it/s]
+ 47%|████▋     | 47/100 [00:12&lt;00:12,  4.32it/s]
+ 48%|████▊     | 48/100 [00:12&lt;00:11,  4.44it/s]
+ 49%|████▉     | 49/100 [00:12&lt;00:12,  4.11it/s]
+ 50%|█████     | 50/100 [00:12&lt;00:12,  3.93it/s]
+ 51%|█████     | 51/100 [00:13&lt;00:11,  4.17it/s]
+ 52%|█████▏    | 52/100 [00:13&lt;00:11,  4.01it/s]
+ 53%|█████▎    | 53/100 [00:13&lt;00:11,  4.13it/s]
+ 54%|█████▍    | 54/100 [00:13&lt;00:10,  4.32it/s]
+ 55%|█████▌    | 55/100 [00:14&lt;00:10,  4.12it/s]
+ 56%|█████▌    | 56/100 [00:14&lt;00:10,  4.29it/s]
+ 57%|█████▋    | 57/100 [00:14&lt;00:10,  4.08it/s]
+ 58%|█████▊    | 58/100 [00:14&lt;00:10,  4.17it/s]
+ 59%|█████▉    | 59/100 [00:15&lt;00:11,  3.64it/s]
+ 60%|██████    | 60/100 [00:15&lt;00:11,  3.39it/s]
+ 61%|██████    | 61/100 [00:15&lt;00:11,  3.40it/s]
+ 62%|██████▏   | 62/100 [00:16&lt;00:11,  3.42it/s]
+ 63%|██████▎   | 63/100 [00:16&lt;00:09,  3.73it/s]
+ 64%|██████▍   | 64/100 [00:16&lt;00:09,  3.72it/s]
+ 65%|██████▌   | 65/100 [00:16&lt;00:09,  3.63it/s]
+ 66%|██████▌   | 66/100 [00:17&lt;00:09,  3.65it/s]
+ 67%|██████▋   | 67/100 [00:17&lt;00:08,  3.68it/s]
+ 68%|██████▊   | 68/100 [00:17&lt;00:08,  3.67it/s]
+ 69%|██████▉   | 69/100 [00:17&lt;00:09,  3.38it/s]
+ 70%|███████   | 70/100 [00:18&lt;00:08,  3.40it/s]
+ 71%|███████   | 71/100 [00:18&lt;00:08,  3.27it/s]
+ 72%|███████▏  | 72/100 [00:18&lt;00:07,  3.60it/s]
+ 73%|███████▎  | 73/100 [00:19&lt;00:06,  3.86it/s]
+ 74%|███████▍  | 74/100 [00:19&lt;00:06,  3.76it/s]
+ 75%|███████▌  | 75/100 [00:19&lt;00:06,  3.93it/s]
+ 76%|███████▌  | 76/100 [00:19&lt;00:06,  3.88it/s]
+ 77%|███████▋  | 77/100 [00:19&lt;00:05,  4.09it/s]
+ 78%|███████▊  | 78/100 [00:20&lt;00:06,  3.63it/s]
+ 79%|███████▉  | 79/100 [00:20&lt;00:05,  3.58it/s]
+ 80%|████████  | 80/100 [00:20&lt;00:05,  3.38it/s]
+ 81%|████████  | 81/100 [00:21&lt;00:05,  3.63it/s]
+ 82%|████████▏ | 82/100 [00:21&lt;00:04,  3.89it/s]
+ 83%|████████▎ | 83/100 [00:21&lt;00:04,  3.77it/s]
+ 84%|████████▍ | 84/100 [00:21&lt;00:04,  3.80it/s]
+ 85%|████████▌ | 85/100 [00:22&lt;00:04,  3.55it/s]
+ 86%|████████▌ | 86/100 [00:22&lt;00:03,  3.59it/s]
+ 87%|████████▋ | 87/100 [00:22&lt;00:03,  3.63it/s]
+ 88%|████████▊ | 88/100 [00:23&lt;00:03,  3.91it/s]
+ 89%|████████▉ | 89/100 [00:23&lt;00:02,  3.86it/s]
+ 90%|█████████ | 90/100 [00:23&lt;00:02,  3.77it/s]
+ 91%|█████████ | 91/100 [00:23&lt;00:02,  3.76it/s]
+ 92%|█████████▏| 92/100 [00:24&lt;00:01,  4.05it/s]
+ 93%|█████████▎| 93/100 [00:24&lt;00:01,  4.24it/s]
+ 94%|█████████▍| 94/100 [00:24&lt;00:01,  3.98it/s]
+ 95%|█████████▌| 95/100 [00:24&lt;00:01,  3.59it/s]
+ 96%|█████████▌| 96/100 [00:25&lt;00:01,  3.17it/s]
+ 97%|█████████▋| 97/100 [00:25&lt;00:00,  3.14it/s]
+ 98%|█████████▊| 98/100 [00:25&lt;00:00,  3.30it/s]
+ 99%|█████████▉| 99/100 [00:26&lt;00:00,  3.64it/s]
+100%|██████████| 100/100 [00:26&lt;00:00,  3.90it/s]
+100%|██████████| 100/100 [00:26&lt;00:00,  3.80it/s]
+</pre></div>
+</div>
+<p>Get the results in a pandas table</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">pandas_results</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get_estimated_parameters</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">pandas_results</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>                         Value  Rob. Std err  Rob. t-test  Rob. p-value
+ASC_CAR               0.261240      0.100102     2.609738  9.061146e-03
+ASC_SM                0.059006      0.216075     0.273080  7.847916e-01
+BETA_COST            -0.715995      0.138327    -5.176108  2.265620e-07
+BETA_DIST_FEMALE     -0.830058      0.192382    -4.314630  1.598703e-05
+BETA_DIST_MALE       -0.685058      0.160244    -4.275095  1.910554e-05
+BETA_DIST_UNREPORTED -0.700983      0.194955    -3.595607  3.236361e-04
+BETA_TIME_FULLTIME   -1.596798      0.332759    -4.798655  1.597348e-06
+BETA_TIME_OTHER      -0.577376      0.296434    -1.947736  5.144651e-02
+mu_nocar              1.530875      0.305467     5.011582  5.398435e-07
+</pre></div>
+</div>
+<p>Simulation</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">simulated_choices</span> <span class="o">=</span> <span class="n">logprob</span><span class="o">.</span><span class="n">get_value_c</span><span class="p">(</span>
+    <span class="n">betas</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">get_beta_values</span><span class="p">(),</span> <span class="n">database</span><span class="o">=</span><span class="n">database</span>
+<span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">simulated_choices</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[-0.65046906 -1.43358985 -0.13265157 ... -0.37245862 -0.29544923
+ -0.26736343]
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">loglikelihood</span> <span class="o">=</span> <span class="n">logprob</span><span class="o">.</span><span class="n">get_value_c</span><span class="p">(</span>
+    <span class="n">betas</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">get_beta_values</span><span class="p">(),</span>
+    <span class="n">database</span><span class="o">=</span><span class="n">database</span><span class="p">,</span>
+    <span class="n">aggregation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Final log likelihood:     </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">logLike</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Simulated log likelihood: </span><span class="si">{</span><span class="n">loglikelihood</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Final log likelihood:     -1298.4984012070581
+Simulated log likelihood: -1298.498401207056
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 27.444 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-indicators-plot-b02estimation-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/c71e0b623cd1afd04544540a41189c5e/plot_b02estimation.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_b02estimation.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/8379361c38a8759096cd409e548e2c7e/plot_b02estimation.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_b02estimation.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/f50f163b3bb46d1a26852c041b7cb866/plot_b02estimation.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_b02estimation.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

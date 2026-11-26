@@ -1,0 +1,491 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Segmentations and alternative specific specification &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Combine many specifications: exception is raised" href="plot_b06everything.html" />
+    <link rel="prev" title="Catalog for segmented parameters" href="plot_b04segmentation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#calculating-indicators">Calculating indicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#timing-function-evaluation">Timing function evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#monte-carlo-integration">Monte-Carlo integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#choice-models-with-latent-variables">Choice models with latent variables</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../examples.html#assisted-specification-algorithm">Assisted specification algorithm</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Assisted specification with Biogeme</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="everything_spec.html">Combination of many specifications</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b00logit.html">Base model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b01model.html">Investigation of several choice models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b02nonlinear.html">Catalog of nonlinear specifications</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b03alt_spec.html">Catalog for alternative specific coefficients</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b04segmentation.html">Catalog for segmented parameters</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Segmentations and alternative specific specification</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b06everything.html">Combine many specifications: exception is raised</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b07everything_assisted.html">Combine many specifications: assisted specification algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b08selected_specification.html">One model among many</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b09post_processing.html">Re-estimation of best models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_simple_example.html">Example of a catalog</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#estimation-with-samples-of-alternatives">Estimation with samples of alternatives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#multiple-discrete-continuous-extreme-value-models">Multiple Discrete Continuous Extreme Value models</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../examples.html">Examples</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Assisted specification with Biogeme</a></li>
+      <li class="breadcrumb-item active">Segmentations and alternative specific specification</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/auto_examples/assisted/plot_b05alt_spec_segmentation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-assisted-plot-b05alt-spec-segmentation-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="segmentations-and-alternative-specific-specification">
+<span id="sphx-glr-auto-examples-assisted-plot-b05alt-spec-segmentation-py"></span><h1>Segmentations and alternative specific specification<a class="headerlink" href="#segmentations-and-alternative-specific-specification" title="Link to this heading"></a></h1>
+<p>We consider 4 specifications for the constants:</p>
+<ul class="simple">
+<li><p>Not segmented</p></li>
+<li><p>Segmented by GA (yearly subscription to public transport)</p></li>
+<li><p>Segmented by luggage</p></li>
+<li><p>Segmented both by GA and luggage</p></li>
+</ul>
+<p>We consider 6 specifications for the time coefficients:</p>
+<ul class="simple">
+<li><p>Generic and not segmented</p></li>
+<li><p>Generic and segmented with first class</p></li>
+<li><p>Generic and segmented with trip purpose</p></li>
+<li><p>Alternative specific and not segmented</p></li>
+<li><p>Alternative specific and segmented with first class</p></li>
+<li><p>Alternative specific and segmented with trip purpose</p></li>
+</ul>
+<p>We consider 2 specifications for the cost coefficients:</p>
+<ul class="simple">
+<li><p>Generic</p></li>
+<li><p>Alternative specific</p></li>
+</ul>
+<p>We obtain a total of 48 specifications.
+See <a class="reference external" href="https://transp-or.epfl.ch/documents/technicalReports/BierOrte23.pdf">Bierlaire and Ortelli (2023)</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Michel Bierlaire, EPFL</p>
+</dd>
+<dt class="field-even">date<span class="colon">:</span></dt>
+<dd class="field-even"><p>Thu Jul 13 16:18:10 2023</p>
+</dd>
+</dl>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.core.display_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biogeme.biogeme</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">bio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Beta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">segmentation_catalogs</span><span class="p">,</span> <span class="n">generic_alt_specific_catalogs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_estimation_results</span><span class="p">,</span> <span class="n">pareto_optimal</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.data.swissmetro</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">read_data</span><span class="p">,</span>
+    <span class="n">CHOICE</span><span class="p">,</span>
+    <span class="n">SM_AV</span><span class="p">,</span>
+    <span class="n">CAR_AV_SP</span><span class="p">,</span>
+    <span class="n">TRAIN_AV_SP</span><span class="p">,</span>
+    <span class="n">TRAIN_TT_SCALED</span><span class="p">,</span>
+    <span class="n">TRAIN_COST_SCALED</span><span class="p">,</span>
+    <span class="n">SM_TT_SCALED</span><span class="p">,</span>
+    <span class="n">SM_COST_SCALED</span><span class="p">,</span>
+    <span class="n">CAR_TT_SCALED</span><span class="p">,</span>
+    <span class="n">CAR_CO_SCALED</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Read the data</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">database</span> <span class="o">=</span> <span class="n">read_data</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Definition of the segmentations.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">segmentation_ga</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">generate_segmentation</span><span class="p">(</span>
+    <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;GA&#39;</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;noGA&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;GA&#39;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">segmentation_luggage</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">generate_segmentation</span><span class="p">(</span>
+    <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;LUGGAGE&#39;</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;no_lugg&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;one_lugg&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;several_lugg&#39;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">segmentation_first</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">generate_segmentation</span><span class="p">(</span>
+    <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;FIRST&#39;</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;2nd_class&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;1st_class&#39;</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>We consider two trip purposes: ‘commuters’ and anything else. We
+need to define a binary variable first.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">database</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;COMMUTERS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">database</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;PURPOSE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="n">segmentation_purpose</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">generate_segmentation</span><span class="p">(</span>
+    <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;COMMUTERS&#39;</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;non_commuters&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;commuters&#39;</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Parameters to be estimated.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">ASC_CAR</span> <span class="o">=</span> <span class="n">Beta</span><span class="p">(</span><span class="s1">&#39;ASC_CAR&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">ASC_TRAIN</span> <span class="o">=</span> <span class="n">Beta</span><span class="p">(</span><span class="s1">&#39;ASC_TRAIN&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">B_TIME</span> <span class="o">=</span> <span class="n">Beta</span><span class="p">(</span><span class="s1">&#39;B_TIME&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">B_COST</span> <span class="o">=</span> <span class="n">Beta</span><span class="p">(</span><span class="s1">&#39;B_COST&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Catalogs for the alternative specific constants.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">ASC_TRAIN_catalog</span><span class="p">,</span> <span class="n">ASC_CAR_catalog</span> <span class="o">=</span> <span class="n">segmentation_catalogs</span><span class="p">(</span>
+    <span class="n">generic_name</span><span class="o">=</span><span class="s1">&#39;ASC&#39;</span><span class="p">,</span>
+    <span class="n">beta_parameters</span><span class="o">=</span><span class="p">[</span><span class="n">ASC_TRAIN</span><span class="p">,</span> <span class="n">ASC_CAR</span><span class="p">],</span>
+    <span class="n">potential_segmentations</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">segmentation_ga</span><span class="p">,</span>
+        <span class="n">segmentation_luggage</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">maximum_number</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Catalog for the travel time coefficient.
+Note that the function returns a list of catalogs. Here, the list
+contains only one of them.  This is why there is a comma after
+“B_TIME_catalog”.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">B_TIME_catalog_dict</span><span class="p">,)</span> <span class="o">=</span> <span class="n">generic_alt_specific_catalogs</span><span class="p">(</span>
+    <span class="n">generic_name</span><span class="o">=</span><span class="s1">&#39;B_TIME&#39;</span><span class="p">,</span>
+    <span class="n">beta_parameters</span><span class="o">=</span><span class="p">[</span><span class="n">B_TIME</span><span class="p">],</span>
+    <span class="n">alternatives</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;TRAIN&#39;</span><span class="p">,</span> <span class="s1">&#39;SM&#39;</span><span class="p">,</span> <span class="s1">&#39;CAR&#39;</span><span class="p">),</span>
+    <span class="n">potential_segmentations</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">segmentation_first</span><span class="p">,</span>
+        <span class="n">segmentation_purpose</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">maximum_number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Catalog for the travel cost coefficient.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">B_COST_catalog_dict</span><span class="p">,)</span> <span class="o">=</span> <span class="n">generic_alt_specific_catalogs</span><span class="p">(</span>
+    <span class="n">generic_name</span><span class="o">=</span><span class="s1">&#39;B_COST&#39;</span><span class="p">,</span> <span class="n">beta_parameters</span><span class="o">=</span><span class="p">[</span><span class="n">B_COST</span><span class="p">],</span> <span class="n">alternatives</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;TRAIN&#39;</span><span class="p">,</span> <span class="s1">&#39;SM&#39;</span><span class="p">,</span> <span class="s1">&#39;CAR&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Definition of the utility functions.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">V1</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">ASC_TRAIN_catalog</span>
+    <span class="o">+</span> <span class="n">B_TIME_catalog_dict</span><span class="p">[</span><span class="s1">&#39;TRAIN&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">TRAIN_TT_SCALED</span>
+    <span class="o">+</span> <span class="n">B_COST_catalog_dict</span><span class="p">[</span><span class="s1">&#39;TRAIN&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">TRAIN_COST_SCALED</span>
+<span class="p">)</span>
+<span class="n">V2</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">B_TIME_catalog_dict</span><span class="p">[</span><span class="s1">&#39;SM&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">SM_TT_SCALED</span>
+    <span class="o">+</span> <span class="n">B_COST_catalog_dict</span><span class="p">[</span><span class="s1">&#39;SM&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">SM_COST_SCALED</span>
+<span class="p">)</span>
+<span class="n">V3</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">ASC_CAR_catalog</span>
+    <span class="o">+</span> <span class="n">B_TIME_catalog_dict</span><span class="p">[</span><span class="s1">&#39;CAR&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">CAR_TT_SCALED</span>
+    <span class="o">+</span> <span class="n">B_COST_catalog_dict</span><span class="p">[</span><span class="s1">&#39;CAR&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">CAR_CO_SCALED</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Associate utility functions with the numbering of alternatives.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="n">V1</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="n">V2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="n">V3</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Associate the availability conditions with the alternatives.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">av</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="n">TRAIN_AV_SP</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="n">SM_AV</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="n">CAR_AV_SP</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Definition of the model. This is the contribution of each
+observation to the log likelihood function.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">logprob</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">loglogit</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">av</span><span class="p">,</span> <span class="n">CHOICE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Create the Biogeme object.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">the_biogeme</span> <span class="o">=</span> <span class="n">bio</span><span class="o">.</span><span class="n">BIOGEME</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">logprob</span><span class="p">)</span>
+<span class="n">the_biogeme</span><span class="o">.</span><span class="n">modelName</span> <span class="o">=</span> <span class="s1">&#39;b05alt_spec_segmentation&#39;</span>
+<span class="n">the_biogeme</span><span class="o">.</span><span class="n">generate_html</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">the_biogeme</span><span class="o">.</span><span class="n">generate_pickle</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>Estimate the parameters.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">dict_of_results</span> <span class="o">=</span> <span class="n">the_biogeme</span><span class="o">.</span><span class="n">estimate_catalog</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Number of estimated models.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;A total of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dict_of_results</span><span class="p">)</span><span class="si">}</span><span class="s1"> models have been estimated&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>A total of 48 models have been estimated
+</pre></div>
+</div>
+<p>All estimation results</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">compiled_results</span><span class="p">,</span> <span class="n">specs</span> <span class="o">=</span> <span class="n">compile_estimation_results</span><span class="p">(</span>
+    <span class="n">dict_of_results</span><span class="p">,</span> <span class="n">use_short_names</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">compiled_results</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>                                     Model_000000  ...      Model_000047
+Number of estimated parameters                 12  ...                 7
+Sample size                                 10719  ...             10719
+Final log likelihood                 -8365.232835  ...      -8257.106047
+Akaike Information Criterion         16754.465669  ...      16528.212095
+Bayesian Information Criterion       16841.822947  ...      16579.170507
+ASC_CAR (t-test)                  -0.549  (-7.08)  ...  0.00577  (0.145)
+ASC_CAR_one_lugg (t-test)        -0.0993  (-1.98)  ...
+ASC_CAR_several_lugg (t-test)      -0.51  (-2.44)  ...
+ASC_TRAIN (t-test)                -0.672  (-6.54)  ...    -1.17  (-18.4)
+ASC_TRAIN_one_lugg (t-test)         0.772  (9.72)  ...
+ASC_TRAIN_several_lugg (t-test)     0.669  (3.73)  ...
+B_COST_CAR (t-test)               -0.643  (-6.44)  ...
+B_COST_SM (t-test)                -0.784  (-14.9)  ...
+B_COST_TRAIN (t-test)                 -1.7  (-14)  ...
+B_TIME_CAR (t-test)                  -1.06  (-11)  ...
+B_TIME_SM (t-test)                 -1.47  (-14.4)  ...
+B_TIME_TRAIN (t-test)               -1.4  (-16.2)  ...
+B_COST (t-test)                                    ...   -0.783  (-13.4)
+B_TIME (t-test)                                    ...   -0.868  (-10.2)
+B_TIME_1st_class (t-test)                          ...   -0.619  (-8.43)
+B_TIME_commuters (t-test)                          ...
+B_TIME_CAR_1st_class (t-test)                      ...
+B_TIME_SM_1st_class (t-test)                       ...
+B_TIME_TRAIN_1st_class (t-test)                    ...
+ASC_CAR_GA (t-test)                                ...    -1.24  (-7.99)
+ASC_TRAIN_GA (t-test)                              ...      1.49  (21.7)
+B_TIME_CAR_commuters (t-test)                      ...
+B_TIME_SM_commuters (t-test)                       ...
+B_TIME_TRAIN_commuters (t-test)                    ...
+
+[29 rows x 48 columns]
+</pre></div>
+</div>
+<p>Glossary</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">short_name</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">short_name</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Model_000000    ASC:LUGGAGE;B_COST_gen_altspec:altspec;B_TIME:no_seg;B_TIME_gen_altspec:altspec
+Model_000001    ASC:LUGGAGE;B_COST_gen_altspec:generic;B_TIME:FIRST;B_TIME_gen_altspec:generic
+Model_000002    ASC:no_seg;B_COST_gen_altspec:altspec;B_TIME:COMMUTERS;B_TIME_gen_altspec:generic
+Model_000003    ASC:no_seg;B_COST_gen_altspec:generic;B_TIME:FIRST;B_TIME_gen_altspec:altspec
+Model_000004    ASC:GA-LUGGAGE;B_COST_gen_altspec:generic;B_TIME:FIRST;B_TIME_gen_altspec:altspec
+Model_000005    ASC:GA-LUGGAGE;B_COST_gen_altspec:generic;B_TIME:no_seg;B_TIME_gen_altspec:generic
+Model_000006    ASC:no_seg;B_COST_gen_altspec:generic;B_TIME:COMMUTERS;B_TIME_gen_altspec:altspec
+Model_000007    ASC:GA-LUGGAGE;B_COST_gen_altspec:altspec;B_TIME:COMMUTERS;B_TIME_gen_altspec:generic
+Model_000008    ASC:LUGGAGE;B_COST_gen_altspec:generic;B_TIME:COMMUTERS;B_TIME_gen_altspec:generic
+Model_000009    ASC:no_seg;B_COST_gen_altspec:generic;B_TIME:no_seg;B_TIME_gen_altspec:generic
+Model_000010    ASC:GA;B_COST_gen_altspec:altspec;B_TIME:FIRST;B_TIME_gen_altspec:generic
+Model_000011    ASC:GA;B_COST_gen_altspec:altspec;B_TIME:no_seg;B_TIME_gen_altspec:altspec
+Model_000012    ASC:LUGGAGE;B_COST_gen_altspec:generic;B_TIME:no_seg;B_TIME_gen_altspec:altspec
+Model_000013    ASC:no_seg;B_COST_gen_altspec:altspec;B_TIME:FIRST;B_TIME_gen_altspec:altspec
+Model_000014    ASC:no_seg;B_COST_gen_altspec:generic;B_TIME:FIRST;B_TIME_gen_altspec:generic
+Model_000015    ASC:GA-LUGGAGE;B_COST_gen_altspec:altspec;B_TIME:no_seg;B_TIME_gen_altspec:generic
+Model_000016    ASC:LUGGAGE;B_COST_gen_altspec:altspec;B_TIME:COMMUTERS;B_TIME_gen_altspec:altspec
+Model_000017    ASC:GA;B_COST_gen_altspec:generic;B_TIME:no_seg;B_TIME_gen_altspec:generic
+Model_000018    ASC:GA;B_COST_gen_altspec:generic;B_TIME:COMMUTERS;B_TIME_gen_altspec:generic
+Model_000019    ASC:GA-LUGGAGE;B_COST_gen_altspec:generic;B_TIME:no_seg;B_TIME_gen_altspec:altspec
+Model_000020    ASC:GA;B_COST_gen_altspec:altspec;B_TIME:COMMUTERS;B_TIME_gen_altspec:generic
+Model_000021    ASC:no_seg;B_COST_gen_altspec:altspec;B_TIME:no_seg;B_TIME_gen_altspec:altspec
+Model_000022    ASC:no_seg;B_COST_gen_altspec:altspec;B_TIME:no_seg;B_TIME_gen_altspec:generic
+Model_000023    ASC:GA-LUGGAGE;B_COST_gen_altspec:altspec;B_TIME:FIRST;B_TIME_gen_altspec:altspec
+Model_000024    ASC:no_seg;B_COST_gen_altspec:generic;B_TIME:COMMUTERS;B_TIME_gen_altspec:generic
+Model_000025    ASC:GA;B_COST_gen_altspec:altspec;B_TIME:FIRST;B_TIME_gen_altspec:altspec
+Model_000026    ASC:LUGGAGE;B_COST_gen_altspec:altspec;B_TIME:FIRST;B_TIME_gen_altspec:altspec
+Model_000027    ASC:no_seg;B_COST_gen_altspec:altspec;B_TIME:FIRST;B_TIME_gen_altspec:generic
+Model_000028    ASC:GA-LUGGAGE;B_COST_gen_altspec:altspec;B_TIME:no_seg;B_TIME_gen_altspec:altspec
+Model_000029    ASC:LUGGAGE;B_COST_gen_altspec:altspec;B_TIME:FIRST;B_TIME_gen_altspec:generic
+Model_000030    ASC:GA-LUGGAGE;B_COST_gen_altspec:generic;B_TIME:COMMUTERS;B_TIME_gen_altspec:generic
+Model_000031    ASC:GA;B_COST_gen_altspec:generic;B_TIME:COMMUTERS;B_TIME_gen_altspec:altspec
+Model_000032    ASC:GA;B_COST_gen_altspec:altspec;B_TIME:COMMUTERS;B_TIME_gen_altspec:altspec
+Model_000033    ASC:LUGGAGE;B_COST_gen_altspec:altspec;B_TIME:no_seg;B_TIME_gen_altspec:generic
+Model_000034    ASC:GA-LUGGAGE;B_COST_gen_altspec:altspec;B_TIME:COMMUTERS;B_TIME_gen_altspec:altspec
+Model_000035    ASC:GA;B_COST_gen_altspec:altspec;B_TIME:no_seg;B_TIME_gen_altspec:generic
+Model_000036    ASC:GA;B_COST_gen_altspec:generic;B_TIME:no_seg;B_TIME_gen_altspec:altspec
+Model_000037    ASC:LUGGAGE;B_COST_gen_altspec:generic;B_TIME:FIRST;B_TIME_gen_altspec:altspec
+Model_000038    ASC:LUGGAGE;B_COST_gen_altspec:generic;B_TIME:COMMUTERS;B_TIME_gen_altspec:altspec
+Model_000039    ASC:LUGGAGE;B_COST_gen_altspec:generic;B_TIME:no_seg;B_TIME_gen_altspec:generic
+Model_000040    ASC:GA-LUGGAGE;B_COST_gen_altspec:generic;B_TIME:FIRST;B_TIME_gen_altspec:generic
+Model_000041    ASC:no_seg;B_COST_gen_altspec:generic;B_TIME:no_seg;B_TIME_gen_altspec:altspec
+Model_000042    ASC:GA-LUGGAGE;B_COST_gen_altspec:altspec;B_TIME:FIRST;B_TIME_gen_altspec:generic
+Model_000043    ASC:no_seg;B_COST_gen_altspec:altspec;B_TIME:COMMUTERS;B_TIME_gen_altspec:altspec
+Model_000044    ASC:LUGGAGE;B_COST_gen_altspec:altspec;B_TIME:COMMUTERS;B_TIME_gen_altspec:generic
+Model_000045    ASC:GA;B_COST_gen_altspec:generic;B_TIME:FIRST;B_TIME_gen_altspec:altspec
+Model_000046    ASC:GA-LUGGAGE;B_COST_gen_altspec:generic;B_TIME:COMMUTERS;B_TIME_gen_altspec:altspec
+Model_000047    ASC:GA;B_COST_gen_altspec:generic;B_TIME:FIRST;B_TIME_gen_altspec:generic
+</pre></div>
+</div>
+<p>Estimation results of the Pareto optimal models.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">pareto_results</span> <span class="o">=</span> <span class="n">pareto_optimal</span><span class="p">(</span><span class="n">dict_of_results</span><span class="p">)</span>
+<span class="n">compiled_pareto_results</span><span class="p">,</span> <span class="n">pareto_specs</span> <span class="o">=</span> <span class="n">compile_estimation_results</span><span class="p">(</span>
+    <span class="n">pareto_results</span><span class="p">,</span> <span class="n">use_short_names</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">compiled_pareto_results</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>                                    Model_000000  ...     Model_000008
+Number of estimated parameters                 6  ...                5
+Sample size                                10719  ...            10719
+Final log likelihood                -8313.612717  ...     -8598.531031
+Akaike Information Criterion        16639.225434  ...     17207.062062
+Bayesian Information Criterion      16682.904073  ...     17243.460927
+ASC_CAR (t-test)                 0.0143  (0.361)  ...  0.0091  (0.245)
+ASC_CAR_GA (t-test)               -1.26  (-8.18)  ...
+ASC_TRAIN (t-test)                -1.12  (-18.2)  ...  -0.707  (-12.5)
+ASC_TRAIN_GA (t-test)               1.52  (22.1)  ...
+B_COST (t-test)                  -0.704  (-13.3)  ...   -0.87  (-15.6)
+B_TIME (t-test)                   -1.19  (-18.3)  ...  -0.916  (-10.9)
+ASC_CAR_one_lugg (t-test)                         ...
+ASC_CAR_several_lugg (t-test)                     ...
+ASC_TRAIN_one_lugg (t-test)                       ...
+ASC_TRAIN_several_lugg (t-test)                   ...
+B_TIME_CAR (t-test)                               ...
+B_TIME_CAR_commuters (t-test)                     ...
+B_TIME_SM (t-test)                                ...
+B_TIME_SM_commuters (t-test)                      ...
+B_TIME_TRAIN (t-test)                             ...
+B_TIME_TRAIN_commuters (t-test)                   ...
+B_COST_CAR (t-test)                               ...
+B_COST_SM (t-test)                                ...
+B_COST_TRAIN (t-test)                             ...
+B_TIME_1st_class (t-test)                         ...  -0.688  (-9.57)
+
+[25 rows x 9 columns]
+</pre></div>
+</div>
+<p>Glossary.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">short_name</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">pareto_specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">short_name</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Model_000000    ASC:GA;B_COST_gen_altspec:generic;B_TIME:no_seg;B_TIME_gen_altspec:generic
+Model_000001    ASC:GA-LUGGAGE;B_COST_gen_altspec:generic;B_TIME:COMMUTERS;B_TIME_gen_altspec:altspec
+Model_000002    ASC:GA;B_COST_gen_altspec:altspec;B_TIME:FIRST;B_TIME_gen_altspec:generic
+Model_000003    ASC:GA;B_COST_gen_altspec:generic;B_TIME:COMMUTERS;B_TIME_gen_altspec:altspec
+Model_000004    ASC:no_seg;B_COST_gen_altspec:generic;B_TIME:no_seg;B_TIME_gen_altspec:generic
+Model_000005    ASC:GA-LUGGAGE;B_COST_gen_altspec:altspec;B_TIME:COMMUTERS;B_TIME_gen_altspec:altspec
+Model_000006    ASC:GA;B_COST_gen_altspec:altspec;B_TIME:COMMUTERS;B_TIME_gen_altspec:altspec
+Model_000007    ASC:GA;B_COST_gen_altspec:generic;B_TIME:FIRST;B_TIME_gen_altspec:generic
+Model_000008    ASC:no_seg;B_COST_gen_altspec:generic;B_TIME:FIRST;B_TIME_gen_altspec:generic
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 21.509 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-assisted-plot-b05alt-spec-segmentation-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/042c0ac341be9d2f6f84ca2ed654b366/plot_b05alt_spec_segmentation.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_b05alt_spec_segmentation.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/cedfb2bbc3ed9e38420c096fb075e8cd/plot_b05alt_spec_segmentation.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_b05alt_spec_segmentation.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/c67b777481ff9d92ec3f36f87172a0c4/plot_b05alt_spec_segmentation.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_b05alt_spec_segmentation.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="plot_b04segmentation.html" class="btn btn-neutral float-left" title="Catalog for segmented parameters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plot_b06everything.html" class="btn btn-neutral float-right" title="Combine many specifications: exception is raised" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,716 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.controller &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.controller</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.controller</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Defines controllers for multiple expressions.</span>
+
+<span class="sd">:author: Michel Bierlaire</span>
+<span class="sd">:date: Sun Jul 16 15:23:46 2023</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Callable</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biogeme</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.configuration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SelectionTuple</span><span class="p">,</span>
+    <span class="n">Configuration</span><span class="p">,</span>
+    <span class="n">SELECTION_SEPARATOR</span><span class="p">,</span>
+    <span class="n">SEPARATOR</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiogemeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_default_value</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Expression</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">Catalog</span>
+
+<span class="n">ControllerOperator</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[</span>
+    <span class="p">[</span><span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="nb">tuple</span><span class="p">[</span><span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+<span class="p">]</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Controller">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.Controller">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Controller</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class controlling the specification of the Catalogs&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">controller_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">specification_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param controller_name: name of the controller</span>
+<span class="sd">        :type controller_name: str</span>
+
+<span class="sd">        :param specification_names: list or tuple of the names of the</span>
+<span class="sd">            specification controlled by the controller</span>
+<span class="sd">        :type specification_names: list(str) or tuple(str)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controller_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">controller_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specification_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">specification_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_index</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="n">index</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">specification_names</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controlled_catalogs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Catalog</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="Controller.all_configurations">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.Controller.all_configurations">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">all_configurations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the code of all configurations</span>
+
+<span class="sd">        :return: set of codes</span>
+<span class="sd">        :rtype: set(str)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">controller_name</span><span class="si">}{</span><span class="n">SELECTION_SEPARATOR</span><span class="si">}{</span><span class="n">specification</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">specification</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">specification_names</span>
+        <span class="p">}</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Controller</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">controller_name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">controller_name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Controller</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">controller_name</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">controller_name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">controller_name</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">controller_name</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">controller_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">specification_names</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<div class="viewcode-block" id="Controller.controller_size">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.Controller.controller_size">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">controller_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of specifications managed by this controller&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">specification_names</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Controller.current_name">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.Controller.current_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">current_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of the currently selected expression&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">specification_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_index</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Controller.set_name">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.Controller.set_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the index of the controller based on the name of the specification</span>
+
+<span class="sd">        :param name: name of the specification</span>
+<span class="sd">        :type name: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">the_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">the_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: unknown specification for controller </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">controller_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">the_index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Controller.set_index">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.Controller.set_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the index of the controller, and update the controlled catalogs</span>
+
+<span class="sd">        :param index: value of the index</span>
+<span class="sd">        :type index: int</span>
+
+<span class="sd">        :raises BiogemeError: if index is out of range</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">controller_size</span><span class="p">():</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Wrong index </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> for controller </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">controller_name</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Must be in [0, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">controller_size</span><span class="p">()</span><span class="si">}</span><span class="s2">]&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="k">for</span> <span class="n">catalog</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">controlled_catalogs</span><span class="p">:</span>
+            <span class="n">catalog</span><span class="o">.</span><span class="n">current_index</span> <span class="o">=</span> <span class="n">index</span></div>
+
+
+<div class="viewcode-block" id="Controller.reset_selection">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.Controller.reset_selection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Select the first specification&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Controller.modify_controller">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.Controller.modify_controller">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">modify_controller</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">circular</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modify the specification of the controller</span>
+
+<span class="sd">        :param step: increment of the modifications. Can be negative.</span>
+<span class="sd">        :type step: int</span>
+
+<span class="sd">        :param circular: If True, the modification is always made. If</span>
+<span class="sd">            the selection needs to move past the last one, it comes</span>
+<span class="sd">            back to the first one. For instance, if the catalog is</span>
+<span class="sd">            currently at its last value, and the step is 1, it is set</span>
+<span class="sd">            to its first value. If circular is False, and the</span>
+<span class="sd">            selection needs to move past the last one, the selection</span>
+<span class="sd">            is set to the last one. It works symmetrically if the step</span>
+<span class="sd">            is negative</span>
+<span class="sd">        :type circular: bool</span>
+
+<span class="sd">        :return: number of actual modifications</span>
+<span class="sd">        :rtype: int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">the_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">controller_size</span><span class="p">()</span>
+        <span class="n">new_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="o">+</span> <span class="n">step</span>
+        <span class="k">if</span> <span class="n">circular</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">new_index</span> <span class="o">%</span> <span class="n">the_size</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">step</span>
+
+        <span class="k">if</span> <span class="n">new_index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">total_modif</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">total_modif</span>
+
+        <span class="k">if</span> <span class="n">new_index</span> <span class="o">&gt;=</span> <span class="n">the_size</span><span class="p">:</span>
+            <span class="n">total_modif</span> <span class="o">=</span> <span class="n">the_size</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">the_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">total_modif</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">new_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">step</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CentralController">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CentralController</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class controlling the complete multiple expression&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">expression</span><span class="p">:</span> <span class="n">Expression</span><span class="p">,</span>
+        <span class="n">maximum_number_of_configurations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param expression: controllers expression</span>
+<span class="sd">        :type expression: biogeme.expressions.Expression</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">set_of_controllers</span> <span class="o">=</span> <span class="n">expression</span><span class="o">.</span><span class="n">get_all_controllers</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">controllers</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Controller</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">set_of_controllers</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_controllers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">controller</span><span class="o">.</span><span class="n">controller_name</span><span class="p">:</span> <span class="n">controller</span> <span class="k">for</span> <span class="n">controller</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">controllers</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expression</span> <span class="o">=</span> <span class="n">expression</span>
+
+        <span class="n">all_controllers_states</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">the_controller</span><span class="o">.</span><span class="n">all_configurations</span><span class="p">()</span> <span class="k">for</span> <span class="n">the_controller</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">controllers</span>
+        <span class="p">]</span>
+
+        <span class="c1"># The total number of configurations is the product of the</span>
+        <span class="c1"># length of each controller.</span>
+
+        <span class="k">if</span> <span class="n">all_controllers_states</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_configurations</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">all_controllers_states</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_configurations</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">maximum_number_of_configurations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">maximum_number_of_configurations</span> <span class="o">=</span> <span class="n">get_default_value</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;maximum_number_catalog_expressions&quot;</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="s2">&quot;Estimation&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_configurations</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">maximum_number_of_configurations</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_configurations_ids</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_configurations</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_configurations_ids</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">SEPARATOR</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">combination</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">combination</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">all_controllers_states</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_configurations</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">Configuration</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">conf_id</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">conf_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_configurations_ids</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="CentralController.number_of_configurations">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController.number_of_configurations">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">number_of_configurations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Total number of configurations&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_configurations</span></div>
+
+
+<div class="viewcode-block" id="CentralController.get_configuration">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController.get_configuration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Configuration</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtain the current configuration of the controllers&quot;&quot;&quot;</span>
+        <span class="n">selections</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">SelectionTuple</span><span class="p">(</span>
+                <span class="n">controller</span><span class="o">=</span><span class="n">controller</span><span class="o">.</span><span class="n">controller_name</span><span class="p">,</span>
+                <span class="n">selection</span><span class="o">=</span><span class="n">controller</span><span class="o">.</span><span class="n">current_name</span><span class="p">(),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">controller</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">controllers</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Configuration</span><span class="p">(</span><span class="n">selections</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CentralController.set_configuration">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController.set_configuration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_configuration</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">configuration</span><span class="p">:</span> <span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply a configuration to the controllers</span>
+
+<span class="sd">        :param configuration: the configuration to be applied</span>
+<span class="sd">        :type configuration: Configuration</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">properly_set</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">controller</span><span class="o">.</span><span class="n">controller_name</span><span class="p">:</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">controller</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">controllers</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">selection</span> <span class="ow">in</span> <span class="n">configuration</span><span class="o">.</span><span class="n">selections</span><span class="p">:</span>
+            <span class="n">controller</span><span class="p">:</span> <span class="n">Controller</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_controllers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">selection</span><span class="o">.</span><span class="n">controller</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">controller</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Wrong configuration: </span><span class="si">{</span><span class="n">configuration</span><span class="si">}</span><span class="s2">. Controller &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">selection</span><span class="o">.</span><span class="n">controller</span><span class="si">}</span><span class="s2"> is unknown&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+            <span class="n">controller</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="n">selection</span><span class="o">.</span><span class="n">selection</span><span class="p">)</span>
+            <span class="n">properly_set</span><span class="p">[</span><span class="n">selection</span><span class="o">.</span><span class="n">controller</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">missing_controllers</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">done</span> <span class="ow">in</span> <span class="n">properly_set</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">done</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">missing_controllers</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Incomplete configuration </span><span class="si">{</span><span class="n">configuration</span><span class="si">}</span><span class="s2">. The following controllers &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;are not defined: </span><span class="si">{</span><span class="n">missing_controllers</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CentralController.set_configuration_from_id">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController.set_configuration_from_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_configuration_from_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configuration_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply a configuration to the controllers</span>
+
+<span class="sd">        :param configuration_id: the ID of the configuration to be applied</span>
+<span class="sd">        :type configuration_id: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">the_configuration</span> <span class="o">=</span> <span class="n">Configuration</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">configuration_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_configuration</span><span class="p">(</span><span class="n">the_configuration</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CentralController.set_controller">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController.set_controller">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_controller</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">controller_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the given controller to the specified index</span>
+
+<span class="sd">        :param controller_name: name of the controller</span>
+<span class="sd">        :type controller_name: string</span>
+
+<span class="sd">        :param index: index of the selection</span>
+<span class="sd">        :type index: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">the_controller</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_controllers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">controller_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">the_controller</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Unknown controller: </span><span class="si">{</span><span class="n">controller_name</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="n">the_controller</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CentralController.increased_controller">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController.increased_controller">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">increased_controller</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">controller_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">current_config</span><span class="p">:</span> <span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span>
+        <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Increase the selection of one controller by &quot;step&quot;</span>
+
+<span class="sd">        :param controller_name: name of the controller to modify</span>
+<span class="sd">        :type controller_name: str</span>
+
+<span class="sd">        :param current_config: current configuration</span>
+<span class="sd">        :type current_config: str</span>
+
+<span class="sd">        :param step: number of steps to perform</span>
+<span class="sd">        :type step: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_configuration</span><span class="p">(</span><span class="n">current_config</span><span class="p">)</span>
+        <span class="n">the_controller</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_controllers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">controller_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">the_controller</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Unknown controller </span><span class="si">{</span><span class="n">the_controller</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="n">the_controller</span><span class="o">.</span><span class="n">modify_controller</span><span class="p">(</span><span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">circular</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">new_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_configuration</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">new_config</span><span class="p">,</span> <span class="n">step</span></div>
+
+
+<div class="viewcode-block" id="CentralController.get_operator_increased_controllers">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController.get_operator_increased_controllers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_operator_increased_controllers</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">controller_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ControllerOperator</span><span class="p">:</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">operator_increased_controller</span><span class="p">(</span>
+            <span class="n">current_config</span><span class="p">:</span> <span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">increased_controller</span><span class="p">(</span>
+                <span class="n">controller_name</span><span class="o">=</span><span class="n">controller_name</span><span class="p">,</span>
+                <span class="n">current_config</span><span class="o">=</span><span class="n">current_config</span><span class="p">,</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">operator_increased_controller</span></div>
+
+
+<div class="viewcode-block" id="CentralController.decreased_controller">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController.decreased_controller">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decreased_controller</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">controller_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">current_config</span><span class="p">:</span> <span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span>
+        <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decrease the selection of one controller by &quot;step&quot;</span>
+
+<span class="sd">        :param controller_name: name of the controller to modify</span>
+<span class="sd">        :param current_config: current configuration</span>
+<span class="sd">        :param step: number of steps to perform</span>
+<span class="sd">        :return: ID of the new configuration and number of steps performed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_configuration</span><span class="p">(</span><span class="n">current_config</span><span class="p">)</span>
+        <span class="n">the_controller</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_controllers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">controller_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">the_controller</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Unknown controller </span><span class="si">{</span><span class="n">the_controller</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="n">the_controller</span><span class="o">.</span><span class="n">modify_controller</span><span class="p">(</span><span class="n">step</span><span class="o">=-</span><span class="n">step</span><span class="p">,</span> <span class="n">circular</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">new_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_configuration</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">new_config</span><span class="p">,</span> <span class="n">step</span></div>
+
+
+<div class="viewcode-block" id="CentralController.get_operator_decreased_controllers">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController.get_operator_decreased_controllers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_operator_decreased_controllers</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">controller_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ControllerOperator</span><span class="p">:</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">operator_decreased_controller</span><span class="p">(</span>
+            <span class="n">current_config</span><span class="p">:</span> <span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">decreased_controller</span><span class="p">(</span>
+                <span class="n">controller_name</span><span class="o">=</span><span class="n">controller_name</span><span class="p">,</span>
+                <span class="n">current_config</span><span class="o">=</span><span class="n">current_config</span><span class="p">,</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">operator_decreased_controller</span></div>
+
+
+<div class="viewcode-block" id="CentralController.two_controllers">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController.two_controllers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">two_controllers</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">first_controller_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">second_controller_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">direction</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">current_config</span><span class="p">:</span> <span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span>
+        <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modification of two controllers. Meaning of direction:</span>
+
+<span class="sd">        - NE (North-East): first controller increased by &quot;step&quot;, second</span>
+<span class="sd">              controller increased by &quot;step&quot;</span>
+<span class="sd">        - NW (North-West): first controller decreased by &quot;step&quot;, second</span>
+<span class="sd">              controller increased by &quot;step&quot;</span>
+<span class="sd">        - SE (South-East): first controller increased by &quot;step&quot;, second</span>
+<span class="sd">              controller decreased by &quot;step&quot;</span>
+<span class="sd">        - SW (South-West): first controller decreased by &quot;step&quot;, second</span>
+<span class="sd">              controller decreased by &quot;step&quot;</span>
+
+<span class="sd">        :param first_controller_name: name of the first_controller to modify</span>
+<span class="sd">        :type first_controller_name: str</span>
+
+<span class="sd">        :param second_controller_name: name of the second_controller to modify</span>
+<span class="sd">        :param direction: direction based on the compass rose. Must be NE, NW, SE or SW</span>
+<span class="sd">        :param current_config: current configuration</span>
+<span class="sd">        :param step: number of steps to perform</span>
+<span class="sd">        :return: ID of the new configuration and number of steps performed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;NE&quot;</span><span class="p">,</span> <span class="s2">&quot;NW&quot;</span><span class="p">,</span> <span class="s2">&quot;SE&quot;</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">]:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Incorrect direction </span><span class="si">{</span><span class="n">direction</span><span class="si">}</span><span class="s1">. Must be one of </span><span class="si">{</span><span class="n">direction</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_configuration</span><span class="p">(</span><span class="n">current_config</span><span class="p">)</span>
+        <span class="n">the_first_controller</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_controllers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">first_controller_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">the_first_controller</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Unknown controller </span><span class="si">{</span><span class="n">the_first_controller</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="n">the_second_controller</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_controllers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">second_controller_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">the_second_controller</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Unknown controller </span><span class="si">{</span><span class="n">the_second_controller</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="c1"># The direction for the first controller is W (decrease) or E (increase)</span>
+        <span class="c1"># The direction for the second controller is N (increase) or S (decrease)</span>
+        <span class="n">actual_step</span> <span class="o">=</span> <span class="n">step</span> <span class="k">if</span> <span class="n">direction</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;E&quot;</span> <span class="k">else</span> <span class="o">-</span><span class="n">step</span>
+        <span class="n">the_first_controller</span><span class="o">.</span><span class="n">modify_controller</span><span class="p">(</span><span class="n">step</span><span class="o">=</span><span class="n">actual_step</span><span class="p">,</span> <span class="n">circular</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">actual_step</span> <span class="o">=</span> <span class="n">step</span> <span class="k">if</span> <span class="n">direction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;N&quot;</span> <span class="k">else</span> <span class="o">-</span><span class="n">step</span>
+        <span class="n">the_second_controller</span><span class="o">.</span><span class="n">modify_controller</span><span class="p">(</span><span class="n">step</span><span class="o">=</span><span class="n">actual_step</span><span class="p">,</span> <span class="n">circular</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">new_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_configuration</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">new_config</span><span class="p">,</span> <span class="n">step</span></div>
+
+
+<div class="viewcode-block" id="CentralController.get_operator_two_controllers">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController.get_operator_two_controllers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_operator_two_controllers</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">first_controller_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">second_controller_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ControllerOperator</span><span class="p">:</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">operator_two_controller</span><span class="p">(</span>
+            <span class="n">current_config</span><span class="p">:</span> <span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">two_controllers</span><span class="p">(</span>
+                <span class="n">first_controller_name</span><span class="o">=</span><span class="n">first_controller_name</span><span class="p">,</span>
+                <span class="n">second_controller_name</span><span class="o">=</span><span class="n">second_controller_name</span><span class="p">,</span>
+                <span class="n">direction</span><span class="o">=</span><span class="n">direction</span><span class="p">,</span>
+                <span class="n">current_config</span><span class="o">=</span><span class="n">current_config</span><span class="p">,</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">operator_two_controller</span></div>
+
+
+<div class="viewcode-block" id="CentralController.modify_random_controllers">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController.modify_random_controllers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">modify_random_controllers</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">increase</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">current_config</span><span class="p">:</span> <span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span>
+        <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Increase the selection of &quot;step&quot; controllers by 1</span>
+
+<span class="sd">        :param increase: If True, the indices are increased . If</span>
+<span class="sd">            False, they are decreased.</span>
+<span class="sd">        :param current_config: current configuration</span>
+<span class="sd">        :param step: number of steps to perform</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_configuration</span><span class="p">(</span><span class="n">current_config</span><span class="p">)</span>
+        <span class="n">number_of_controllers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">controllers</span><span class="p">)</span>
+        <span class="n">actual_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">number_of_controllers</span><span class="p">)</span>
+        <span class="n">selected_controllers</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_of_controllers</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">k</span><span class="o">=</span><span class="n">actual_size</span>
+        <span class="p">)</span>
+        <span class="n">the_modification</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">increase</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">the_controller</span> <span class="ow">in</span> <span class="n">selected_controllers</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_controllers</span><span class="p">[</span><span class="n">the_controller</span><span class="p">]</span><span class="o">.</span><span class="n">modify_controller</span><span class="p">(</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">the_modification</span><span class="p">,</span> <span class="n">circular</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+        <span class="n">new_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_configuration</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">new_config</span><span class="p">,</span> <span class="n">actual_size</span></div>
+
+
+<div class="viewcode-block" id="CentralController.get_operator_modify_random_controllers">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController.get_operator_modify_random_controllers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_operator_modify_random_controllers</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">increase</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ControllerOperator</span><span class="p">:</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">operator_modify_random_controller</span><span class="p">(</span>
+            <span class="n">current_config</span><span class="p">:</span> <span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">biogeme</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">Configuration</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">modify_random_controllers</span><span class="p">(</span>
+                <span class="n">increase</span><span class="o">=</span><span class="n">increase</span><span class="p">,</span>
+                <span class="n">current_config</span><span class="o">=</span><span class="n">current_config</span><span class="p">,</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">operator_modify_random_controller</span></div>
+
+
+<div class="viewcode-block" id="CentralController.prepare_operators">
+<a class="viewcode-back" href="../../code/biogeme/controller.html#biogeme.controller.CentralController.prepare_operators">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_operators</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ControllerOperator</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Operators are functions that take a configuration and a</span>
+<span class="sd">        size as arguments, and return a new configuration, and the</span>
+<span class="sd">        actual number of modifications that have been</span>
+<span class="sd">        implemented.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dict_of_operators</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># Increase and decrease controllers</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_controllers</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">dict_of_operators</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Increase </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_operator_increased_controllers</span><span class="p">(</span><span class="n">controller_name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">dict_of_operators</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Decrease </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_operator_decreased_controllers</span><span class="p">(</span><span class="n">controller_name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="c1"># Pair of controllers</span>
+        <span class="n">directions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NE&quot;</span><span class="p">,</span> <span class="s2">&quot;NW&quot;</span><span class="p">,</span> <span class="s2">&quot;SE&quot;</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">]</span>
+        <span class="c1"># Using nested list comprehensions to generate all possible pairs</span>
+        <span class="n">all_pairs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">name1</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_controllers</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">name2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_controllers</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">direction</span> <span class="ow">in</span> <span class="n">directions</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Filter out pairs with the same name</span>
+        <span class="n">filtered_pairs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">name1</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name1</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">direction</span> <span class="ow">in</span> <span class="n">all_pairs</span>
+            <span class="k">if</span> <span class="n">name1</span> <span class="o">!=</span> <span class="n">name2</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">name1</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">direction</span> <span class="ow">in</span> <span class="n">filtered_pairs</span><span class="p">:</span>
+            <span class="n">dict_of_operators</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Pair_</span><span class="si">{</span><span class="n">name1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">name2</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">direction</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_operator_two_controllers</span><span class="p">(</span>
+                    <span class="n">first_controller_name</span><span class="o">=</span><span class="n">name1</span><span class="p">,</span>
+                    <span class="n">second_controller_name</span><span class="o">=</span><span class="n">name2</span><span class="p">,</span>
+                    <span class="n">direction</span><span class="o">=</span><span class="n">direction</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Several controllers</span>
+        <span class="n">dict_of_operators</span><span class="p">[</span><span class="s2">&quot;Increase_several&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_operator_modify_random_controllers</span><span class="p">(</span><span class="n">increase</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">dict_of_operators</span><span class="p">[</span><span class="s2">&quot;Decrease_several&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_operator_modify_random_controllers</span><span class="p">(</span><span class="n">increase</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">dict_of_operators</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

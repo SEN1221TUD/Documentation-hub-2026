@@ -1,0 +1,575 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.controller module &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="biogeme.data module" href="data.html" />
+    <link rel="prev" title="biogeme.configuration module" href="configuration.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../native_draws.html">Native draws</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../biogeme.html">.biogeme module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="assisted.html">biogeme.assisted module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme.html">biogeme.biogeme module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme_logging.html">biogeme.biogeme_logging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog.html">biogeme.catalog module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="check_parameters.html">biogeme.check_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cnl.html">biogeme.cnl module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">biogeme.configuration module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">biogeme.controller module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.controller.CentralController"><code class="docutils literal notranslate"><span class="pre">CentralController</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.CentralController.decreased_controller"><code class="docutils literal notranslate"><span class="pre">CentralController.decreased_controller()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.CentralController.get_configuration"><code class="docutils literal notranslate"><span class="pre">CentralController.get_configuration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.CentralController.get_operator_decreased_controllers"><code class="docutils literal notranslate"><span class="pre">CentralController.get_operator_decreased_controllers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.CentralController.get_operator_increased_controllers"><code class="docutils literal notranslate"><span class="pre">CentralController.get_operator_increased_controllers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.CentralController.get_operator_modify_random_controllers"><code class="docutils literal notranslate"><span class="pre">CentralController.get_operator_modify_random_controllers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.CentralController.get_operator_two_controllers"><code class="docutils literal notranslate"><span class="pre">CentralController.get_operator_two_controllers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.CentralController.increased_controller"><code class="docutils literal notranslate"><span class="pre">CentralController.increased_controller()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.CentralController.modify_random_controllers"><code class="docutils literal notranslate"><span class="pre">CentralController.modify_random_controllers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.CentralController.number_of_configurations"><code class="docutils literal notranslate"><span class="pre">CentralController.number_of_configurations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.CentralController.prepare_operators"><code class="docutils literal notranslate"><span class="pre">CentralController.prepare_operators()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.CentralController.set_configuration"><code class="docutils literal notranslate"><span class="pre">CentralController.set_configuration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.CentralController.set_configuration_from_id"><code class="docutils literal notranslate"><span class="pre">CentralController.set_configuration_from_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.CentralController.set_controller"><code class="docutils literal notranslate"><span class="pre">CentralController.set_controller()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.CentralController.two_controllers"><code class="docutils literal notranslate"><span class="pre">CentralController.two_controllers()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.controller.Controller"><code class="docutils literal notranslate"><span class="pre">Controller</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.Controller.all_configurations"><code class="docutils literal notranslate"><span class="pre">Controller.all_configurations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.Controller.controller_size"><code class="docutils literal notranslate"><span class="pre">Controller.controller_size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.Controller.current_name"><code class="docutils literal notranslate"><span class="pre">Controller.current_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.Controller.modify_controller"><code class="docutils literal notranslate"><span class="pre">Controller.modify_controller()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.Controller.reset_selection"><code class="docutils literal notranslate"><span class="pre">Controller.reset_selection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.Controller.set_index"><code class="docutils literal notranslate"><span class="pre">Controller.set_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.controller.Controller.set_name"><code class="docutils literal notranslate"><span class="pre">Controller.set_name()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data.html">biogeme.data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html">biogeme.database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="default_parameters.html">biogeme.default_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deprecated.html">biogeme.deprecated module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dict_of_formulas.html">biogeme.dict_of_formulas module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distributions.html">biogeme.distributions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="draws.html">biogeme.draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptions.html">biogeme.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expressions.html">biogeme.expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filenames.html">biogeme.filenames module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="function_output.html">biogeme.function_output module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loglikelihood.html">biogeme.loglikelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lsh.html">biogeme.lsh module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mdcev.html">biogeme.mdcev module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="messaging.html">biogeme.messaging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html">biogeme.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiobjectives.html">biogeme.multiobjectives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="native_draws.html">biogeme.native_draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="negative_likelihood.html">biogeme.negative_likelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nests.html">biogeme.nests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optimization.html">biogeme.optimization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameters.html">biogeme.parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition.html">biogeme.partition module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html">biogeme.results module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sampling_of_alternatives.html">biogeme.sampling_of_alternatives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="segmentation.html">biogeme.segmentation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="singleton.html">biogeme.singleton module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="specification.html">biogeme.specification module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html">biogeme.tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="validity.html">biogeme.validity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="version.html">biogeme.version module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../biogeme.html">.biogeme module</a></li>
+      <li class="breadcrumb-item active">biogeme.controller module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/code/biogeme/controller.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-biogeme.controller">
+<span id="biogeme-controller-module"></span><h1>biogeme.controller module<a class="headerlink" href="#module-biogeme.controller" title="Link to this heading"></a></h1>
+<p>Defines controllers for multiple expressions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Michel Bierlaire</p>
+</dd>
+<dt class="field-even">date<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sun Jul 16 15:23:46 2023</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.controller.</span></span><span class="sig-name descname"><span class="pre">CentralController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expression</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum_number_of_configurations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class controlling the complete multiple expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expression</strong> (<a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a>)</p></li>
+<li><p><strong>maximum_number_of_configurations</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController.decreased_controller">
+<span class="sig-name descname"><span class="pre">decreased_controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController.decreased_controller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController.decreased_controller" title="Link to this definition"></a></dt>
+<dd><p>Decrease the selection of one controller by “step”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>controller_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – name of the controller to modify</p></li>
+<li><p><strong>current_config</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a></span>) – current configuration</p></li>
+<li><p><strong>step</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – number of steps to perform</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ID of the new configuration and number of steps performed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController.get_configuration">
+<span class="sig-name descname"><span class="pre">get_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController.get_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController.get_configuration" title="Link to this definition"></a></dt>
+<dd><p>Obtain the current configuration of the controllers</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController.get_operator_decreased_controllers">
+<span class="sig-name descname"><span class="pre">get_operator_decreased_controllers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController.get_operator_decreased_controllers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController.get_operator_decreased_controllers" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>controller_name</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController.get_operator_increased_controllers">
+<span class="sig-name descname"><span class="pre">get_operator_increased_controllers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController.get_operator_increased_controllers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController.get_operator_increased_controllers" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>controller_name</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController.get_operator_modify_random_controllers">
+<span class="sig-name descname"><span class="pre">get_operator_modify_random_controllers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">increase</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController.get_operator_modify_random_controllers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController.get_operator_modify_random_controllers" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>increase</strong> (<em>bool</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController.get_operator_two_controllers">
+<span class="sig-name descname"><span class="pre">get_operator_two_controllers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_controller_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">second_controller_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController.get_operator_two_controllers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController.get_operator_two_controllers" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>first_controller_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>second_controller_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>direction</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController.increased_controller">
+<span class="sig-name descname"><span class="pre">increased_controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController.increased_controller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController.increased_controller" title="Link to this definition"></a></dt>
+<dd><p>Increase the selection of one controller by “step”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>controller_name</strong> (<em>str</em>) – name of the controller to modify</p></li>
+<li><p><strong>current_config</strong> (<em>str</em>) – current configuration</p></li>
+<li><p><strong>step</strong> (<em>int</em>) – number of steps to perform</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController.modify_random_controllers">
+<span class="sig-name descname"><span class="pre">modify_random_controllers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">increase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController.modify_random_controllers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController.modify_random_controllers" title="Link to this definition"></a></dt>
+<dd><p>Increase the selection of “step” controllers by 1</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>increase</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, the indices are increased . If
+False, they are decreased.</p></li>
+<li><p><strong>current_config</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a></span>) – current configuration</p></li>
+<li><p><strong>step</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – number of steps to perform</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController.number_of_configurations">
+<span class="sig-name descname"><span class="pre">number_of_configurations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController.number_of_configurations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController.number_of_configurations" title="Link to this definition"></a></dt>
+<dd><p>Total number of configurations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController.prepare_operators">
+<span class="sig-name descname"><span class="pre">prepare_operators</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController.prepare_operators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController.prepare_operators" title="Link to this definition"></a></dt>
+<dd><p>Operators are functions that take a configuration and a
+size as arguments, and return a new configuration, and the
+actual number of modifications that have been
+implemented.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController.set_configuration">
+<span class="sig-name descname"><span class="pre">set_configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configuration</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController.set_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController.set_configuration" title="Link to this definition"></a></dt>
+<dd><p>Apply a configuration to the controllers</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configuration</strong> (<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><em>Configuration</em></a>) – the configuration to be applied</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController.set_configuration_from_id">
+<span class="sig-name descname"><span class="pre">set_configuration_from_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configuration_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController.set_configuration_from_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController.set_configuration_from_id" title="Link to this definition"></a></dt>
+<dd><p>Apply a configuration to the controllers</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configuration_id</strong> (<em>str</em>) – the ID of the configuration to be applied</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController.set_controller">
+<span class="sig-name descname"><span class="pre">set_controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController.set_controller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController.set_controller" title="Link to this definition"></a></dt>
+<dd><p>Set the given controller to the specified index</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>controller_name</strong> (<em>string</em>) – name of the controller</p></li>
+<li><p><strong>index</strong> (<em>int</em>) – index of the selection</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.CentralController.two_controllers">
+<span class="sig-name descname"><span class="pre">two_controllers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_controller_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">second_controller_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#CentralController.two_controllers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.CentralController.two_controllers" title="Link to this definition"></a></dt>
+<dd><p>Modification of two controllers. Meaning of direction:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>NE (North-East): first controller increased by “step”, second</dt><dd><p>controller increased by “step”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>NW (North-West): first controller decreased by “step”, second</dt><dd><p>controller increased by “step”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>SE (South-East): first controller increased by “step”, second</dt><dd><p>controller decreased by “step”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>SW (South-West): first controller decreased by “step”, second</dt><dd><p>controller decreased by “step”</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>first_controller_name</strong> (<em>str</em>) – name of the first_controller to modify</p></li>
+<li><p><strong>second_controller_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – name of the second_controller to modify</p></li>
+<li><p><strong>direction</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – direction based on the compass rose. Must be NE, NW, SE or SW</p></li>
+<li><p><strong>current_config</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a></span>) – current configuration</p></li>
+<li><p><strong>step</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – number of steps to perform</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Configuration</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ID of the new configuration and number of steps performed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.controller.Controller">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.controller.</span></span><span class="sig-name descname"><span class="pre">Controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specification_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#Controller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.Controller" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class controlling the specification of the Catalogs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>controller_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>specification_names</strong> (<em>Iterable</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.Controller.all_configurations">
+<span class="sig-name descname"><span class="pre">all_configurations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#Controller.all_configurations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.Controller.all_configurations" title="Link to this definition"></a></dt>
+<dd><p>Return the code of all configurations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set of codes</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>set</em>(<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.Controller.controller_size">
+<span class="sig-name descname"><span class="pre">controller_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#Controller.controller_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.Controller.controller_size" title="Link to this definition"></a></dt>
+<dd><p>Number of specifications managed by this controller</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.Controller.current_name">
+<span class="sig-name descname"><span class="pre">current_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#Controller.current_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.Controller.current_name" title="Link to this definition"></a></dt>
+<dd><p>Name of the currently selected expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.Controller.modify_controller">
+<span class="sig-name descname"><span class="pre">modify_controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circular</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#Controller.modify_controller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.Controller.modify_controller" title="Link to this definition"></a></dt>
+<dd><p>Modify the specification of the controller</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step</strong> (<em>int</em>) – increment of the modifications. Can be negative.</p></li>
+<li><p><strong>circular</strong> (<em>bool</em>) – If True, the modification is always made. If
+the selection needs to move past the last one, it comes
+back to the first one. For instance, if the catalog is
+currently at its last value, and the step is 1, it is set
+to its first value. If circular is False, and the
+selection needs to move past the last one, the selection
+is set to the last one. It works symmetrically if the step
+is negative</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>number of actual modifications</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>int</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.Controller.reset_selection">
+<span class="sig-name descname"><span class="pre">reset_selection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#Controller.reset_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.Controller.reset_selection" title="Link to this definition"></a></dt>
+<dd><p>Select the first specification</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.Controller.set_index">
+<span class="sig-name descname"><span class="pre">set_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#Controller.set_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.Controller.set_index" title="Link to this definition"></a></dt>
+<dd><p>Set the index of the controller, and update the controlled catalogs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>int</em>) – value of the index</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if index is out of range</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.controller.Controller.set_name">
+<span class="sig-name descname"><span class="pre">set_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/controller.html#Controller.set_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.controller.Controller.set_name" title="Link to this definition"></a></dt>
+<dd><p>Set the index of the controller based on the name of the specification</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – name of the specification</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="configuration.html" class="btn btn-neutral float-left" title="biogeme.configuration module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="data.html" class="btn btn-neutral float-right" title="biogeme.data module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

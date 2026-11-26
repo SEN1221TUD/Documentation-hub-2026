@@ -1,0 +1,769 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.mdcev.mdcev module &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="biogeme.mdcev.non_monotonic module" href="non_monotonic.html" />
+    <link rel="prev" title="biogeme.mdcev.generalized module" href="generalized.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../native_draws.html">Native draws</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../biogeme.html">.biogeme module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../assisted.html">biogeme.assisted module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../biogeme.html">biogeme.biogeme module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../biogeme_logging.html">biogeme.biogeme_logging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../catalog.html">biogeme.catalog module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../check_parameters.html">biogeme.check_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cnl.html">biogeme.cnl module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration.html">biogeme.configuration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../controller.html">biogeme.controller module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data.html">biogeme.data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database.html">biogeme.database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../default_parameters.html">biogeme.default_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deprecated.html">biogeme.deprecated module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dict_of_formulas.html">biogeme.dict_of_formulas module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../distributions.html">biogeme.distributions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../draws.html">biogeme.draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exceptions.html">biogeme.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../expressions.html">biogeme.expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../filenames.html">biogeme.filenames module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../function_output.html">biogeme.function_output module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../loglikelihood.html">biogeme.loglikelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lsh.html">biogeme.lsh module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../mdcev.html">biogeme.mdcev module</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gamma_profile.html">biogeme.mdcev.gamma_profile module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generalized.html">biogeme.mdcev.generalized module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">biogeme.mdcev.mdcev module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.mdcev.mdcev.Mdcev"><code class="docutils literal notranslate"><span class="pre">Mdcev</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.mdcev.mdcev.MdcevConfiguration"><code class="docutils literal notranslate"><span class="pre">MdcevConfiguration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="non_monotonic.html">biogeme.mdcev.non_monotonic module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="translated.html">biogeme.mdcev.translated module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../messaging.html">biogeme.messaging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html">biogeme.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../multiobjectives.html">biogeme.multiobjectives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../native_draws.html">biogeme.native_draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../negative_likelihood.html">biogeme.negative_likelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nests.html">biogeme.nests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optimization.html">biogeme.optimization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../parameters.html">biogeme.parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../partition.html">biogeme.partition module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../results.html">biogeme.results module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sampling_of_alternatives.html">biogeme.sampling_of_alternatives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../segmentation.html">biogeme.segmentation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../singleton.html">biogeme.singleton module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../specification.html">biogeme.specification module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools.html">biogeme.tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../validity.html">biogeme.validity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../version.html">biogeme.version module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../biogeme.html">.biogeme module</a></li>
+          <li class="breadcrumb-item"><a href="../mdcev.html">biogeme.mdcev module</a></li>
+      <li class="breadcrumb-item active">biogeme.mdcev.mdcev module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/code/biogeme/mdcev/mdcev.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-biogeme.mdcev.mdcev">
+<span id="biogeme-mdcev-mdcev-module"></span><h1>biogeme.mdcev.mdcev module<a class="headerlink" href="#module-biogeme.mdcev.mdcev" title="Link to this heading"></a></h1>
+<p>Implements the MDCEV model as a generic class</p>
+<p>Michel Bierlaire
+Sun Apr 7 16:52:33 2024</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.mdcev.mdcev.</span></span><span class="sig-name descname"><span class="pre">Mdcev</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline_utilities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_parameter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>baseline_utilities</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em>]</em>)</p></li>
+<li><p><strong>gamma_parameters</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em> | </em><em>None</em><em>]</em>)</p></li>
+<li><p><strong>alpha_parameters</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>scale_parameter</strong> (<a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>weights</strong> (<a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.calculate_baseline_utility">
+<span class="sig-name descname"><span class="pre">calculate_baseline_utility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alternative_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_observation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.calculate_baseline_utility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.calculate_baseline_utility" title="Link to this definition"></a></dt>
+<dd><p>As this function may be called many times with the same input in forecasting mode, we use the
+lru_cache decorator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>alternative_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>one_observation</strong> (<a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.calculate_inverse_of_determinant_entries">
+<span class="sig-name descname"><span class="pre">calculate_inverse_of_determinant_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumption</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.calculate_inverse_of_determinant_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.calculate_inverse_of_determinant_entries" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>consumption</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em>]</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.calculate_inverse_of_determinant_one_alternative">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calculate_inverse_of_determinant_one_alternative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.calculate_inverse_of_determinant_one_alternative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.calculate_inverse_of_determinant_one_alternative" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>the_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>consumption</strong> (<a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.calculate_log_determinant_entries">
+<span class="sig-name descname"><span class="pre">calculate_log_determinant_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumption</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.calculate_log_determinant_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.calculate_log_determinant_entries" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>consumption</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em>]</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.calculate_log_determinant_one_alternative">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calculate_log_determinant_one_alternative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.calculate_log_determinant_one_alternative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.calculate_log_determinant_one_alternative" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>the_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>consumption</strong> (<a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.calculate_utilities">
+<span class="sig-name descname"><span class="pre">calculate_utilities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumption</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.calculate_utilities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.calculate_utilities" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>consumption</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em>]</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.derivative_utility_one_alternative">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">derivative_utility_one_alternative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">the_consumption</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_observation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.derivative_utility_one_alternative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.derivative_utility_one_alternative" title="Link to this definition"></a></dt>
+<dd><p>Used in the optimization problem solved for forecasting tp calculate the dual variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>the_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>the_consumption</strong> (<em>float</em>)</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em>)</p></li>
+<li><p><strong>one_observation</strong> (<a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.estimate_parameters">
+<span class="sig-name descname"><span class="pre">estimate_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_chosen_alternatives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumed_quantities</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.estimate_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.estimate_parameters" title="Link to this definition"></a></dt>
+<dd><p>Generate the Biogeme formula for the log probability of the MDCEV model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><code class="xref py py-class docutils literal notranslate"><span class="pre">Database</span></code></a></span>) – data needed for the estimation of the parameters, in Biogeme format.</p></li>
+<li><p><strong>number_of_chosen_alternatives</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></span>) – see the module documentation <code class="xref py py-mod docutils literal notranslate"><span class="pre">biogeme.mdcev_no_outside_good</span></code></p></li>
+<li><p><strong>consumed_quantities</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – see the module documentation <code class="xref py py-mod docutils literal notranslate"><span class="pre">biogeme.mdcev_no_outside_good</span></code></p></li>
+<li><p><strong>**kwargs</strong> – <p>additional parameters that are transmitted as such to the constructor of the Biogeme object.</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../results.html#biogeme.results.bioResults" title="biogeme.results.bioResults"><code class="xref py py-class docutils literal notranslate"><span class="pre">bioResults</span></code></a></span></p>
+</dd>
+</dl>
+<p>A detailed explanation is provided in the technical report
+“Estimating the MDCEV model with Biogeme”:</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.estimation_results">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">estimation_results</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../results.html#biogeme.results.bioResults" title="biogeme.results.bioResults"><span class="pre">bioResults</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.estimation_results" title="Link to this definition"></a></dt>
+<dd><p>Property for the estimation results</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.forecast">
+<span class="sig-name descname"><span class="pre">forecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_budget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilons</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brute_force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance_dual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance_budget</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.forecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.forecast" title="Link to this definition"></a></dt>
+<dd><p>Forecast the optimal expenditures given a budget and one realization of epsilon for each alternative</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><code class="xref py py-class docutils literal notranslate"><span class="pre">Database</span></code></a></span>) – database containing the values of the explanatory variables.</p></li>
+<li><p><strong>total_budget</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – total budget.</p></li>
+<li><p><strong>epsilons</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</span>) – draws from the error terms provided by the user. Each entry of the list corresponds
+to an observation in the database, and consists of a data frame of
+size=(number_of_draws, self.number_of_alternatives).</p></li>
+<li><p><strong>brute_force</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – if True, the brute force algorithm is applied. It solves each optimization problem using
+the scipy optimization algorithm. If False, the method proposed by Pinjari and Bhat (2021) is used.</p></li>
+<li><p><strong>tolerance_dual</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – convergence criterion for the estimate of the dual variable.</p></li>
+<li><p><strong>tolerance_budget</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – convergence criterion for the estimate of the total budget.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a list of data frames, each containing the results for each draw</p>
+</dd>
+</dl>
+<div role="list" class="citation-list">
+<div class="citation" id="pinjbhat21" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>PinjBhat21<span class="fn-bracket">]</span></span>
+<p>A. R. Pinjari, C. Bhat, Computationally efficient forecasting procedures for Kuhn-Tucker
+consumer demand model systems: Application to residential energy consumption analysis, Journal of Choice
+Modelling, Volume 39, 2021, 100283.</p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.forecast_bisection_one_draw">
+<span class="sig-name descname"><span class="pre">forecast_bisection_one_draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">one_row_of_database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_budget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance_dual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-13</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance_budget</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-13</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.forecast_bisection_one_draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.forecast_bisection_one_draw" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>one_row_of_database</strong> (<a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>)</p></li>
+<li><p><strong>total_budget</strong> (<em>float</em>)</p></li>
+<li><p><strong>epsilon</strong> (<em>ndarray</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.forecast_bruteforce_one_draw">
+<span class="sig-name descname"><span class="pre">forecast_bruteforce_one_draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">one_row_database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_budget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.forecast_bruteforce_one_draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.forecast_bruteforce_one_draw" title="Link to this definition"></a></dt>
+<dd><p>Forecast the optimal expenditures given a budget and one realization of epsilon for each alternative.
+If there is an issue with the optimization algorithm, None is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>one_row_database</strong> (<a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>)</p></li>
+<li><p><strong>total_budget</strong> (<em>float</em>)</p></li>
+<li><p><strong>epsilon</strong> (<em>ndarray</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.forecast_comparison_one_draw">
+<span class="sig-name descname"><span class="pre">forecast_comparison_one_draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">one_row_of_database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_budget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance_dual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance_budget</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.forecast_comparison_one_draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.forecast_comparison_one_draw" title="Link to this definition"></a></dt>
+<dd><p>Compares the results from each of the two forecasting algorithms.
+:type one_row_of_database: <span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><code class="xref py py-class docutils literal notranslate"><span class="pre">Database</span></code></a></span>
+:param one_row_of_database: list of rows from the database containing the values of the explanatory variables.
+:type total_budget: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>
+:param total_budget: total budget.
+:type epsilon: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code></span>
+:param epsilon: draws from the error terms provided by the user. Length: self.number_of_alternatives.
+:type tolerance_dual: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>
+:param tolerance_dual: convergence criterion for the estimate of the dual variable.
+:type tolerance_budget: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>
+:param tolerance_budget: convergence criterion for the estimate of the total budget.
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>
+:return: None. Warning are triggered if discrepancies are observed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>one_row_of_database</strong> (<a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>)</p></li>
+<li><p><strong>total_budget</strong> (<em>float</em>)</p></li>
+<li><p><strong>epsilon</strong> (<em>array</em>)</p></li>
+<li><p><strong>tolerance_dual</strong> (<em>float</em>)</p></li>
+<li><p><strong>tolerance_budget</strong> (<em>float</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em>[<em>int</em>, <em>float</em>] | <em>None</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.generate_epsilons">
+<span class="sig-name descname"><span class="pre">generate_epsilons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_observations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_draws</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.generate_epsilons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.generate_epsilons" title="Link to this definition"></a></dt>
+<dd><p>Generate draws for the error terms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_observations</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – number of entries in the database.</p></li>
+<li><p><strong>number_of_draws</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – number of draws to generate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a list of length “number_of_observations”. Each element is a</p>
+</dd>
+</dl>
+<p>number_of_draws x self.number_of_alternatives array.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.identification_chosen_alternatives">
+<span class="sig-name descname"><span class="pre">identification_chosen_alternatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_budget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.identification_chosen_alternatives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.identification_chosen_alternatives" title="Link to this definition"></a></dt>
+<dd><p>Algorithm identifying the chosen alternatives at the optimal solution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><code class="xref py py-class docutils literal notranslate"><span class="pre">Database</span></code></a></span>) – one row of the database.</p></li>
+<li><p><strong>total_budget</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – total budget for the constraint.</p></li>
+<li><p><strong>epsilon</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span>) – vector of draws from the error term.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the set of chosen alternatives, as well as a lower and an upper bound on the dual variable.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.info_gamma_parameters">
+<span class="sig-name descname"><span class="pre">info_gamma_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.info_gamma_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.info_gamma_parameters" title="Link to this definition"></a></dt>
+<dd><p>Provides logging information about the outside good</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.is_next_alternative_chosen">
+<span class="sig-name descname"><span class="pre">is_next_alternative_chosen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chosen_alternatives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">candidate_alternative</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">derivative_zero_expenditure_candidate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_budget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.is_next_alternative_chosen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.is_next_alternative_chosen" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>chosen_alternatives</strong> (<em>set</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>candidate_alternative</strong> (<em>int</em>)</p></li>
+<li><p><strong>derivative_zero_expenditure_candidate</strong> (<em>float</em>)</p></li>
+<li><p><strong>database</strong> (<a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>)</p></li>
+<li><p><strong>total_budget</strong> (<em>float</em>)</p></li>
+<li><p><strong>epsilon</strong> (<em>ndarray</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.loglikelihood">
+<span class="sig-name descname"><span class="pre">loglikelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_chosen_alternatives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumed_quantities</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.loglikelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.loglikelihood" title="Link to this definition"></a></dt>
+<dd><p>Generate the Biogeme formula for the log probability of the MDCEV model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_chosen_alternatives</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></span>) – see the module documentation <code class="xref py py-mod docutils literal notranslate"><span class="pre">biogeme.mdcev_no_outside_good</span></code></p></li>
+<li><p><strong>consumed_quantities</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span>) – see the module documentation <code class="xref py py-mod docutils literal notranslate"><span class="pre">biogeme.mdcev_no_outside_good</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></span></p>
+</dd>
+</dl>
+<p>A detailed explanation is provided in the technical report
+“Estimating the MDCEV model with Biogeme”</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.lower_bound_dual_variable">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lower_bound_dual_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chosen_alternatives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_observation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.lower_bound_dual_variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.lower_bound_dual_variable" title="Link to this definition"></a></dt>
+<dd><p>Method providing model specific bounds on the dual variable. It not overloaded,
+default values are used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chosen_alternatives</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – list of alternatives that are chosen at the optimal solution</p></li>
+<li><p><strong>one_observation</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><code class="xref py py-class docutils literal notranslate"><span class="pre">Database</span></code></a></span>) – data for one observation.</p></li>
+<li><p><strong>epsilon</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span>) – draws from the error term.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a lower bound on the dual variable, such that the expenditure calculated for any larger value is</p>
+</dd>
+</dl>
+<p>well-defined and non negative.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.number_of_alternatives">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">number_of_alternatives</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.number_of_alternatives" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.optimal_consumption">
+<span class="sig-name descname"><span class="pre">optimal_consumption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chosen_alternatives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dual_variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_observation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.optimal_consumption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.optimal_consumption" title="Link to this definition"></a></dt>
+<dd><p>Analytical calculation of the optimal consumption if the dual variable is known.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>chosen_alternatives</strong> (<em>Iterable</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>dual_variable</strong> (<em>float</em>)</p></li>
+<li><p><strong>epsilon</strong> (<em>ndarray</em>)</p></li>
+<li><p><strong>one_observation</strong> (<a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.optimal_consumption_one_alternative">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">optimal_consumption_one_alternative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dual_variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_observation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.optimal_consumption_one_alternative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.optimal_consumption_one_alternative" title="Link to this definition"></a></dt>
+<dd><p>Analytical calculation of the optimal consumption if the dual variable is known.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>the_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>dual_variable</strong> (<em>float</em>)</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em>)</p></li>
+<li><p><strong>one_observation</strong> (<a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.outside_good_index">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">outside_good_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.outside_good_index" title="Link to this definition"></a></dt>
+<dd><p>Obtain  the index of the outside good.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.sum_of_utilities">
+<span class="sig-name descname"><span class="pre">sum_of_utilities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumptions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.sum_of_utilities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.sum_of_utilities" title="Link to this definition"></a></dt>
+<dd><p>Calculates the sum of all utilities. Used for forecasting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>consumptions</strong> (<em>ndarray</em>)</p></li>
+<li><p><strong>epsilon</strong> (<em>ndarray</em>)</p></li>
+<li><p><strong>data_row</strong> (<a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.transformed_utility">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">transformed_utility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">the_consumption</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.transformed_utility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.transformed_utility" title="Link to this definition"></a></dt>
+<dd><p>Calculates the transformed utility for one alternative. Used for estimation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>the_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>the_consumption</strong> (<a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.utility_expression_one_alternative">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">utility_expression_one_alternative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">the_consumption</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unscaled_epsilon</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.utility_expression_one_alternative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.utility_expression_one_alternative" title="Link to this definition"></a></dt>
+<dd><p>Utility expression. Used only for code validation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>the_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>the_consumption</strong> (<a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a>)</p></li>
+<li><p><strong>unscaled_epsilon</strong> (<a class="reference internal" href="../expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.utility_one_alternative">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">utility_one_alternative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">the_consumption</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_observation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.utility_one_alternative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.utility_one_alternative" title="Link to this definition"></a></dt>
+<dd><p>Utility needed for forecasting</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>the_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>the_consumption</strong> (<em>float</em>)</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em>)</p></li>
+<li><p><strong>one_observation</strong> (<a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.validate_forecast">
+<span class="sig-name descname"><span class="pre">validate_forecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_budget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilons</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance_dual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-13</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance_budget</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-13</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.validate_forecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.validate_forecast" title="Link to this definition"></a></dt>
+<dd><p>Compare the two algorithms to forecast the optimal expenditures given a budget and one realization of
+epsilon for each alternative</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><code class="xref py py-class docutils literal notranslate"><span class="pre">Database</span></code></a></span>) – database containing the values of the explanatory variables.</p></li>
+<li><p><strong>total_budget</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – total budget.</p></li>
+<li><p><strong>epsilons</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</span>) – draws from the error terms. Each entry of the list corresponds
+to an observation in the database, and consists of a data frame of
+size=(number_of_draws, self.number_of_alternatives).</p></li>
+<li><p><strong>tolerance_dual</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – convergence criterion for the estimate of the dual variable.</p></li>
+<li><p><strong>tolerance_budget</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – convergence criterion for the estimate of the total budget.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None. Warning are triggered if discrepancies are observed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.validation">
+<span class="sig-name descname"><span class="pre">validation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">one_row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.validation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.validation" title="Link to this definition"></a></dt>
+<dd><p>Validation of some abstract methods for all alternatives.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>one_row</strong> (<a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.validation_one_alternative">
+<span class="sig-name descname"><span class="pre">validation_one_alternative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alternative_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.validation_one_alternative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.validation_one_alternative" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>alternative_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>one_row</strong> (<a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.Mdcev.validation_one_alternative_one_consumption">
+<span class="sig-name descname"><span class="pre">validation_one_alternative_one_consumption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alternative_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_consumption</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#Mdcev.validation_one_alternative_one_consumption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.Mdcev.validation_one_alternative_one_consumption" title="Link to this definition"></a></dt>
+<dd><p>Validation of some of the abstract methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>alternative_id</strong> (<em>int</em>)</p></li>
+<li><p><strong>value_consumption</strong> (<em>float</em>)</p></li>
+<li><p><strong>one_row</strong> (<a class="reference internal" href="../../../database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.MdcevConfiguration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.mdcev.mdcev.</span></span><span class="sig-name descname"><span class="pre">MdcevConfiguration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gamma_is_none</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">price_is_none</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/mdcev/mdcev.html#MdcevConfiguration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.mdcev.mdcev.MdcevConfiguration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Identify various configurations of the model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gamma_is_none</strong> (<em>bool</em>)</p></li>
+<li><p><strong>price_is_none</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.MdcevConfiguration.gamma_is_none">
+<span class="sig-name descname"><span class="pre">gamma_is_none</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></em><a class="headerlink" href="#biogeme.mdcev.mdcev.MdcevConfiguration.gamma_is_none" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.mdcev.mdcev.MdcevConfiguration.price_is_none">
+<span class="sig-name descname"><span class="pre">price_is_none</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></em><a class="headerlink" href="#biogeme.mdcev.mdcev.MdcevConfiguration.price_is_none" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="generalized.html" class="btn btn-neutral float-left" title="biogeme.mdcev.generalized module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="non_monotonic.html" class="btn btn-neutral float-right" title="biogeme.mdcev.non_monotonic module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,451 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.parameters module &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="biogeme.partition module" href="partition.html" />
+    <link rel="prev" title="biogeme.optimization module" href="optimization.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../native_draws.html">Native draws</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../biogeme.html">.biogeme module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="assisted.html">biogeme.assisted module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme.html">biogeme.biogeme module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme_logging.html">biogeme.biogeme_logging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog.html">biogeme.catalog module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="check_parameters.html">biogeme.check_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cnl.html">biogeme.cnl module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">biogeme.configuration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="controller.html">biogeme.controller module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html">biogeme.data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html">biogeme.database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="default_parameters.html">biogeme.default_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deprecated.html">biogeme.deprecated module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dict_of_formulas.html">biogeme.dict_of_formulas module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distributions.html">biogeme.distributions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="draws.html">biogeme.draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptions.html">biogeme.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expressions.html">biogeme.expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filenames.html">biogeme.filenames module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="function_output.html">biogeme.function_output module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loglikelihood.html">biogeme.loglikelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lsh.html">biogeme.lsh module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mdcev.html">biogeme.mdcev module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="messaging.html">biogeme.messaging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html">biogeme.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiobjectives.html">biogeme.multiobjectives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="native_draws.html">biogeme.native_draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="negative_likelihood.html">biogeme.negative_likelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nests.html">biogeme.nests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optimization.html">biogeme.optimization module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">biogeme.parameters module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.parameters.NameSectionTuple"><code class="docutils literal notranslate"><span class="pre">NameSectionTuple</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.NameSectionTuple.name"><code class="docutils literal notranslate"><span class="pre">NameSectionTuple.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.NameSectionTuple.section"><code class="docutils literal notranslate"><span class="pre">NameSectionTuple.section</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.parameters.Parameters"><code class="docutils literal notranslate"><span class="pre">Parameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.Parameters.add_parameter"><code class="docutils literal notranslate"><span class="pre">Parameters.add_parameter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.Parameters.check_parameter_value"><code class="docutils literal notranslate"><span class="pre">Parameters.check_parameter_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.Parameters.dump_file"><code class="docutils literal notranslate"><span class="pre">Parameters.dump_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.Parameters.generate_document"><code class="docutils literal notranslate"><span class="pre">Parameters.generate_document()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.Parameters.get_param_tuple"><code class="docutils literal notranslate"><span class="pre">Parameters.get_param_tuple()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.Parameters.get_value"><code class="docutils literal notranslate"><span class="pre">Parameters.get_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.Parameters.import_document"><code class="docutils literal notranslate"><span class="pre">Parameters.import_document()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.Parameters.parameter_names"><code class="docutils literal notranslate"><span class="pre">Parameters.parameter_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.Parameters.parameters_in_section"><code class="docutils literal notranslate"><span class="pre">Parameters.parameters_in_section()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.Parameters.read_file"><code class="docutils literal notranslate"><span class="pre">Parameters.read_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.Parameters.sections"><code class="docutils literal notranslate"><span class="pre">Parameters.sections</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.Parameters.sections_from_name"><code class="docutils literal notranslate"><span class="pre">Parameters.sections_from_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.parameters.Parameters.set_value"><code class="docutils literal notranslate"><span class="pre">Parameters.set_value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.parameters.format_comment"><code class="docutils literal notranslate"><span class="pre">format_comment()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.parameters.get_default_value"><code class="docutils literal notranslate"><span class="pre">get_default_value()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.parameters.parse_boolean"><code class="docutils literal notranslate"><span class="pre">parse_boolean()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="partition.html">biogeme.partition module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html">biogeme.results module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sampling_of_alternatives.html">biogeme.sampling_of_alternatives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="segmentation.html">biogeme.segmentation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="singleton.html">biogeme.singleton module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="specification.html">biogeme.specification module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html">biogeme.tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="validity.html">biogeme.validity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="version.html">biogeme.version module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../biogeme.html">.biogeme module</a></li>
+      <li class="breadcrumb-item active">biogeme.parameters module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/code/biogeme/parameters.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-biogeme.parameters">
+<span id="biogeme-parameters-module"></span><h1>biogeme.parameters module<a class="headerlink" href="#module-biogeme.parameters" title="Link to this heading"></a></h1>
+<p>Centralized management of the parameters.</p>
+<p>Parameters are organized by section. Parameters within the same
+section must have different names</p>
+<dl class="field-list simple">
+<dt class="field-odd">author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Michel Bierlaire</p>
+</dd>
+<dt class="field-even">date<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fri Dec  2 12:17:38 2022</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.parameters.NameSectionTuple">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.parameters.</span></span><span class="sig-name descname"><span class="pre">NameSectionTuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#NameSectionTuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.NameSectionTuple" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>section</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.parameters.NameSectionTuple.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#biogeme.parameters.NameSectionTuple.name" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.parameters.NameSectionTuple.section">
+<span class="sig-name descname"><span class="pre">section</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#biogeme.parameters.NameSectionTuple.section" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.parameters.Parameters">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.parameters.</span></span><span class="sig-name descname"><span class="pre">Parameters</span></span><a class="reference internal" href="../../_modules/biogeme/parameters.html#Parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.Parameters" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Parameters management</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.parameters.Parameters.add_parameter">
+<span class="sig-name descname"><span class="pre">add_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter_tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#Parameters.add_parameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.Parameters.add_parameter" title="Link to this definition"></a></dt>
+<dd><p>Add one parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parameter_tuple</strong> (<a class="reference internal" href="default_parameters.html#biogeme.default_parameters.ParameterTuple" title="biogeme.default_parameters.ParameterTuple"><em>ParameterTuple</em></a>) – tuple containing the data associated with the parameter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.parameters.Parameters.check_parameter_value">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_parameter_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#Parameters.check_parameter_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.Parameters.check_parameter_value" title="Link to this definition"></a></dt>
+<dd><p>Check if the value of the parameter is valid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>the_tuple</strong> (<a class="reference internal" href="default_parameters.html#biogeme.default_parameters.ParameterTuple" title="biogeme.default_parameters.ParameterTuple"><em>ParameterTuple</em></a>) – tuple to check</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a boolean that is True if the value is valid. If not,
+diagnostics are provided.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>tuple</em>(<em>bool</em>, <em>list</em>(<em>str</em>))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.parameters.Parameters.dump_file">
+<span class="sig-name descname"><span class="pre">dump_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#Parameters.dump_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.Parameters.dump_file" title="Link to this definition"></a></dt>
+<dd><p>Dump the values of the parameters in the TOML file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.parameters.Parameters.generate_document">
+<span class="sig-name descname"><span class="pre">generate_document</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#Parameters.generate_document"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.Parameters.generate_document" title="Link to this definition"></a></dt>
+<dd><p>Generate the  TOML document</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TOMLDocument</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.parameters.Parameters.get_param_tuple">
+<span class="sig-name descname"><span class="pre">get_param_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#Parameters.get_param_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.Parameters.get_param_tuple" title="Link to this definition"></a></dt>
+<dd><p>Obtain a tuple describing the parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of the parameter</p></li>
+<li><p><strong>section</strong> (<em>str</em>) – section where the parameter is relevant</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple containing the name, section and value of the
+parameter, or None if not found</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="default_parameters.html#biogeme.default_parameters.ParameterTuple" title="biogeme.default_parameters.ParameterTuple"><em>ParameterTuple</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.parameters.Parameters.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#Parameters.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.Parameters.get_value" title="Link to this definition"></a></dt>
+<dd><p>Get the value of a parameter. If the parameter appears in
+only one section, the name of the section can be omitted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of the parameter</p></li>
+<li><p><strong>section</strong> (<em>str</em>) – section containing the parameter</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.parameters.Parameters.import_document">
+<span class="sig-name descname"><span class="pre">import_document</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#Parameters.import_document"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.Parameters.import_document" title="Link to this definition"></a></dt>
+<dd><p>Record the values of the parameters in the TOML document</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="biogeme.parameters.Parameters.parameter_names">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameter_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#biogeme.parameters.Parameters.parameter_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.parameters.Parameters.parameters_in_section">
+<span class="sig-name descname"><span class="pre">parameters_in_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#Parameters.parameters_in_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.Parameters.parameters_in_section" title="Link to this definition"></a></dt>
+<dd><p>Returns the parameters in a section</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>section_name</strong> (<em>str</em>) – name of the section</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<a class="reference internal" href="default_parameters.html#biogeme.default_parameters.ParameterTuple" title="biogeme.default_parameters.ParameterTuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParameterTuple</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.parameters.Parameters.read_file">
+<span class="sig-name descname"><span class="pre">read_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#Parameters.read_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.Parameters.read_file" title="Link to this definition"></a></dt>
+<dd><p>Read TOML file. If the file name is invalid (typically, an empty string),
+the default value sof the parameters are used</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="biogeme.parameters.Parameters.sections">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sections</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#biogeme.parameters.Parameters.sections" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.parameters.Parameters.sections_from_name">
+<span class="sig-name descname"><span class="pre">sections_from_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#Parameters.sections_from_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.Parameters.sections_from_name" title="Link to this definition"></a></dt>
+<dd><p>Obtain the list of sections containing the given entry</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – name of the parameter</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.parameters.Parameters.set_value">
+<span class="sig-name descname"><span class="pre">set_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#Parameters.set_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.Parameters.set_value" title="Link to this definition"></a></dt>
+<dd><p>Set a value of a parameter. If the parameter appears in
+only one section, the name of the section can be ommitted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of the parameter</p></li>
+<li><p><strong>value</strong> (<em>str</em>) – value of the parameter</p></li>
+<li><p><strong>section</strong> (<em>str</em>) – section containing the parameter</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.parameters.format_comment">
+<span class="sig-prename descclassname"><span class="pre">biogeme.parameters.</span></span><span class="sig-name descname"><span class="pre">format_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_param</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#format_comment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.format_comment" title="Link to this definition"></a></dt>
+<dd><p>Format the content of the file, in particular the description of the parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>the_param</strong> (<a class="reference internal" href="default_parameters.html#biogeme.default_parameters.ParameterTuple" title="biogeme.default_parameters.ParameterTuple"><em>ParameterTuple</em></a>) – parmeter to format</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>formatted text</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>str</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.parameters.get_default_value">
+<span class="sig-prename descclassname"><span class="pre">biogeme.parameters.</span></span><span class="sig-name descname"><span class="pre">get_default_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#get_default_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.get_default_value" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>)</p></li>
+<li><p><strong>section</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.parameters.parse_boolean">
+<span class="sig-prename descclassname"><span class="pre">biogeme.parameters.</span></span><span class="sig-name descname"><span class="pre">parse_boolean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/parameters.html#parse_boolean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.parameters.parse_boolean" title="Link to this definition"></a></dt>
+<dd><p>Transforms one of the string representing a boolean into an actual boolean</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>str</em>) – value to be transformed</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>equivalent boolean</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>bool</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="optimization.html" class="btn btn-neutral float-left" title="biogeme.optimization module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="partition.html" class="btn btn-neutral float-right" title="biogeme.partition module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

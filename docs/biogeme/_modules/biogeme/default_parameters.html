@@ -1,0 +1,450 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.default_parameters &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.default_parameters</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.default_parameters</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Generation of the default parameter file and values</span>
+
+<span class="sd">:author: Michel Bierlaire</span>
+<span class="sd">:date: Wed Nov 30 10:14:35 2022</span>
+
+<span class="sd">IMPORTANT: when only one &quot;check&quot; function is provided, do not forget</span>
+<span class="sd">to insert a comma at the end, before the closing parenthesis for the</span>
+<span class="sd">tuple.</span>
+<span class="sd">See https://www.w3schools.com/python/gloss_python_tuple_one_item.asp</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Callable</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_version</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">biogeme.check_parameters</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">biogeme.optimization</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">opt</span>
+
+<span class="n">ParameterValue</span> <span class="o">=</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span>
+
+
+<div class="viewcode-block" id="ParameterTuple">
+<a class="viewcode-back" href="../../code/biogeme/default_parameters.html#biogeme.default_parameters.ParameterTuple">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParameterTuple</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">ParameterValue</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">type</span>
+    <span class="n">section</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">check</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">ParameterValue</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]],</span> <span class="o">...</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="all_parameters_tuple">
+<a class="viewcode-back" href="../../code/biogeme/default_parameters.html#biogeme.default_parameters.all_parameters_tuple">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">all_parameters_tuple</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ParameterTuple</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;identification_threshold&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mf">1.0e-5</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;Output&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;float: if the smallest eigenvalue of the second derivative &#39;</span>
+                <span class="s1">&#39;matrix is lesser or equal to this parameter, the model is &#39;</span>
+                <span class="s1">&#39;considered not identified. The corresponding eigenvector &#39;</span>
+                <span class="s1">&#39;is then reported to identify the parameters involved in the issue.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_number</span><span class="p">,),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;only_robust_stats&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;Output&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;bool: &quot;True&quot; if only the robust statistics need to be reported.&#39;</span>
+                <span class="s1">&#39; If &quot;False&quot;, the statistics from the Rao-Cramer bound are &#39;</span>
+                <span class="s1">&#39;also reported.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_boolean</span><span class="p">,),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;generate_html&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;Output&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;bool: &quot;True&quot; if the HTML file with the results must be generated.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_boolean</span><span class="p">,),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;generate_pickle&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;Output&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;bool: &quot;True&quot; if the pickle file with the &#39;</span> <span class="s1">&#39;results must be generated.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_boolean</span><span class="p">,),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;number_of_threads&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;MultiThreading&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;int: Number of threads/processors to be used. If&#39;</span>
+                <span class="s1">&#39; the parameter is 0, the number of&#39;</span>
+                <span class="s1">&#39; available threads is calculated using&#39;</span>
+                <span class="s1">&#39; cpu_count().&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_integer</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_non_negative</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;number_of_draws&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;MonteCarlo&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s1">&#39;int: Number of draws for Monte-Carlo integration.&#39;</span><span class="p">,</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_integer</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_positive</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;missing_data&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">99999</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;Specification&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;number: If one variable has this value, it is assumed&#39;</span>
+                <span class="s1">&#39; that a data is missing and an exception will&#39;</span>
+                <span class="s1">&#39; be triggered.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_number</span><span class="p">,),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;seed&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;MonteCarlo&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;int: Seed used for the pseudo-random number generation. It is&#39;</span>
+                <span class="s1">&#39; useful only when each run should generate the exact same&#39;</span>
+                <span class="s1">&#39; result. If 0, a new seed is used at each run.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_integer</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_non_negative</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;bootstrap_samples&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;Estimation&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s1">&#39;int: number of re-estimations for bootstrap sampling.&#39;</span><span class="p">,</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_integer</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_non_negative</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;large_data_set&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">100_000</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;Estimation&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;If the number of observations is larger than this value, the data set is deemed large, and the &#39;</span>
+                <span class="s1">&#39;default estimation algorithm will not use second derivatives.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_integer</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_non_negative</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;max_number_parameters_to_report&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;Estimation&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;int: maximum number of parameters to report during the estimation.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_integer</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_non_negative</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;save_iterations&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;Estimation&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;bool: If True, the current iterate is saved after&#39;</span>
+                <span class="s1">&#39; each iteration, in a file named&#39;</span>
+                <span class="s1">&#39; ``__[modelName].iter``, where&#39;</span>
+                <span class="s1">&#39; ``[modelName]`` is the name given to the&#39;</span>
+                <span class="s1">&#39; model. If such a file exists, the starting&#39;</span>
+                <span class="s1">&#39; values for the estimation are replaced by&#39;</span>
+                <span class="s1">&#39; the values saved in the file.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_boolean</span><span class="p">,),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;maximum_number_catalog_expressions&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;Estimation&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;If the expression contains catalogs, the parameter sets an &#39;</span>
+                <span class="s1">&#39;upper bound of the total number of possible combinations &#39;</span>
+                <span class="s1">&#39;that can be estimated in the same loop.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">cp</span><span class="o">.</span><span class="n">is_integer</span><span class="p">,</span>
+                <span class="n">cp</span><span class="o">.</span><span class="n">is_positive</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;optimization_algorithm&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="s1">&#39;automatic&#39;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;Estimation&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;str: optimization algorithm to be used for estimation. &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;Valid values: </span><span class="si">{</span><span class="p">[</span><span class="s2">&quot;automatic&quot;</span><span class="p">]</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">algorithms</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">check_algo_name</span><span class="p">,),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;second_derivatives&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;SimpleBounds&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;float: proportion (between 0 and 1) of iterations when the &#39;</span>
+                <span class="s1">&#39;analytical Hessian is calculated&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">zero_one</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_number</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;tolerance&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span> <span class="o">**</span> <span class="mf">0.25</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;SimpleBounds&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s1">&#39;float: the algorithm stops when this precision is reached&#39;</span><span class="p">,</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_number</span><span class="p">,),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;max_iterations&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;SimpleBounds&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s1">&#39;int: maximum number of iterations&#39;</span><span class="p">,</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_integer</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_positive</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;infeasible_cg&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;SimpleBounds&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;If True, the conjugate gradient algorithm may generate &#39;</span>
+                <span class="s1">&#39;infeasible solutions until termination.  The result will &#39;</span>
+                <span class="s1">&#39;then be projected on the feasible domain.  If False, the &#39;</span>
+                <span class="s1">&#39;algorithm stops as soon as an infeasible iterate is &#39;</span>
+                <span class="s1">&#39;generated&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_boolean</span><span class="p">,),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;initial_radius&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;SimpleBounds&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Initial radius of the trust region&#39;</span><span class="p">,</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_number</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_positive</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;steptol&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mf">1.0e-5</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;SimpleBounds&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;The algorithm stops when the relative change in x is below &#39;</span>
+                <span class="s1">&#39;this threshold. Basically, if p significant digits of x &#39;</span>
+                <span class="s1">&#39;are needed, steptol should be set to 1.0e-p.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_number</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_positive</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;enlarging_factor&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;SimpleBounds&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;If an iteration is very successful, the radius of &#39;</span>
+                <span class="s1">&#39;the trust region is multiplied by this factor&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_number</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_positive</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;dogleg&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;TrustRegion&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;bool: choice of the method to solve the trust region subproblem. &#39;</span>
+                <span class="s1">&#39;True: dogleg. False: truncated conjugate gradient.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_boolean</span><span class="p">,),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;maximum_number_parameters&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;AssistedSpecification&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;int: maximum number of parameters allowed in a model. Each specification &#39;</span>
+                <span class="s1">&#39;with a higher number is deemed invalid and not estimated.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_integer</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_positive</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;number_of_neighbors&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;AssistedSpecification&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;int: maximum number of neighbors that are visited by the VNS algorithm.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_integer</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_non_negative</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;largest_neighborhood&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;AssistedSpecification&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;int: size of the largest neighborhood copnsidered by the Variable &#39;</span>
+                <span class="s1">&#39;Neighborhood Search (VNS) algorithm.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_integer</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_non_negative</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;maximum_attempts&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;AssistedSpecification&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                <span class="s1">&#39;int: an attempts consists in selecting a solution in the Pareto &#39;</span>
+                <span class="s1">&#39;set, and trying to improve it. The parameter imposes an upper bound &#39;</span>
+                <span class="s1">&#39;on the total number of attempts, irrespectively if they are &#39;</span>
+                <span class="s1">&#39;successful or not.&#39;</span>
+            <span class="p">),</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">is_integer</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">is_non_negative</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ParameterTuple</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;version&#39;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">get_version</span><span class="p">(),</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="s1">&#39;Biogeme&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Version of Biogeme that created the TOML file. Do not modify this value.&#39;</span><span class="p">,</span>
+            <span class="n">check</span><span class="o">=</span><span class="p">(),</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

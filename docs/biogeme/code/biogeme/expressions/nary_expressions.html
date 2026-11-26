@@ -1,0 +1,623 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.expressions.nary_expressions module &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="biogeme.expressions.numeric_expressions module" href="numeric_expressions.html" />
+    <link rel="prev" title="biogeme.expressions.named_expression module" href="named_expression.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../native_draws.html">Native draws</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../biogeme.html">.biogeme module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../assisted.html">biogeme.assisted module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../biogeme.html">biogeme.biogeme module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../biogeme_logging.html">biogeme.biogeme_logging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../catalog.html">biogeme.catalog module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../check_parameters.html">biogeme.check_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cnl.html">biogeme.cnl module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration.html">biogeme.configuration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../controller.html">biogeme.controller module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data.html">biogeme.data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database.html">biogeme.database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../default_parameters.html">biogeme.default_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deprecated.html">biogeme.deprecated module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dict_of_formulas.html">biogeme.dict_of_formulas module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../distributions.html">biogeme.distributions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../draws.html">biogeme.draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exceptions.html">biogeme.exceptions module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../expressions.html">biogeme.expressions module</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="base_expressions.html">biogeme.expressions.base_expressions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="beta_parameters.html">biogeme.expressions.beta_parameters module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="binary_expressions.html">biogeme.expressions.binary_expressions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="calculator.html">biogeme.expressions.calculator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="catalog_iterator.html">biogeme.expressions.catalog_iterator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="comparison_expressions.html">biogeme.expressions.comparison_expressions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="convert.html">biogeme.expressions.convert module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="elementary_expressions.html">biogeme.expressions.elementary_expressions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="elementary_types.html">biogeme.expressions.elementary_types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="idmanager.html">biogeme.expressions.idmanager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="logit_expressions.html">biogeme.expressions.logit_expressions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multiple_expressions.html">biogeme.expressions.multiple_expressions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="named_expression.html">biogeme.expressions.named_expression module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">biogeme.expressions.nary_expressions module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.expressions.nary_expressions.ConditionalSum"><code class="docutils literal notranslate"><span class="pre">ConditionalSum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.expressions.nary_expressions.ConditionalTermTuple"><code class="docutils literal notranslate"><span class="pre">ConditionalTermTuple</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.expressions.nary_expressions.Elem"><code class="docutils literal notranslate"><span class="pre">Elem</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.expressions.nary_expressions.LinearTermTuple"><code class="docutils literal notranslate"><span class="pre">LinearTermTuple</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.expressions.nary_expressions.bioLinearUtility"><code class="docutils literal notranslate"><span class="pre">bioLinearUtility</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.expressions.nary_expressions.bioMultSum"><code class="docutils literal notranslate"><span class="pre">bioMultSum</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="numeric_expressions.html">biogeme.expressions.numeric_expressions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numeric_tools.html">biogeme.expressions.numeric_tools module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unary_expressions.html">biogeme.expressions.unary_expressions module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../filenames.html">biogeme.filenames module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../function_output.html">biogeme.function_output module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../loglikelihood.html">biogeme.loglikelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lsh.html">biogeme.lsh module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mdcev.html">biogeme.mdcev module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../messaging.html">biogeme.messaging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html">biogeme.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../multiobjectives.html">biogeme.multiobjectives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../native_draws.html">biogeme.native_draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../negative_likelihood.html">biogeme.negative_likelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nests.html">biogeme.nests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optimization.html">biogeme.optimization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../parameters.html">biogeme.parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../partition.html">biogeme.partition module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../results.html">biogeme.results module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sampling_of_alternatives.html">biogeme.sampling_of_alternatives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../segmentation.html">biogeme.segmentation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../singleton.html">biogeme.singleton module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../specification.html">biogeme.specification module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools.html">biogeme.tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../validity.html">biogeme.validity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../version.html">biogeme.version module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../biogeme.html">.biogeme module</a></li>
+          <li class="breadcrumb-item"><a href="../expressions.html">biogeme.expressions module</a></li>
+      <li class="breadcrumb-item active">biogeme.expressions.nary_expressions module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/code/biogeme/expressions/nary_expressions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-biogeme.expressions.nary_expressions">
+<span id="biogeme-expressions-nary-expressions-module"></span><h1>biogeme.expressions.nary_expressions module<a class="headerlink" href="#module-biogeme.expressions.nary_expressions" title="Link to this heading"></a></h1>
+<p>Arithmetic expressions accepted by Biogeme: nary operators</p>
+<dl class="field-list simple">
+<dt class="field-odd">author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Michel Bierlaire</p>
+</dd>
+<dt class="field-even">date<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sat Sep  9 15:29:36 2023</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.ConditionalSum">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.nary_expressions.</span></span><span class="sig-name descname"><span class="pre">ConditionalSum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_terms</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#ConditionalSum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.ConditionalSum" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></p>
+<p>This expression returns the sum of a selected list of
+expressions. An expression is considered in the sum only if the
+corresponding key is True (that is, return a non-zero value).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>list_of_terms</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="../../../nary_expressions.html#biogeme.expressions.nary_expressions.ConditionalTermTuple" title="biogeme.expressions.nary_expressions.ConditionalTermTuple"><em>ConditionalTermTuple</em></a><em>]</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.ConditionalSum.getValue">
+<span class="sig-name descname"><span class="pre">getValue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#ConditionalSum.getValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.ConditionalSum.getValue" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="../../../nary_expressions.html#biogeme.expressions.nary_expressions.ConditionalSum.get_value" title="biogeme.expressions.nary_expressions.ConditionalSum.get_value"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.ConditionalSum.get_signature">
+<span class="sig-name descname"><span class="pre">get_signature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#ConditionalSum.get_signature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.ConditionalSum.get_signature" title="Link to this definition"></a></dt>
+<dd><p>The signature of a string characterizing an expression.</p>
+<p>This is designed to be communicated to C++, so that the
+expression can be reconstructed in this environment.</p>
+<p>The list contains the following elements:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>the signature of the expression defining the key</p></li>
+<li><p>the signatures of all the children expressions,</p></li>
+<li><p>the name of the expression between &lt; &gt;</p></li>
+<li><p>the id of the expression between { }</p></li>
+<li><p>the number of elements between ( )</p></li>
+<li><p>the id of the expression defining the key</p></li>
+<li><p>for each element: the value of the key and the id
+of the expression, separated by commas.</p></li>
+</ol>
+</div></blockquote>
+<p>Consider the following expression:</p>
+<div class="math notranslate nohighlight">
+\[2 \beta_1  V_1 -
+\frac{\exp(-\beta_2 V_2) }{ \beta_3  (\beta_2 \geq \beta_1)}.\]</div>
+<p>It is defined as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta1</span> <span class="o">*</span> <span class="n">Variable1</span> <span class="o">-</span> <span class="n">expressions</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta2</span><span class="o">*</span><span class="n">Variable2</span><span class="p">)</span> <span class="o">/</span>
+    <span class="p">(</span><span class="n">beta3</span> <span class="o">*</span> <span class="p">(</span><span class="n">beta2</span> <span class="o">&gt;=</span> <span class="n">beta1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>And its signature is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;&lt;Numeric&gt;</span><span class="si">{4780527008}</span><span class="s1">,2&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277152}</span><span class="s1">&quot;beta1&quot;[0],0,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780526952}</span><span class="s1">(2),4780527008,4780277152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Variable&gt;</span><span class="si">{4511837152}</span><span class="s1">&quot;Variable1&quot;,5,2&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527064}</span><span class="s1">(2),4780526952,4511837152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277656}</span><span class="s1">&quot;beta2&quot;[0],1,1&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;UnaryMinus&gt;</span><span class="si">{4780527120}</span><span class="s1">(1),4780277656&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Variable&gt;</span><span class="si">{4511837712}</span><span class="s1">&quot;Variable2&quot;,6,3&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527176}</span><span class="s1">(2),4780527120,4511837712&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;exp&gt;</span><span class="si">{4780527232}</span><span class="s1">(1),4780527176&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277264}</span><span class="s1">&quot;beta3&quot;[1],2,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277656}</span><span class="s1">&quot;beta2&quot;[0],1,1&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277152}</span><span class="s1">&quot;beta1&quot;[0],0,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;GreaterOrEqual&gt;</span><span class="si">{4780527288}</span><span class="s1">(2),4780277656,4780277152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527344}</span><span class="s1">(2),4780277264,4780527288&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Divide&gt;</span><span class="si">{4780527400}</span><span class="s1">(2),4780527232,4780527344&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Minus&gt;</span><span class="si">{4780527456}</span><span class="s1">(2),4780527064,4780527400&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of the signatures of an expression and its children.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list</em>(string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.ConditionalSum.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#ConditionalSum.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.ConditionalSum.get_value" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the value of the expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value of the expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.ConditionalTermTuple">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.nary_expressions.</span></span><span class="sig-name descname"><span class="pre">ConditionalTermTuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">term</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#ConditionalTermTuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.ConditionalTermTuple" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>condition</strong> (<a class="reference internal" href="base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em> | </em><em>float</em><em> | </em><em>int</em><em> | </em><em>bool</em>)</p></li>
+<li><p><strong>term</strong> (<a class="reference internal" href="base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em> | </em><em>float</em><em> | </em><em>int</em><em> | </em><em>bool</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.ConditionalTermTuple.condition">
+<span class="sig-name descname"><span class="pre">condition</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></em><a class="headerlink" href="#biogeme.expressions.nary_expressions.ConditionalTermTuple.condition" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.ConditionalTermTuple.term">
+<span class="sig-name descname"><span class="pre">term</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></em><a class="headerlink" href="#biogeme.expressions.nary_expressions.ConditionalTermTuple.term" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.Elem">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.nary_expressions.</span></span><span class="sig-name descname"><span class="pre">Elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_of_expressions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_expression</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#Elem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.Elem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></p>
+<p>This returns the element of a dictionary. The key is evaluated
+from an expression and must return an integer, possibly negative.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dict_of_expressions</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><em>ExpressionOrNumeric</em><em>]</em>)</p></li>
+<li><p><strong>key_expression</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.Elem.dict_of_expressions">
+<span class="sig-name descname"><span class="pre">dict_of_expressions</span></span><a class="headerlink" href="#biogeme.expressions.nary_expressions.Elem.dict_of_expressions" title="Link to this definition"></a></dt>
+<dd><p>dict of expressions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.Elem.getValue">
+<span class="sig-name descname"><span class="pre">getValue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#Elem.getValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.Elem.getValue" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="../../../nary_expressions.html#biogeme.expressions.nary_expressions.Elem.get_value" title="biogeme.expressions.nary_expressions.Elem.get_value"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.Elem.get_signature">
+<span class="sig-name descname"><span class="pre">get_signature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#Elem.get_signature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.Elem.get_signature" title="Link to this definition"></a></dt>
+<dd><p>The signature of a string characterizing an expression.</p>
+<p>This is designed to be communicated to C++, so that the
+expression can be reconstructed in this environment.</p>
+<p>The list contains the following elements:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>the signature of the expression defining the key</p></li>
+<li><p>the signatures of all the children expressions,</p></li>
+<li><p>the name of the expression between &lt; &gt;</p></li>
+<li><p>the id of the expression between { }</p></li>
+<li><p>the number of elements between ( )</p></li>
+<li><p>the id of the expression defining the key</p></li>
+<li><p>for each element: the value of the key and the id
+of the expression, separated by commas.</p></li>
+</ol>
+</div></blockquote>
+<p>Consider the following expression:</p>
+<div class="math notranslate nohighlight">
+\[2 \beta_1  V_1 -
+\frac{\exp(-\beta_2 V_2) }{ \beta_3  (\beta_2 \geq \beta_1)}.\]</div>
+<p>It is defined as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta1</span> <span class="o">*</span> <span class="n">Variable1</span> <span class="o">-</span> <span class="n">expressions</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta2</span><span class="o">*</span><span class="n">Variable2</span><span class="p">)</span> <span class="o">/</span>
+    <span class="p">(</span><span class="n">beta3</span> <span class="o">*</span> <span class="p">(</span><span class="n">beta2</span> <span class="o">&gt;=</span> <span class="n">beta1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>And its signature is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;&lt;Numeric&gt;</span><span class="si">{4780527008}</span><span class="s1">,2&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277152}</span><span class="s1">&quot;beta1&quot;[0],0,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780526952}</span><span class="s1">(2),4780527008,4780277152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Variable&gt;</span><span class="si">{4511837152}</span><span class="s1">&quot;Variable1&quot;,5,2&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527064}</span><span class="s1">(2),4780526952,4511837152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277656}</span><span class="s1">&quot;beta2&quot;[0],1,1&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;UnaryMinus&gt;</span><span class="si">{4780527120}</span><span class="s1">(1),4780277656&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Variable&gt;</span><span class="si">{4511837712}</span><span class="s1">&quot;Variable2&quot;,6,3&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527176}</span><span class="s1">(2),4780527120,4511837712&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;exp&gt;</span><span class="si">{4780527232}</span><span class="s1">(1),4780527176&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277264}</span><span class="s1">&quot;beta3&quot;[1],2,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277656}</span><span class="s1">&quot;beta2&quot;[0],1,1&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277152}</span><span class="s1">&quot;beta1&quot;[0],0,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;GreaterOrEqual&gt;</span><span class="si">{4780527288}</span><span class="s1">(2),4780277656,4780277152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527344}</span><span class="s1">(2),4780277264,4780527288&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Divide&gt;</span><span class="si">{4780527400}</span><span class="s1">(2),4780527232,4780527344&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Minus&gt;</span><span class="si">{4780527456}</span><span class="s1">(2),4780527064,4780527400&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of the signatures of an expression and its children.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list</em>(string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.Elem.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#Elem.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.Elem.get_value" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the value of the expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value of the expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if the calcuated key is not present in
+the dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.LinearTermTuple">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.nary_expressions.</span></span><span class="sig-name descname"><span class="pre">LinearTermTuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#LinearTermTuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.LinearTermTuple" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>beta</strong> (<a class="reference internal" href="beta_parameters.html#biogeme.expressions.beta_parameters.Beta" title="biogeme.expressions.beta_parameters.Beta"><em>Beta</em></a>)</p></li>
+<li><p><strong>x</strong> (<a class="reference internal" href="../../../elementary_expressions.html#biogeme.expressions.elementary_expressions.Variable" title="biogeme.expressions.elementary_expressions.Variable"><em>Variable</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.LinearTermTuple.beta">
+<span class="sig-name descname"><span class="pre">beta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="beta_parameters.html#biogeme.expressions.beta_parameters.Beta" title="biogeme.expressions.beta_parameters.Beta"><code class="xref py py-class docutils literal notranslate"><span class="pre">Beta</span></code></a></em><a class="headerlink" href="#biogeme.expressions.nary_expressions.LinearTermTuple.beta" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.LinearTermTuple.x">
+<span class="sig-name descname"><span class="pre">x</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../../elementary_expressions.html#biogeme.expressions.elementary_expressions.Variable" title="biogeme.expressions.elementary_expressions.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a></em><a class="headerlink" href="#biogeme.expressions.nary_expressions.LinearTermTuple.x" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.bioLinearUtility">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.nary_expressions.</span></span><span class="sig-name descname"><span class="pre">bioLinearUtility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_terms</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#bioLinearUtility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.bioLinearUtility" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></p>
+<p>When the utility function is linear, it is expressed as a list of
+terms, where a parameter multiplies a variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>list_of_terms</strong> (<em>list</em><em>[</em><a class="reference internal" href="../../../nary_expressions.html#biogeme.expressions.nary_expressions.LinearTermTuple" title="biogeme.expressions.nary_expressions.LinearTermTuple"><em>LinearTermTuple</em></a><em>]</em>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.bioLinearUtility.betas">
+<span class="sig-name descname"><span class="pre">betas</span></span><a class="headerlink" href="#biogeme.expressions.nary_expressions.bioLinearUtility.betas" title="Link to this definition"></a></dt>
+<dd><p>list of parameters</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.bioLinearUtility.dict_of_elementary_expression">
+<span class="sig-name descname"><span class="pre">dict_of_elementary_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#bioLinearUtility.dict_of_elementary_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.bioLinearUtility.dict_of_elementary_expression" title="Link to this definition"></a></dt>
+<dd><p>Extract a dict with all elementary expressions of a specific type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>the_type</strong> (<a class="reference internal" href="../../../elementary_types.html#biogeme.expressions.elementary_types.TypeOfElementaryExpression" title="biogeme.expressions.elementary_types.TypeOfElementaryExpression"><em>TypeOfElementaryExpression</em></a>) – the type of expression</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>returns a dict with the variables appearing in the
+expression the keys being their names.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em>(string:biogeme.expressions.Expression)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.bioLinearUtility.get_signature">
+<span class="sig-name descname"><span class="pre">get_signature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#bioLinearUtility.get_signature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.bioLinearUtility.get_signature" title="Link to this definition"></a></dt>
+<dd><p>The signature of a string characterizing an expression.</p>
+<p>This is designed to be communicated to C++, so that the
+expression can be reconstructed in this environment.</p>
+<p>The list contains the following elements:</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p>the signatures of all the children expressions,</p></li>
+<li><p>the name of the expression between &lt; &gt;</p></li>
+<li><p>the id of the expression between { }</p></li>
+<li><p>the number of terms in the utility ( )</p></li>
+<li><p>for each term:</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li><p>the id of the Beta parameter</p></li>
+<li><p>the unique id of the Beta parameter</p></li>
+<li><p>the name of the parameter</p></li>
+<li><p>the id of the variable</p></li>
+<li><p>the unique id of the variable</p></li>
+<li><p>the name of the variable</p></li>
+</ol>
+</div></blockquote>
+</li>
+</ol>
+</div></blockquote>
+<p>Consider the following expression:</p>
+<div class="math notranslate nohighlight">
+\[2 \beta_1  V_1 -
+\frac{\exp(-\beta_2 V_2) }{ \beta_3  (\beta_2 \geq \beta_1)}.\]</div>
+<p>It is defined as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta1</span> <span class="o">*</span> <span class="n">Variable1</span> <span class="o">-</span> <span class="n">expressions</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta2</span><span class="o">*</span><span class="n">Variable2</span><span class="p">)</span> <span class="o">/</span>
+    <span class="p">(</span><span class="n">beta3</span> <span class="o">*</span> <span class="p">(</span><span class="n">beta2</span> <span class="o">&gt;=</span> <span class="n">beta1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>And its signature is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;&lt;Numeric&gt;</span><span class="si">{4780527008}</span><span class="s1">,2&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277152}</span><span class="s1">&quot;beta1&quot;[0],0,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780526952}</span><span class="s1">(2),4780527008,4780277152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Variable&gt;</span><span class="si">{4511837152}</span><span class="s1">&quot;Variable1&quot;,5,2&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527064}</span><span class="s1">(2),4780526952,4511837152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277656}</span><span class="s1">&quot;beta2&quot;[0],1,1&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;UnaryMinus&gt;</span><span class="si">{4780527120}</span><span class="s1">(1),4780277656&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Variable&gt;</span><span class="si">{4511837712}</span><span class="s1">&quot;Variable2&quot;,6,3&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527176}</span><span class="s1">(2),4780527120,4511837712&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;exp&gt;</span><span class="si">{4780527232}</span><span class="s1">(1),4780527176&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277264}</span><span class="s1">&quot;beta3&quot;[1],2,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277656}</span><span class="s1">&quot;beta2&quot;[0],1,1&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277152}</span><span class="s1">&quot;beta1&quot;[0],0,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;GreaterOrEqual&gt;</span><span class="si">{4780527288}</span><span class="s1">(2),4780277656,4780277152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527344}</span><span class="s1">(2),4780277264,4780527288&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Divide&gt;</span><span class="si">{4780527400}</span><span class="s1">(2),4780527232,4780527344&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Minus&gt;</span><span class="si">{4780527456}</span><span class="s1">(2),4780527064,4780527400&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of the signatures of an expression and its children.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list</em>(string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.bioLinearUtility.listOfTerms">
+<span class="sig-name descname"><span class="pre">listOfTerms</span></span><a class="headerlink" href="#biogeme.expressions.nary_expressions.bioLinearUtility.listOfTerms" title="Link to this definition"></a></dt>
+<dd><p>List of terms</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.bioLinearUtility.variables">
+<span class="sig-name descname"><span class="pre">variables</span></span><a class="headerlink" href="#biogeme.expressions.nary_expressions.bioLinearUtility.variables" title="Link to this definition"></a></dt>
+<dd><p>list of variables</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.bioMultSum">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.nary_expressions.</span></span><span class="sig-name descname"><span class="pre">bioMultSum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_expressions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#bioMultSum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.bioMultSum" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></p>
+<p>This expression returns the sum of several other expressions.</p>
+<p>It is a generalization of ‘Plus’ for more than two terms</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>list_of_expressions</strong> (<em>list</em><em>[</em><em>ExpressionOrNumeric</em><em>] </em><em>| </em><em>dict</em><em>[</em><em>Any:ExpressionOrNumeric</em><em>]</em>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.bioMultSum.getValue">
+<span class="sig-name descname"><span class="pre">getValue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#bioMultSum.getValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.bioMultSum.getValue" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="../../../nary_expressions.html#biogeme.expressions.nary_expressions.bioMultSum.get_value" title="biogeme.expressions.nary_expressions.bioMultSum.get_value"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.nary_expressions.bioMultSum.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/biogeme/expressions/nary_expressions.html#bioMultSum.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.nary_expressions.bioMultSum.get_value" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the value of the expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value of the expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="named_expression.html" class="btn btn-neutral float-left" title="biogeme.expressions.named_expression module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="numeric_expressions.html" class="btn btn-neutral float-right" title="biogeme.expressions.numeric_expressions module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

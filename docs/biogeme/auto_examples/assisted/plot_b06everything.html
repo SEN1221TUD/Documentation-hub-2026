@@ -1,0 +1,205 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Combine many specifications: exception is raised &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Combine many specifications: assisted specification algorithm" href="plot_b07everything_assisted.html" />
+    <link rel="prev" title="Segmentations and alternative specific specification" href="plot_b05alt_spec_segmentation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#calculating-indicators">Calculating indicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#timing-function-evaluation">Timing function evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#monte-carlo-integration">Monte-Carlo integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#choice-models-with-latent-variables">Choice models with latent variables</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../examples.html#assisted-specification-algorithm">Assisted specification algorithm</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Assisted specification with Biogeme</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="everything_spec.html">Combination of many specifications</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b00logit.html">Base model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b01model.html">Investigation of several choice models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b02nonlinear.html">Catalog of nonlinear specifications</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b03alt_spec.html">Catalog for alternative specific coefficients</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b04segmentation.html">Catalog for segmented parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b05alt_spec_segmentation.html">Segmentations and alternative specific specification</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Combine many specifications: exception is raised</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b07everything_assisted.html">Combine many specifications: assisted specification algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b08selected_specification.html">One model among many</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b09post_processing.html">Re-estimation of best models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_simple_example.html">Example of a catalog</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#estimation-with-samples-of-alternatives">Estimation with samples of alternatives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#multiple-discrete-continuous-extreme-value-models">Multiple Discrete Continuous Extreme Value models</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../examples.html">Examples</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Assisted specification with Biogeme</a></li>
+      <li class="breadcrumb-item active">Combine many specifications: exception is raised</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/auto_examples/assisted/plot_b06everything.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-assisted-plot-b06everything-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="combine-many-specifications-exception-is-raised">
+<span id="sphx-glr-auto-examples-assisted-plot-b06everything-py"></span><h1>Combine many specifications: exception is raised<a class="headerlink" href="#combine-many-specifications-exception-is-raised" title="Link to this heading"></a></h1>
+<p>We combine many specifications, defined in <a class="reference internal" href="everything_spec.html#everything-spec-section"><span class="std std-ref">Combination of many specifications</span></a>.
+This leads to a total of 432 specifications.
+When the total number of specifications exceeds 100, Biogeme raises an
+ValueOutOfRange exception when the estimate_catalog is called.
+See <a class="reference external" href="https://transp-or.epfl.ch/documents/technicalReports/BierOrte23.pdf">Bierlaire and Ortelli (2023)</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Michel Bierlaire, EPFL</p>
+</dd>
+<dt class="field-even">date<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fri Jul 14 09:55:33 2023</p>
+</dd>
+</dl>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">biogeme.biogeme</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">bio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiogemeError</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="everything_spec.html#everything-spec-section"><span class="std std-ref">Combination of many specifications</span></a>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">everything_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">model_catalog</span><span class="p">,</span> <span class="n">database</span>
+</pre></div>
+</div>
+<p>Create the Biogeme object.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">the_biogeme</span> <span class="o">=</span> <span class="n">bio</span><span class="o">.</span><span class="n">BIOGEME</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">model_catalog</span><span class="p">)</span>
+<span class="n">the_biogeme</span><span class="o">.</span><span class="n">modelName</span> <span class="o">=</span> <span class="s1">&#39;b06everything&#39;</span>
+<span class="n">the_biogeme</span><span class="o">.</span><span class="n">generate_html</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">the_biogeme</span><span class="o">.</span><span class="n">generate_pickle</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>Estimate the parameters.
+It does not work as there are two many specifications</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="n">dict_of_results</span> <span class="o">=</span> <span class="n">the_biogeme</span><span class="o">.</span><span class="n">estimate_catalog</span><span class="p">()</span>
+<span class="k">except</span> <span class="n">BiogemeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>There are too many [432] different specifications for the log likelihood function. This is above the maximum number: 100. Simplify the specification, change the value of the parameter maximum_number_catalog_expressions, or consider using the AssistedSpecification object in the &quot;biogeme.assisted&quot; module.
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.314 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-assisted-plot-b06everything-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/f48107eb21d02c2c3b9739d956c8d2d6/plot_b06everything.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_b06everything.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/345999cacb221ac8ac7ef2761a0b8aae/plot_b06everything.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_b06everything.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/0e1771ddba8b12f40e1ed8406cd9f890/plot_b06everything.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_b06everything.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="plot_b05alt_spec_segmentation.html" class="btn btn-neutral float-left" title="Segmentations and alternative specific specification" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plot_b07everything_assisted.html" class="btn btn-neutral float-right" title="Combine many specifications: assisted specification algorithm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

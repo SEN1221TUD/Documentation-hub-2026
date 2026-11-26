@@ -1,0 +1,412 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Investigation of several choice models &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Catalog of nonlinear specifications" href="plot_b02nonlinear.html" />
+    <link rel="prev" title="Base model" href="plot_b00logit.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#calculating-indicators">Calculating indicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#timing-function-evaluation">Timing function evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#monte-carlo-integration">Monte-Carlo integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#choice-models-with-latent-variables">Choice models with latent variables</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../examples.html#assisted-specification-algorithm">Assisted specification algorithm</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Assisted specification with Biogeme</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="everything_spec.html">Combination of many specifications</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b00logit.html">Base model</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Investigation of several choice models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b02nonlinear.html">Catalog of nonlinear specifications</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b03alt_spec.html">Catalog for alternative specific coefficients</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b04segmentation.html">Catalog for segmented parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b05alt_spec_segmentation.html">Segmentations and alternative specific specification</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b06everything.html">Combine many specifications: exception is raised</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b07everything_assisted.html">Combine many specifications: assisted specification algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b08selected_specification.html">One model among many</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_b09post_processing.html">Re-estimation of best models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_simple_example.html">Example of a catalog</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#estimation-with-samples-of-alternatives">Estimation with samples of alternatives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#multiple-discrete-continuous-extreme-value-models">Multiple Discrete Continuous Extreme Value models</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../examples.html">Examples</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Assisted specification with Biogeme</a></li>
+      <li class="breadcrumb-item active">Investigation of several choice models</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/auto_examples/assisted/plot_b01model.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-assisted-plot-b01model-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="investigation-of-several-choice-models">
+<span id="sphx-glr-auto-examples-assisted-plot-b01model-py"></span><h1>Investigation of several choice models<a class="headerlink" href="#investigation-of-several-choice-models" title="Link to this heading"></a></h1>
+<p>Investigate several choice models:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>logit</p></li>
+<li><p>nested logit with two nests: public and private transportation</p></li>
+<li><p>nested logit with two nests existing and future modes</p></li>
+</ul>
+</div></blockquote>
+<p>for a total of 3 specifications.
+See <a class="reference external" href="https://transp-or.epfl.ch/documents/technicalReports/BierOrte23.pdf">Bierlaire and Ortelli (2023)</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Michel Bierlaire, EPFL</p>
+</dd>
+<dt class="field-even">date<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fri Jul 14 09:47:21 2023</p>
+</dd>
+</dl>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">biogeme.biogeme</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">bio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">biogeme.biogeme_logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">blog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Beta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">Catalog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.nests</span><span class="w"> </span><span class="kn">import</span> <span class="n">OneNestForNestedLogit</span><span class="p">,</span> <span class="n">NestsForNestedLogit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_estimation_results</span><span class="p">,</span> <span class="n">pareto_optimal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.core.display_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.data.swissmetro</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">read_data</span><span class="p">,</span>
+    <span class="n">CHOICE</span><span class="p">,</span>
+    <span class="n">SM_AV</span><span class="p">,</span>
+    <span class="n">CAR_AV_SP</span><span class="p">,</span>
+    <span class="n">TRAIN_AV_SP</span><span class="p">,</span>
+    <span class="n">TRAIN_TT_SCALED</span><span class="p">,</span>
+    <span class="n">TRAIN_COST_SCALED</span><span class="p">,</span>
+    <span class="n">SM_TT_SCALED</span><span class="p">,</span>
+    <span class="n">SM_COST_SCALED</span><span class="p">,</span>
+    <span class="n">CAR_TT_SCALED</span><span class="p">,</span>
+    <span class="n">CAR_CO_SCALED</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">blog</span><span class="o">.</span><span class="n">get_screen_logger</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">blog</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Parameters to be estimated</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">ASC_CAR</span> <span class="o">=</span> <span class="n">Beta</span><span class="p">(</span><span class="s1">&#39;ASC_CAR&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">ASC_TRAIN</span> <span class="o">=</span> <span class="n">Beta</span><span class="p">(</span><span class="s1">&#39;ASC_TRAIN&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">B_TIME</span> <span class="o">=</span> <span class="n">Beta</span><span class="p">(</span><span class="s1">&#39;B_TIME&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">B_COST</span> <span class="o">=</span> <span class="n">Beta</span><span class="p">(</span><span class="s1">&#39;B_COST&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Definition of the utility functions</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">V1</span> <span class="o">=</span> <span class="n">ASC_TRAIN</span> <span class="o">+</span> <span class="n">B_TIME</span> <span class="o">*</span> <span class="n">TRAIN_TT_SCALED</span> <span class="o">+</span> <span class="n">B_COST</span> <span class="o">*</span> <span class="n">TRAIN_COST_SCALED</span>
+<span class="n">V2</span> <span class="o">=</span> <span class="n">B_TIME</span> <span class="o">*</span> <span class="n">SM_TT_SCALED</span> <span class="o">+</span> <span class="n">B_COST</span> <span class="o">*</span> <span class="n">SM_COST_SCALED</span>
+<span class="n">V3</span> <span class="o">=</span> <span class="n">ASC_CAR</span> <span class="o">+</span> <span class="n">B_TIME</span> <span class="o">*</span> <span class="n">CAR_TT_SCALED</span> <span class="o">+</span> <span class="n">B_COST</span> <span class="o">*</span> <span class="n">CAR_CO_SCALED</span>
+</pre></div>
+</div>
+<p>Associate utility functions with the numbering of alternatives</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="n">V1</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="n">V2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="n">V3</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Associate the availability conditions with the alternatives</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">av</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="n">TRAIN_AV_SP</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="n">SM_AV</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="n">CAR_AV_SP</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Definition of the logit model. This is the contribution of each
+observation to the log likelihood function.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">logprob_logit</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">loglogit</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">av</span><span class="p">,</span> <span class="n">CHOICE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Nested logit model: nest with existing alternatives.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mu_existing</span> <span class="o">=</span> <span class="n">Beta</span><span class="p">(</span><span class="s1">&#39;mu_existing&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">existing</span> <span class="o">=</span> <span class="n">OneNestForNestedLogit</span><span class="p">(</span>
+    <span class="n">nest_param</span><span class="o">=</span><span class="n">mu_existing</span><span class="p">,</span> <span class="n">list_of_alternatives</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Existing&#39;</span>
+<span class="p">)</span>
+
+<span class="n">nests_existing</span> <span class="o">=</span> <span class="n">NestsForNestedLogit</span><span class="p">(</span><span class="n">choice_set</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">tuple_of_nests</span><span class="o">=</span><span class="p">(</span><span class="n">existing</span><span class="p">,))</span>
+<span class="n">logprob_nested_existing</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">lognested</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">av</span><span class="p">,</span> <span class="n">nests_existing</span><span class="p">,</span> <span class="n">CHOICE</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>The following elements do not appear in any nest and are assumed each to be alone in a separate nest: {2}. If it is not the intention, check the assignment of alternatives to nests.
+</pre></div>
+</div>
+<p>Nested logit model: nest with public transportation alternatives.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mu_public</span> <span class="o">=</span> <span class="n">Beta</span><span class="p">(</span><span class="s1">&#39;mu_public&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">public</span> <span class="o">=</span> <span class="n">OneNestForNestedLogit</span><span class="p">(</span>
+    <span class="n">nest_param</span><span class="o">=</span><span class="n">mu_public</span><span class="p">,</span> <span class="n">list_of_alternatives</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Public&#39;</span>
+<span class="p">)</span>
+
+<span class="n">nests_public</span> <span class="o">=</span> <span class="n">NestsForNestedLogit</span><span class="p">(</span><span class="n">choice_set</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">tuple_of_nests</span><span class="o">=</span><span class="p">(</span><span class="n">public</span><span class="p">,))</span>
+<span class="n">logprob_nested_public</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">lognested</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">av</span><span class="p">,</span> <span class="n">nests_public</span><span class="p">,</span> <span class="n">CHOICE</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>The following elements do not appear in any nest and are assumed each to be alone in a separate nest: {3}. If it is not the intention, check the assignment of alternatives to nests.
+</pre></div>
+</div>
+<p>Catalog.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">model_catalog</span> <span class="o">=</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+    <span class="n">catalog_name</span><span class="o">=</span><span class="s1">&#39;model_catalog&#39;</span><span class="p">,</span>
+    <span class="n">dict_of_expressions</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;logit&#39;</span><span class="p">:</span> <span class="n">logprob_logit</span><span class="p">,</span>
+        <span class="s1">&#39;nested existing&#39;</span><span class="p">:</span> <span class="n">logprob_nested_existing</span><span class="p">,</span>
+        <span class="s1">&#39;nested public&#39;</span><span class="p">:</span> <span class="n">logprob_nested_public</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Read the data</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">database</span> <span class="o">=</span> <span class="n">read_data</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Create the Biogeme object.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">the_biogeme</span> <span class="o">=</span> <span class="n">bio</span><span class="o">.</span><span class="n">BIOGEME</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">model_catalog</span><span class="p">)</span>
+<span class="n">the_biogeme</span><span class="o">.</span><span class="n">modelName</span> <span class="o">=</span> <span class="s1">&#39;b01model&#39;</span>
+<span class="n">the_biogeme</span><span class="o">.</span><span class="n">generate_html</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">the_biogeme</span><span class="o">.</span><span class="n">generate_pickle</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Biogeme parameters read from biogeme.toml.
+</pre></div>
+</div>
+<p>Estimate the parameters.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">dict_of_results</span> <span class="o">=</span> <span class="n">the_biogeme</span><span class="o">.</span><span class="n">estimate_catalog</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Estimating 3 models.
+Biogeme parameters read from biogeme.toml.
+As the model is not too complex, we activate the calculation of second derivatives. If you want to change it, change the name of the algorithm in the TOML file from &quot;automatic&quot; to &quot;simple_bounds&quot;
+*** Initial values of the parameters are obtained from the file __b01model_000000.iter
+Cannot read file __b01model_000000.iter. Statement is ignored.
+As the model is not too complex, we activate the calculation of second derivatives. If you want to change it, change the name of the algorithm in the TOML file from &quot;automatic&quot; to &quot;simple_bounds&quot;
+Optimization algorithm: hybrid Newton/BFGS with simple bounds [simple_bounds]
+** Optimization: Newton with trust region for simple bounds
+Iter.         ASC_CAR       ASC_TRAIN          B_COST          B_TIME       mu_public     Function    Relgrad   Radius      Rho
+    0          -0.028           -0.82           -0.19              -1             1.4        9e+03      0.068        1     0.68    +
+    1            0.11            0.18           -0.61            -1.4             1.6      8.8e+03      0.058        1     0.47    +
+    2           -0.23           -0.29           -0.69           -0.94             1.8      8.7e+03     0.0096        1     0.81    +
+    3           -0.23           -0.29           -0.69           -0.94             1.8      8.7e+03     0.0096     0.41    -0.11    -
+    4           -0.07           -0.23           -0.71            -1.2             1.4      8.7e+03      0.011     0.41     0.87    +
+    5          -0.045           -0.41           -0.77            -1.2             1.2      8.7e+03     0.0057      4.1      1.2   ++
+    6          -0.024           -0.51           -0.78            -1.2             1.1      8.7e+03     0.0017       41      1.2   ++
+    7          -0.012           -0.56           -0.78            -1.3             1.1      8.7e+03    0.00034  4.1e+02      1.1   ++
+    8          -0.012           -0.56           -0.78            -1.3             1.1      8.7e+03    1.2e-05  4.1e+02        1   ++
+Biogeme parameters read from biogeme.toml.
+As the model is not too complex, we activate the calculation of second derivatives. If you want to change it, change the name of the algorithm in the TOML file from &quot;automatic&quot; to &quot;simple_bounds&quot;
+*** Initial values of the parameters are obtained from the file __b01model_000001.iter
+Cannot read file __b01model_000001.iter. Statement is ignored.
+As the model is not too complex, we activate the calculation of second derivatives. If you want to change it, change the name of the algorithm in the TOML file from &quot;automatic&quot; to &quot;simple_bounds&quot;
+Optimization algorithm: hybrid Newton/BFGS with simple bounds [simple_bounds]
+** Optimization: Newton with trust region for simple bounds
+Iter.         ASC_CAR       ASC_TRAIN          B_COST          B_TIME     mu_existing     Function    Relgrad   Radius      Rho
+    0           0.099           -0.47           -0.72            -1.2             1.4      8.6e+03      0.014       10      1.2   ++
+    1           0.027           -0.39           -0.68            -1.1             1.7      8.5e+03     0.0082    1e+02      1.2   ++
+    2           0.011           -0.38           -0.64           -0.99             1.9      8.5e+03     0.0018    1e+03      1.2   ++
+    3        -0.00017           -0.37           -0.63           -0.96               2      8.5e+03    0.00055    1e+04      1.1   ++
+    4        -0.00017           -0.37           -0.63           -0.96               2      8.5e+03    8.2e-06    1e+04        1   ++
+Biogeme parameters read from biogeme.toml.
+As the model is not too complex, we activate the calculation of second derivatives. If you want to change it, change the name of the algorithm in the TOML file from &quot;automatic&quot; to &quot;simple_bounds&quot;
+*** Initial values of the parameters are obtained from the file __b01model_000002.iter
+Cannot read file __b01model_000002.iter. Statement is ignored.
+As the model is not too complex, we activate the calculation of second derivatives. If you want to change it, change the name of the algorithm in the TOML file from &quot;automatic&quot; to &quot;simple_bounds&quot;
+Optimization algorithm: hybrid Newton/BFGS with simple bounds [simple_bounds]
+** Optimization: Newton with trust region for simple bounds
+Iter.         ASC_CAR       ASC_TRAIN          B_COST          B_TIME     Function    Relgrad   Radius      Rho
+    0         -0.0043           -0.62           -0.77            -1.2      8.7e+03     0.0097       10      1.1   ++
+    1           0.016           -0.65           -0.79            -1.3      8.7e+03    0.00024    1e+02        1   ++
+    2           0.016           -0.65           -0.79            -1.3      8.7e+03    1.3e-07    1e+02        1   ++
+</pre></div>
+</div>
+<p>Number of estimated models.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;A total of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dict_of_results</span><span class="p">)</span><span class="si">}</span><span class="s1"> models have been estimated&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>A total of 3 models have been estimated
+</pre></div>
+</div>
+<p>All estimation results</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">compiled_results</span><span class="p">,</span> <span class="n">specs</span> <span class="o">=</span> <span class="n">compile_estimation_results</span><span class="p">(</span>
+    <span class="n">dict_of_results</span><span class="p">,</span> <span class="n">use_short_names</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">compiled_results</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>                                      Model_000000  ...     Model_000002
+Number of estimated parameters                   5  ...                4
+Sample size                                  10719  ...            10719
+Final log likelihood                  -8669.496598  ...     -8670.163119
+Akaike Information Criterion          17348.993197  ...     17348.326237
+Bayesian Information Criterion        17385.392062  ...      17377.44533
+ASC_CAR (t-test)                -0.00984  (-0.197)  ...  0.0162  (0.438)
+ASC_TRAIN (t-test)                 -0.566  (-6.88)  ...    -0.652  (-12)
+B_COST (t-test)                      -0.782  (-15)  ...   -0.79  (-15.5)
+B_TIME (t-test)                     -1.25  (-16.2)  ...   -1.28  (-19.5)
+mu_public (t-test)                    1.08  (12.6)  ...
+mu_existing (t-test)                                ...
+
+[11 rows x 3 columns]
+</pre></div>
+</div>
+<p>Glossary</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">short_name</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">short_name</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Model_000000    model_catalog:nested public
+Model_000001    model_catalog:nested existing
+Model_000002    model_catalog:logit
+</pre></div>
+</div>
+<p>Estimation results of the Pareto optimal models.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">pareto_results</span> <span class="o">=</span> <span class="n">pareto_optimal</span><span class="p">(</span><span class="n">dict_of_results</span><span class="p">)</span>
+<span class="n">compiled_pareto_results</span><span class="p">,</span> <span class="n">pareto_specs</span> <span class="o">=</span> <span class="n">compile_estimation_results</span><span class="p">(</span>
+    <span class="n">pareto_results</span><span class="p">,</span> <span class="n">use_short_names</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>No Pareto file has been provided
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">compiled_pareto_results</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>                                   Model_000000         Model_000001
+Number of estimated parameters                4                    5
+Sample size                               10719                10719
+Final log likelihood               -8670.163119         -8526.889901
+Akaike Information Criterion       17348.326237         17063.779801
+Bayesian Information Criterion      17377.44533         17100.178667
+ASC_CAR (t-test)                0.0162  (0.438)  -0.00129  (-0.0377)
+ASC_TRAIN (t-test)                -0.652  (-12)      -0.373  (-7.17)
+B_COST (t-test)                  -0.79  (-15.5)      -0.629  (-14.8)
+B_TIME (t-test)                  -1.28  (-19.5)      -0.958  (-14.7)
+mu_existing (t-test)                                    2.05  (15.8)
+</pre></div>
+</div>
+<p>Glossary.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">short_name</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">pareto_specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">short_name</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Model_000000    model_catalog:logit
+Model_000001    model_catalog:nested existing
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.725 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-assisted-plot-b01model-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/b5afdb358f921307a45ff0ca1c5ea663/plot_b01model.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_b01model.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/fffe1e4af0f97ec2344508884ef2df24/plot_b01model.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_b01model.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/7a247602ea7bb7a816a6b18eccc4b1a4/plot_b01model.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_b01model.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="plot_b00logit.html" class="btn btn-neutral float-left" title="Base model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plot_b02nonlinear.html" class="btn btn-neutral float-right" title="Catalog of nonlinear specifications" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

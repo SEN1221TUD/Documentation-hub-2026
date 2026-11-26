@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.sampling_of_alternatives.generate_model &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.sampling_of_alternatives.generate_model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.sampling_of_alternatives.generate_model</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Generation of models estimated with samples of alternatives </span>
+
+<span class="sd">:author: Michel Bierlaire</span>
+<span class="sd">:date: Fri Sep 22 12:14:59 2023</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">loglogit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Variable</span><span class="p">,</span>
+    <span class="n">Expression</span><span class="p">,</span>
+    <span class="n">BelongsTo</span><span class="p">,</span>
+    <span class="n">ConditionalTermTuple</span><span class="p">,</span>
+    <span class="n">ConditionalSum</span><span class="p">,</span>
+    <span class="n">exp</span><span class="p">,</span>
+    <span class="n">log</span><span class="p">,</span>
+    <span class="n">logzero</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.nests</span><span class="w"> </span><span class="kn">import</span> <span class="n">NestsForNestedLogit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.sampling_context</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamplingContext</span><span class="p">,</span> <span class="n">LOG_PROBA_COL</span><span class="p">,</span> <span class="n">MEV_WEIGHT</span><span class="p">,</span> <span class="n">CNL_PREFIX</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="GenerateModel">
+<a class="viewcode-back" href="../../../code/biogeme/sampling_of_alternatives/generate_model.html#biogeme.sampling_of_alternatives.generate_model.GenerateModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GenerateModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class in charge of generating the biogeme expression for the</span>
+<span class="sd">    loglikelihood function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">SamplingContext</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        :param context: contains all the information that is needed to</span>
+<span class="sd">            perform the sampling of alternatives.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">context</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">utility_function</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">utility_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_sample_size</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">total_sample_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mev_prefix</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">mev_prefix</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">utilities</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">alt_id</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_utility</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">alt_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">alt_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_sample_size</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">second_partition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mev_utilities</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">alt_id</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">utilities</span><span class="p">[</span><span class="n">alt_id</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">alt_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_sample_size</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mev_utilities</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">alt_id</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_utility</span><span class="p">(</span>
+                    <span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mev_prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">alt_id</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">alt_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">second_sample_size</span><span class="p">)</span>
+            <span class="p">}</span>
+
+<div class="viewcode-block" id="GenerateModel.generate_utility">
+<a class="viewcode-back" href="../../../code/biogeme/sampling_of_alternatives/generate_model.html#biogeme.sampling_of_alternatives.generate_model.GenerateModel.generate_utility">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_utility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the utility function for one alternative</span>
+
+<span class="sd">        :param prefix: prefix to add to the attributes</span>
+
+<span class="sd">        :param suffix: suffix to add to the attributes</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">copy_utility</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">utility_function</span><span class="p">)</span>
+        <span class="n">copy_utility</span><span class="o">.</span><span class="n">rename_elementary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">copy_utility</span></div>
+
+
+<div class="viewcode-block" id="GenerateModel.get_logit">
+<a class="viewcode-back" href="../../../code/biogeme/sampling_of_alternatives/generate_model.html#biogeme.sampling_of_alternatives.generate_model.GenerateModel.get_logit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_logit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the expression for the log likelihood of the logit model&quot;&quot;&quot;</span>
+
+        <span class="n">corrected_utilities</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">i</span><span class="p">:</span> <span class="n">utility</span> <span class="o">-</span> <span class="n">Variable</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">LOG_PROBA_COL</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">utility</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">loglogit</span><span class="p">(</span><span class="n">corrected_utilities</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GenerateModel.get_nested_logit">
+<a class="viewcode-back" href="../../../code/biogeme/sampling_of_alternatives/generate_model.html#biogeme.sampling_of_alternatives.generate_model.GenerateModel.get_nested_logit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_nested_logit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nests</span><span class="p">:</span> <span class="n">NestsForNestedLogit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the expression for the log likelihood of the nested logit model</span>
+
+<span class="sd">        :param nests: A tuple containing as many items as nests.</span>
+<span class="sd">            Each item is also a tuple containing two items:</span>
+
+<span class="sd">        - an object of type biogeme.expressions.expr.Expression representing</span>
+<span class="sd">          the nest parameter,</span>
+<span class="sd">        - a list containing the list of identifiers of the alternatives</span>
+<span class="sd">          belonging to the nest.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            nesta = MUA ,[1, 2, 3]</span>
+<span class="sd">            nestb = MUB ,[4, 5, 6]</span>
+<span class="sd">            nests = nesta, nestb</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dict_of_mev_sums</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># We first compute the MEV partial sum for each nest</span>
+        <span class="k">for</span> <span class="n">nest</span> <span class="ow">in</span> <span class="n">nests</span><span class="p">:</span>
+            <span class="n">mu_param</span> <span class="o">=</span> <span class="n">nest</span><span class="o">.</span><span class="n">nest_param</span>
+            <span class="n">list_of_alternatives</span> <span class="o">=</span> <span class="n">nest</span><span class="o">.</span><span class="n">list_of_alternatives</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">check_valid_alternatives</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">list_of_alternatives</span><span class="p">))</span>
+            <span class="c1"># We first build the MEV term using a sample of</span>
+            <span class="c1"># alternatives. To build this term, we iterate from 1, as</span>
+            <span class="c1"># we ignore the chosen alternative.</span>
+            <span class="n">list_of_terms</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">utility</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_utilities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">alternative_id</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mev_prefix</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">id_column</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="n">belong_to_nest</span> <span class="o">=</span> <span class="n">BelongsTo</span><span class="p">(</span><span class="n">alternative_id</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">list_of_alternatives</span><span class="p">))</span>
+                <span class="n">weight</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mev_prefix</span><span class="si">}{</span><span class="n">MEV_WEIGHT</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">the_term</span> <span class="o">=</span> <span class="n">ConditionalTermTuple</span><span class="p">(</span>
+                    <span class="n">condition</span><span class="o">=</span><span class="n">belong_to_nest</span><span class="p">,</span> <span class="n">term</span><span class="o">=</span><span class="n">weight</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="n">mu_param</span> <span class="o">*</span> <span class="n">utility</span><span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="n">list_of_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_term</span><span class="p">)</span>
+            <span class="n">dict_of_mev_sums</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">list_of_alternatives</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ConditionalSum</span><span class="p">(</span>
+                <span class="n">list_of_terms</span>
+            <span class="p">)</span>
+
+        <span class="c1"># We now add all relevant MEV terms to the utilities</span>
+
+        <span class="n">dict_of_mev_terms</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">the_utility</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">alternative_id</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">id_column</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">list_of_terms</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">nest</span> <span class="ow">in</span> <span class="n">nests</span><span class="p">:</span>
+                <span class="n">mu_param</span> <span class="o">=</span> <span class="n">nest</span><span class="o">.</span><span class="n">nest_param</span>
+                <span class="n">mev_sum</span> <span class="o">=</span> <span class="n">dict_of_mev_sums</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">nest</span><span class="o">.</span><span class="n">list_of_alternatives</span><span class="p">)]</span>
+                <span class="n">mev_term</span> <span class="o">=</span> <span class="p">(</span><span class="n">mu_param</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">the_utility</span> <span class="o">+</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">mu_param</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span>
+                <span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">mev_sum</span><span class="p">)</span>
+                <span class="n">belong_to_nest</span> <span class="o">=</span> <span class="n">BelongsTo</span><span class="p">(</span>
+                    <span class="n">alternative_id</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">nest</span><span class="o">.</span><span class="n">list_of_alternatives</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">the_term</span> <span class="o">=</span> <span class="n">ConditionalTermTuple</span><span class="p">(</span><span class="n">condition</span><span class="o">=</span><span class="n">belong_to_nest</span><span class="p">,</span> <span class="n">term</span><span class="o">=</span><span class="n">mev_term</span><span class="p">)</span>
+
+                <span class="n">list_of_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_term</span><span class="p">)</span>
+            <span class="n">dict_of_mev_terms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConditionalSum</span><span class="p">(</span><span class="n">list_of_terms</span><span class="p">)</span>
+
+        <span class="n">corrected_utilities</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">util</span> <span class="o">-</span> <span class="n">Variable</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">LOG_PROBA_COL</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">dict_of_mev_terms</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">util</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">loglogit</span><span class="p">(</span><span class="n">corrected_utilities</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GenerateModel.get_cross_nested_logit">
+<a class="viewcode-back" href="../../../code/biogeme/sampling_of_alternatives/generate_model.html#biogeme.sampling_of_alternatives.generate_model.GenerateModel.get_cross_nested_logit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_cross_nested_logit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expression</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the expression for the log likelihood of the nested logit model&quot;&quot;&quot;</span>
+        <span class="n">nests</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">cnl_nests</span>
+
+        <span class="c1"># We  compute the MEV partial sum for each nest</span>
+        <span class="n">dict_of_mev_sums</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">nest</span> <span class="ow">in</span> <span class="n">nests</span><span class="p">:</span>
+            <span class="n">mu_param</span> <span class="o">=</span> <span class="n">nest</span><span class="o">.</span><span class="n">nest_param</span>
+            <span class="c1"># We first build the MEV term using a sample of</span>
+            <span class="c1"># alternatives. To build this term, we iterate from 1, as</span>
+            <span class="c1"># we ignore the chosen alternative.</span>
+            <span class="n">list_of_terms</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">utility</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_utilities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">alpha</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mev_prefix</span><span class="si">}{</span><span class="n">CNL_PREFIX</span><span class="si">}{</span><span class="n">nest</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">weight</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mev_prefix</span><span class="si">}{</span><span class="n">MEV_WEIGHT</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">the_term</span> <span class="o">=</span> <span class="n">ConditionalTermTuple</span><span class="p">(</span>
+                    <span class="n">condition</span><span class="o">=</span><span class="n">alpha</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">term</span><span class="o">=</span><span class="n">weight</span> <span class="o">*</span> <span class="n">alpha</span><span class="o">**</span><span class="n">mu_param</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="n">mu_param</span> <span class="o">*</span> <span class="n">utility</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="n">list_of_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_term</span><span class="p">)</span>
+
+            <span class="n">dict_of_mev_sums</span><span class="p">[</span><span class="n">nest</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConditionalSum</span><span class="p">(</span><span class="n">list_of_terms</span><span class="p">)</span>
+
+        <span class="c1"># We now add all relevant MEV terms to the utilities</span>
+        <span class="n">dict_of_mev_terms</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">the_utility</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">list_of_terms</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">nest</span> <span class="ow">in</span> <span class="n">nests</span><span class="p">:</span>
+                <span class="n">alpha</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mev_prefix</span><span class="si">}{</span><span class="n">CNL_PREFIX</span><span class="si">}{</span><span class="n">nest</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">mu_param</span> <span class="o">=</span> <span class="n">nest</span><span class="o">.</span><span class="n">nest_param</span>
+                <span class="n">mev_sum</span> <span class="o">=</span> <span class="n">dict_of_mev_sums</span><span class="p">[</span><span class="n">nest</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">**</span> <span class="p">((</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">mu_param</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
+                <span class="n">mev_term</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">alpha</span><span class="o">**</span><span class="n">mu_param</span> <span class="o">*</span> <span class="n">exp</span><span class="p">((</span><span class="n">mu_param</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">the_utility</span><span class="p">)</span> <span class="o">*</span> <span class="n">mev_sum</span>
+                <span class="p">)</span>
+                <span class="n">the_term</span> <span class="o">=</span> <span class="n">ConditionalTermTuple</span><span class="p">(</span><span class="n">condition</span><span class="o">=</span><span class="n">alpha</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">term</span><span class="o">=</span><span class="n">mev_term</span><span class="p">)</span>
+                <span class="n">list_of_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">the_term</span><span class="p">)</span>
+            <span class="n">dict_of_mev_terms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">logzero</span><span class="p">(</span><span class="n">ConditionalSum</span><span class="p">(</span><span class="n">list_of_terms</span><span class="p">))</span>
+
+        <span class="n">corrected_utilities</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">util</span> <span class="o">-</span> <span class="n">Variable</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">LOG_PROBA_COL</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">dict_of_mev_terms</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">util</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">loglogit</span><span class="p">(</span><span class="n">corrected_utilities</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

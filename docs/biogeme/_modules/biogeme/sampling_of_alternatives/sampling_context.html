@@ -1,0 +1,484 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.sampling_of_alternatives.sampling_context &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">biogeme.sampling_of_alternatives.sampling_context</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for biogeme.sampling_of_alternatives.sampling_context</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Defines a class that characterized the context to apply sampling of alternatives</span>
+
+<span class="sd">:author: Michel Bierlaire</span>
+<span class="sd">:date: Wed Sep  6 14:38:31 2023</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">TypeOfElementaryExpression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.nests</span><span class="w"> </span><span class="kn">import</span> <span class="n">NestsForCrossNestedLogit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiogemeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biogeme.partition</span><span class="w"> </span><span class="kn">import</span> <span class="n">Partition</span><span class="p">,</span> <span class="n">Segment</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">MEV_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;_MEV_&#39;</span>
+<span class="n">LOG_PROBA_COL</span> <span class="o">=</span> <span class="s1">&#39;_log_proba&#39;</span>
+<span class="n">MEV_WEIGHT</span> <span class="o">=</span> <span class="s1">&#39;_mev_weight&#39;</span>
+<span class="n">CNL_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;_CNL_&#39;</span>
+
+
+<div class="viewcode-block" id="StratumTuple">
+<a class="viewcode-back" href="../../../code/biogeme/sampling_of_alternatives/sampling_context.html#biogeme.sampling_of_alternatives.sampling_context.StratumTuple">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StratumTuple</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A stratum is an element of a partition of the full choice set,</span>
+<span class="sd">    combined with the number of alternatives that must be sampled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">subset</span><span class="p">:</span> <span class="n">Segment</span>
+    <span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span></div>
+
+
+
+<div class="viewcode-block" id="CrossVariableTuple">
+<a class="viewcode-back" href="../../../code/biogeme/sampling_of_alternatives/sampling_context.html#biogeme.sampling_of_alternatives.sampling_context.CrossVariableTuple">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CrossVariableTuple</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A cross variable is a variable that involves socio-economic</span>
+<span class="sd">    attributes of the individuals, and attributes of the</span>
+<span class="sd">    alternatives. It can only be calculated after the sampling has</span>
+<span class="sd">    been made.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">formula</span><span class="p">:</span> <span class="n">Expression</span></div>
+
+
+
+<div class="viewcode-block" id="SamplingContext">
+<a class="viewcode-back" href="../../../code/biogeme/sampling_of_alternatives/sampling_context.html#biogeme.sampling_of_alternatives.sampling_context.SamplingContext">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SamplingContext</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class gathering the data needed to perform an estimation with</span>
+<span class="sd">    samples of alternatives</span>
+
+<span class="sd">    :param the_partition: Partition used for the sampling.</span>
+
+<span class="sd">    :param sample_sizes: number of alternative to draw from each segment.</span>
+
+<span class="sd">    :param individuals: Pandas data frame containing all the</span>
+<span class="sd">        individuals as rows. One column must contain the choice of</span>
+<span class="sd">        each individual.</span>
+
+<span class="sd">    :param choice_column: name of the column containing the choice of</span>
+<span class="sd">        each individual.</span>
+
+<span class="sd">    :param alternatives: Pandas data frame containing all the</span>
+<span class="sd">        alternatives as rows. One column must contain a unique ID</span>
+<span class="sd">        identifying the alternatives. The other columns contain</span>
+<span class="sd">        variables to include in the data file.</span>
+
+<span class="sd">    :param id_column: name of the column containing the Ids of the alternatives.</span>
+
+<span class="sd">    :param utility_function: definition of the generic utility function</span>
+
+<span class="sd">    :param combined_variables: definition of interaction variables</span>
+
+<span class="sd">    :param mev_partition: If a second choice set need to be sampled</span>
+<span class="sd">        for the MEV terms, the corresponding partitition is provided</span>
+<span class="sd">        here.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">the_partition</span><span class="p">:</span> <span class="n">Partition</span>
+    <span class="n">sample_sizes</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">individuals</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+    <span class="n">choice_column</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">alternatives</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+    <span class="n">id_column</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">biogeme_file_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">utility_function</span><span class="p">:</span> <span class="n">Expression</span>
+    <span class="n">combined_variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CrossVariableTuple</span><span class="p">]</span>
+    <span class="n">mev_partition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Partition</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">mev_sample_sizes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">cnl_nests</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NestsForCrossNestedLogit</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="SamplingContext.check_expression">
+<a class="viewcode-back" href="../../../code/biogeme/sampling_of_alternatives/sampling_context.html#biogeme.sampling_of_alternatives.sampling_context.SamplingContext.check_expression">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expression</span><span class="p">:</span> <span class="n">Expression</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verifies if the variables contained in the expression can be found in the databases&quot;&quot;&quot;</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="n">expression</span><span class="o">.</span><span class="n">set_of_elementary_expression</span><span class="p">(</span>
+            <span class="n">TypeOfElementaryExpression</span><span class="o">.</span><span class="n">VARIABLE</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">variable</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">columns</span>
+                <span class="ow">and</span> <span class="n">variable</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="o">.</span><span class="n">columns</span>
+                <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">variable</span> <span class="o">!=</span> <span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_variables</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid expression. Variable &quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s1">&quot; has not been found in &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;the provided database&#39;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SamplingContext.check_partition">
+<a class="viewcode-back" href="../../../code/biogeme/sampling_of_alternatives/sampling_context.html#biogeme.sampling_of_alternatives.sampling_context.SamplingContext.check_partition">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_partition</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the partition is truly a partition. If not, an exception is raised</span>
+
+<span class="sd">        :raise BiogemeError: if some elements are present in more than one subset.</span>
+
+<span class="sd">        :raise BiogemeError: if the size of the union of the subsets does</span>
+<span class="sd">           not match the expected total size</span>
+
+<span class="sd">        :raise BiogemeError: if an alternative in the partition does</span>
+<span class="sd">            not appear in the database of alternatives</span>
+
+<span class="sd">        :raise BiogemeError: if a segment is empty</span>
+
+<span class="sd">        :raise BiogemeError: if the number of sampled alternatives in</span>
+<span class="sd">            a stratum is incorrect , that is zero, or larger than the</span>
+<span class="sd">            stratum size..</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Verify that all requested alternatives appear in the database of alternatives</span>
+        <span class="k">for</span> <span class="n">stratum</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stratum</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="s1">&#39;A stratum is empty&#39;</span>
+                <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">stratum</span><span class="o">.</span><span class="n">sample_size</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">:</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Cannot draw </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1"> elements in a stratum of size </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="s1">&#39;At least one alternative must be selected in each segment&#39;</span>
+                <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">alt</span> <span class="ow">in</span> <span class="n">stratum</span><span class="o">.</span><span class="n">subset</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">alt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_column</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+                    <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;Alternative </span><span class="si">{</span><span class="n">alt</span><span class="si">}</span><span class="s1"> does not appear in the database of &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;alternatives&#39;</span>
+                    <span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SamplingContext.check_mev_partition">
+<a class="viewcode-back" href="../../../code/biogeme/sampling_of_alternatives/sampling_context.html#biogeme.sampling_of_alternatives.sampling_context.SamplingContext.check_mev_partition">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_mev_partition</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the partition is a partition of the MEV</span>
+<span class="sd">        alternatives. It does not need to cover the full choice set&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_partition</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_sample_sizes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s1">&#39;If mev_partition is defined, mev_sample_size must also be defined&#39;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_sample_sizes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_partition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s1">&#39;If mev_sample_sizes is defined, mev_partition must also be defined&#39;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cnl_nests</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_partition</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cnl_nests</span><span class="o">.</span><span class="n">mev_alternatives</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_partition</span><span class="o">.</span><span class="n">full_set</span><span class="p">:</span>
+                <span class="n">in_nest_not_in_partition</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cnl_nests</span><span class="o">.</span><span class="n">mev_alternatives</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_partition</span><span class="o">.</span><span class="n">full_set</span>
+                <span class="p">)</span>
+                <span class="n">in_partition_not_in_nest</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">mev_partition</span><span class="o">.</span><span class="n">full_set</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cnl_nests</span><span class="o">.</span><span class="n">mev_alternatives</span>
+                <span class="p">)</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="k">if</span> <span class="n">in_nest_not_in_partition</span><span class="p">:</span>
+                    <span class="n">error_msg</span> <span class="o">+=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;The following alternative(s) belong to a nest but not to the&#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39; partition for the sample: </span><span class="si">{</span><span class="n">in_nest_not_in_partition</span><span class="si">}</span><span class="s1">. &#39;</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="n">in_partition_not_in_nest</span><span class="p">:</span>
+                    <span class="n">error_msg</span> <span class="o">+=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;The following alternative(s) belong to the partition for &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;the MEV sample, but not to any nest: </span><span class="si">{</span><span class="n">in_partition_not_in_nest</span><span class="si">}</span><span class="s1">&#39;</span>
+                    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SamplingContext.check_valid_alternatives">
+<a class="viewcode-back" href="../../../code/biogeme/sampling_of_alternatives/sampling_context.html#biogeme.sampling_of_alternatives.sampling_context.SamplingContext.check_valid_alternatives">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_valid_alternatives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_of_ids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the IDs in set are indeed valid</span>
+<span class="sd">            alternatives. Typically used to check if a nest is well</span>
+<span class="sd">            defined</span>
+
+<span class="sd">        :param set_of_ids: set of identifiers to check</span>
+
+<span class="sd">        :raise BiogemeError: if at least one id is invalid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">set_of_ids</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_column</span><span class="p">])</span>
+            <span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="n">missing_values</span> <span class="o">=</span> <span class="n">set_of_ids</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_column</span><span class="p">])</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;The following IDs are not valid alternative IDs: </span><span class="si">{</span><span class="n">missing_values</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SamplingContext.include_cnl_alphas">
+<a class="viewcode-back" href="../../../code/biogeme/sampling_of_alternatives/sampling_context.html#biogeme.sampling_of_alternatives.sampling_context.SamplingContext.include_cnl_alphas">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">include_cnl_alphas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cnl_nests</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">nest</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cnl_nests</span><span class="p">:</span>
+            <span class="n">column_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">CNL_PREFIX</span><span class="si">}{</span><span class="n">nest</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_column</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cnl_nests</span><span class="o">.</span><span class="n">get_alpha_values</span><span class="p">(</span><span class="n">alternative_id</span><span class="o">=</span><span class="n">x</span><span class="p">)[</span><span class="n">nest</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nest</span><span class="o">.</span><span class="n">dict_of_alpha</span>
+                    <span class="k">else</span> <span class="mf">0.0</span>
+                <span class="p">)</span>
+            <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Check for empty utility function</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">utility_function</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="s1">&#39;No utility function has been provided&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Check for empty strings</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice_column</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="s1">&#39;choice_column should not be an empty string.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_column</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="s1">&#39;id_column should not be an empty string.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Validate that the DataFrames are not empty</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">empty</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span>
+                <span class="s1">&#39;DataFrames individuals or alternatives should not be empty.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># A previous implementation used a list of StratumTuple. We</span>
+        <span class="c1"># now perform the conversion.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">partition</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">StratumTuple</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">segment</span><span class="p">,</span> <span class="n">sample_size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">segment</span><span class="p">,</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">the_partition</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_sizes</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_partition</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Check if there is a MEV partition&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_partition</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_sample_sizes</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Yes, there is a MEV partition&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_mev_partition</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">second_partition</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">StratumTuple</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">segment</span><span class="p">,</span> <span class="n">sample_size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">segment</span><span class="p">,</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mev_partition</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_sample_sizes</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;No, there is no MEV partition&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">second_partition</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># If CNL nests are defined, check that the alphas are all</span>
+        <span class="c1"># fixed and that the nests have a name.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cnl_nests</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cnl_nests</span><span class="o">.</span><span class="n">all_alphas_fixed</span><span class="p">():</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="s1">&#39;For the CNL model, all alpha parameters must be fixed.&#39;</span>
+                <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cnl_nests</span><span class="o">.</span><span class="n">check_names</span><span class="p">():</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="s1">&#39;For the CNL model, all nests must have a name.&#39;</span>
+                <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_of_alternatives</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_of_individuals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Validate that choice_column is in the individuals DataFrame</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice_column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">choice_column</span><span class="si">}</span><span class="s1"> is not a column in the individuals DataFrame.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Validate that id_column is in the alternatives DataFrame</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id_column</span><span class="si">}</span><span class="s1"> is not a column in the alternatives DataFrame.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Check for data types</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">choice_column</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Column </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">choice_column</span><span class="si">}</span><span class="s1"> in data frame &quot;individuals&quot; should &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;be of type int or float.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_column</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">BiogemeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Column </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id_column</span><span class="si">}</span><span class="s1"> in alternatives should be of type int or float.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_sample_size</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">stratum</span><span class="o">.</span><span class="n">sample_size</span> <span class="k">for</span> <span class="n">stratum</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">second_sample_size</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="kc">None</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">second_partition</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="nb">sum</span><span class="p">(</span><span class="n">stratum</span><span class="o">.</span><span class="n">sample_size</span> <span class="k">for</span> <span class="n">stratum</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">second_partition</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_expression</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">utility_function</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">cross_variable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_variables</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_expression</span><span class="p">(</span><span class="n">cross_variable</span><span class="o">.</span><span class="n">formula</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">|</span> <span class="p">{</span>
+            <span class="n">combined_variable</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">combined_variable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_variables</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mev_prefix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">second_partition</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">MEV_PREFIX</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">include_cnl_alphas</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SamplingContext.reporting">
+<a class="viewcode-back" href="../../../code/biogeme/sampling_of_alternatives/sampling_context.html#biogeme.sampling_of_alternatives.sampling_context.SamplingContext.reporting">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reporting</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Summarizes the configuration specified by the context object.&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;Size of the choice set&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternatives</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s1">&#39;Main partition&#39;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">the_partition</span><span class="o">.</span><span class="n">number_of_segments</span><span class="p">()</span><span class="si">}</span><span class="s1"> segment(s) of size &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">segment</span><span class="p">))</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">segment</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">the_partition</span><span class="p">])</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">),</span>
+            <span class="s1">&#39;Main sample&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">total_sample_size</span><span class="si">}</span><span class="s1">: &#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;Main sample&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">stratum</span><span class="o">.</span><span class="n">sample_size</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">stratum</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="k">for</span> <span class="n">stratum</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mev_partition</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;Nbr of MEV alternatives&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mev_partition</span><span class="o">.</span><span class="n">full_set</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;MEV partition&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mev_partition</span><span class="o">.</span><span class="n">number_of_segments</span><span class="p">()</span><span class="si">}</span><span class="s1"> segment(s) of size &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">segment</span><span class="p">))</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">segment</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">mev_partition</span><span class="p">])</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;MEV sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">second_sample_size</span><span class="si">}</span><span class="s1">: &#39;</span>
+            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;MEV sample&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">stratum</span><span class="o">.</span><span class="n">sample_size</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">stratum</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+                    <span class="k">for</span> <span class="n">stratum</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">second_partition</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">section</span><span class="p">,</span> <span class="n">description</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">description</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,472 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>.biogeme module &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="biogeme.assisted module" href="biogeme/assisted.html" />
+    <link rel="prev" title="Native draws" href="native_draws.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="native_draws.html">Native draws</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">.biogeme module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/assisted.html">biogeme.assisted module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/biogeme.html">biogeme.biogeme module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/biogeme_logging.html">biogeme.biogeme_logging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/catalog.html">biogeme.catalog module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/check_parameters.html">biogeme.check_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/cnl.html">biogeme.cnl module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/configuration.html">biogeme.configuration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/controller.html">biogeme.controller module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/data.html">biogeme.data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/database.html">biogeme.database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/default_parameters.html">biogeme.default_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/deprecated.html">biogeme.deprecated module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/dict_of_formulas.html">biogeme.dict_of_formulas module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/distributions.html">biogeme.distributions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/draws.html">biogeme.draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/exceptions.html">biogeme.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions.html">biogeme.expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/filenames.html">biogeme.filenames module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/function_output.html">biogeme.function_output module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/loglikelihood.html">biogeme.loglikelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/lsh.html">biogeme.lsh module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/mdcev.html">biogeme.mdcev module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/messaging.html">biogeme.messaging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/models.html">biogeme.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/multiobjectives.html">biogeme.multiobjectives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html">biogeme.native_draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/negative_likelihood.html">biogeme.negative_likelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/nests.html">biogeme.nests module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/optimization.html">biogeme.optimization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/parameters.html">biogeme.parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/partition.html">biogeme.partition module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/results.html">biogeme.results module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/sampling_of_alternatives.html">biogeme.sampling_of_alternatives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/segmentation.html">biogeme.segmentation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/singleton.html">biogeme.singleton module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/specification.html">biogeme.specification module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/tools.html">biogeme.tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/validity.html">biogeme.validity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/version.html">biogeme.version module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">.biogeme module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/code/biogeme.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="biogeme-module">
+<h1>.biogeme module<a class="headerlink" href="#biogeme-module" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/assisted.html">biogeme.assisted module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/assisted.html#biogeme.assisted.AssistedSpecification"><code class="docutils literal notranslate"><span class="pre">AssistedSpecification</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/assisted.html#biogeme.assisted.ParetoPostProcessing"><code class="docutils literal notranslate"><span class="pre">ParetoPostProcessing</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/biogeme.html">biogeme.biogeme module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/biogeme.html#biogeme.biogeme.BIOGEME"><code class="docutils literal notranslate"><span class="pre">BIOGEME</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/biogeme.html#biogeme.biogeme.OldNewParamTuple"><code class="docutils literal notranslate"><span class="pre">OldNewParamTuple</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/biogeme_logging.html">biogeme.biogeme_logging module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/biogeme_logging.html#biogeme.biogeme_logging.get_file_logger"><code class="docutils literal notranslate"><span class="pre">get_file_logger()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/biogeme_logging.html#biogeme.biogeme_logging.get_screen_logger"><code class="docutils literal notranslate"><span class="pre">get_screen_logger()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/catalog.html">biogeme.catalog module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/catalog.html#biogeme.catalog.Catalog"><code class="docutils literal notranslate"><span class="pre">Catalog</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/catalog.html#biogeme.catalog.SegmentedParameters"><code class="docutils literal notranslate"><span class="pre">SegmentedParameters</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/catalog.html#biogeme.catalog.generic_alt_specific_catalogs"><code class="docutils literal notranslate"><span class="pre">generic_alt_specific_catalogs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/catalog.html#biogeme.catalog.segmentation_catalogs"><code class="docutils literal notranslate"><span class="pre">segmentation_catalogs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/check_parameters.html">biogeme.check_parameters module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/check_parameters.html#biogeme.check_parameters.check_algo_name"><code class="docutils literal notranslate"><span class="pre">check_algo_name()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/check_parameters.html#biogeme.check_parameters.is_boolean"><code class="docutils literal notranslate"><span class="pre">is_boolean()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/check_parameters.html#biogeme.check_parameters.is_integer"><code class="docutils literal notranslate"><span class="pre">is_integer()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/check_parameters.html#biogeme.check_parameters.is_non_negative"><code class="docutils literal notranslate"><span class="pre">is_non_negative()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/check_parameters.html#biogeme.check_parameters.is_number"><code class="docutils literal notranslate"><span class="pre">is_number()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/check_parameters.html#biogeme.check_parameters.is_positive"><code class="docutils literal notranslate"><span class="pre">is_positive()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/check_parameters.html#biogeme.check_parameters.zero_one"><code class="docutils literal notranslate"><span class="pre">zero_one()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/cnl.html">biogeme.cnl module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/cnl.html#biogeme.cnl.cnl_CDF"><code class="docutils literal notranslate"><span class="pre">cnl_CDF()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/cnl.html#biogeme.cnl.cnl_G"><code class="docutils literal notranslate"><span class="pre">cnl_G()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/cnl.html#biogeme.cnl.cnl_cdf"><code class="docutils literal notranslate"><span class="pre">cnl_cdf()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/cnl.html#biogeme.cnl.cnl_g"><code class="docutils literal notranslate"><span class="pre">cnl_g()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/configuration.html">biogeme.configuration module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/configuration.html#biogeme.configuration.Configuration"><code class="docutils literal notranslate"><span class="pre">Configuration</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/configuration.html#biogeme.configuration.SelectionTuple"><code class="docutils literal notranslate"><span class="pre">SelectionTuple</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/controller.html">biogeme.controller module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/controller.html#biogeme.controller.CentralController"><code class="docutils literal notranslate"><span class="pre">CentralController</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/controller.html#biogeme.controller.Controller"><code class="docutils literal notranslate"><span class="pre">Controller</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/data.html">biogeme.data module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/data/data.html">biogeme.data.data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/data/mdcev_data.html">biogeme.data.mdcev_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/data/optima.html">biogeme.data.optima module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/data/swissmetro.html">biogeme.data.swissmetro module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/database.html">biogeme.database module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/database.html#biogeme.database.Database"><code class="docutils literal notranslate"><span class="pre">Database</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/database.html#biogeme.database.EstimationValidation"><code class="docutils literal notranslate"><span class="pre">EstimationValidation</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/database.html#biogeme.database.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/default_parameters.html">biogeme.default_parameters module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/default_parameters.html#biogeme.default_parameters.ParameterTuple"><code class="docutils literal notranslate"><span class="pre">ParameterTuple</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/default_parameters.html#biogeme.default_parameters.all_parameters_tuple"><code class="docutils literal notranslate"><span class="pre">all_parameters_tuple()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/deprecated.html">biogeme.deprecated module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/deprecated.html#biogeme.deprecated.deprecated"><code class="docutils literal notranslate"><span class="pre">deprecated()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/deprecated.html#biogeme.deprecated.deprecated_parameters"><code class="docutils literal notranslate"><span class="pre">deprecated_parameters()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/deprecated.html#biogeme.deprecated.issue_deprecation_warning"><code class="docutils literal notranslate"><span class="pre">issue_deprecation_warning()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/dict_of_formulas.html">biogeme.dict_of_formulas module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/dict_of_formulas.html#biogeme.dict_of_formulas.check_validity"><code class="docutils literal notranslate"><span class="pre">check_validity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/dict_of_formulas.html#biogeme.dict_of_formulas.get_expression"><code class="docutils literal notranslate"><span class="pre">get_expression()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/dict_of_formulas.html#biogeme.dict_of_formulas.is_similar_to"><code class="docutils literal notranslate"><span class="pre">is_similar_to()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/distributions.html">biogeme.distributions module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/distributions.html#biogeme.distributions.logisticcdf"><code class="docutils literal notranslate"><span class="pre">logisticcdf()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/distributions.html#biogeme.distributions.lognormalpdf"><code class="docutils literal notranslate"><span class="pre">lognormalpdf()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/distributions.html#biogeme.distributions.normalpdf"><code class="docutils literal notranslate"><span class="pre">normalpdf()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/distributions.html#biogeme.distributions.triangularpdf"><code class="docutils literal notranslate"><span class="pre">triangularpdf()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/distributions.html#biogeme.distributions.uniformpdf"><code class="docutils literal notranslate"><span class="pre">uniformpdf()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/draws.html">biogeme.draws module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/draws.html#biogeme.draws.getAntithetic"><code class="docutils literal notranslate"><span class="pre">getAntithetic()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/draws.html#biogeme.draws.getHaltonDraws"><code class="docutils literal notranslate"><span class="pre">getHaltonDraws()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/draws.html#biogeme.draws.getLatinHypercubeDraws"><code class="docutils literal notranslate"><span class="pre">getLatinHypercubeDraws()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/draws.html#biogeme.draws.getNormalWichuraDraws"><code class="docutils literal notranslate"><span class="pre">getNormalWichuraDraws()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/draws.html#biogeme.draws.getUniform"><code class="docutils literal notranslate"><span class="pre">getUniform()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/draws.html#biogeme.draws.get_antithetic"><code class="docutils literal notranslate"><span class="pre">get_antithetic()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/draws.html#biogeme.draws.get_halton_draws"><code class="docutils literal notranslate"><span class="pre">get_halton_draws()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/draws.html#biogeme.draws.get_latin_hypercube_draws"><code class="docutils literal notranslate"><span class="pre">get_latin_hypercube_draws()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/draws.html#biogeme.draws.get_normal_wichura_draws"><code class="docutils literal notranslate"><span class="pre">get_normal_wichura_draws()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/draws.html#biogeme.draws.get_uniform"><code class="docutils literal notranslate"><span class="pre">get_uniform()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/exceptions.html">biogeme.exceptions module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/exceptions.html#biogeme.exceptions.BiogemeError"><code class="docutils literal notranslate"><span class="pre">BiogemeError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/exceptions.html#biogeme.exceptions.DuplicateError"><code class="docutils literal notranslate"><span class="pre">DuplicateError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/exceptions.html#biogeme.exceptions.FileNotFound"><code class="docutils literal notranslate"><span class="pre">FileNotFound</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/exceptions.html#biogeme.exceptions.NotImplementedError"><code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/exceptions.html#biogeme.exceptions.ValueOutOfRange"><code class="docutils literal notranslate"><span class="pre">ValueOutOfRange</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/expressions.html">biogeme.expressions module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/base_expressions.html">biogeme.expressions.base_expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/beta_parameters.html">biogeme.expressions.beta_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/binary_expressions.html">biogeme.expressions.binary_expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/calculator.html">biogeme.expressions.calculator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/catalog_iterator.html">biogeme.expressions.catalog_iterator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/comparison_expressions.html">biogeme.expressions.comparison_expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/convert.html">biogeme.expressions.convert module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/elementary_expressions.html">biogeme.expressions.elementary_expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/elementary_types.html">biogeme.expressions.elementary_types module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/idmanager.html">biogeme.expressions.idmanager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/logit_expressions.html">biogeme.expressions.logit_expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/multiple_expressions.html">biogeme.expressions.multiple_expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/named_expression.html">biogeme.expressions.named_expression module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/nary_expressions.html">biogeme.expressions.nary_expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/numeric_expressions.html">biogeme.expressions.numeric_expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/numeric_tools.html">biogeme.expressions.numeric_tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/expressions/unary_expressions.html">biogeme.expressions.unary_expressions module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/filenames.html">biogeme.filenames module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/filenames.html#biogeme.filenames.get_new_file_name"><code class="docutils literal notranslate"><span class="pre">get_new_file_name()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/function_output.html">biogeme.function_output module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/function_output.html#biogeme.function_output.BiogemeDisaggregateFunctionOutput"><code class="docutils literal notranslate"><span class="pre">BiogemeDisaggregateFunctionOutput</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/function_output.html#biogeme.function_output.BiogemeDisaggregateFunctionOutputSmartOutputProxy"><code class="docutils literal notranslate"><span class="pre">BiogemeDisaggregateFunctionOutputSmartOutputProxy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/function_output.html#biogeme.function_output.BiogemeFunctionOutput"><code class="docutils literal notranslate"><span class="pre">BiogemeFunctionOutput</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/function_output.html#biogeme.function_output.BiogemeFunctionOutputSmartOutputProxy"><code class="docutils literal notranslate"><span class="pre">BiogemeFunctionOutputSmartOutputProxy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/function_output.html#biogeme.function_output.FunctionOutput"><code class="docutils literal notranslate"><span class="pre">FunctionOutput</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/function_output.html#biogeme.function_output.NamedBiogemeDisaggregateFunctionOutput"><code class="docutils literal notranslate"><span class="pre">NamedBiogemeDisaggregateFunctionOutput</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/function_output.html#biogeme.function_output.NamedBiogemeFunctionOutput"><code class="docutils literal notranslate"><span class="pre">NamedBiogemeFunctionOutput</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/function_output.html#biogeme.function_output.NamedFunctionOutput"><code class="docutils literal notranslate"><span class="pre">NamedFunctionOutput</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/function_output.html#biogeme.function_output.SmartOutputProxy"><code class="docutils literal notranslate"><span class="pre">SmartOutputProxy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/function_output.html#biogeme.function_output.convert_to_dict"><code class="docutils literal notranslate"><span class="pre">convert_to_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/loglikelihood.html">biogeme.loglikelihood module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/loglikelihood.html#biogeme.loglikelihood.likelihoodregression"><code class="docutils literal notranslate"><span class="pre">likelihoodregression()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/loglikelihood.html#biogeme.loglikelihood.loglikelihood"><code class="docutils literal notranslate"><span class="pre">loglikelihood()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/loglikelihood.html#biogeme.loglikelihood.loglikelihoodregression"><code class="docutils literal notranslate"><span class="pre">loglikelihoodregression()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/loglikelihood.html#biogeme.loglikelihood.mixedloglikelihood"><code class="docutils literal notranslate"><span class="pre">mixedloglikelihood()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/lsh.html">biogeme.lsh module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/lsh.html#biogeme.lsh.get_lsh_weights"><code class="docutils literal notranslate"><span class="pre">get_lsh_weights()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/mdcev.html">biogeme.mdcev module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/mdcev/gamma_profile.html">biogeme.mdcev.gamma_profile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/mdcev/generalized.html">biogeme.mdcev.generalized module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/mdcev/mdcev.html">biogeme.mdcev.mdcev module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/mdcev/non_monotonic.html">biogeme.mdcev.non_monotonic module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/mdcev/translated.html">biogeme.mdcev.translated module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/messaging.html">biogeme.messaging module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/messaging.html#biogeme.messaging.bioMessage"><code class="docutils literal notranslate"><span class="pre">bioMessage</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/models.html">biogeme.models module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/models/boxcox.html">biogeme.models.boxcox module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/models/cnl.html">biogeme.models.cnl module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/models/logit.html">biogeme.models.logit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/models/mev.html">biogeme.models.mev module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/models/models_orig.html">biogeme.models.models_orig module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/models/nested.html">biogeme.models.nested module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/models/ordered.html">biogeme.models.ordered module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/models/piecewise.html">biogeme.models.piecewise module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/multiobjectives.html">biogeme.multiobjectives module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/multiobjectives.html#biogeme.multiobjectives.AIC_BIC_dimension"><code class="docutils literal notranslate"><span class="pre">AIC_BIC_dimension()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/multiobjectives.html#biogeme.multiobjectives.aic_bic_dimension"><code class="docutils literal notranslate"><span class="pre">aic_bic_dimension()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/multiobjectives.html#biogeme.multiobjectives.loglikelihood_dimension"><code class="docutils literal notranslate"><span class="pre">loglikelihood_dimension()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/native_draws.html">biogeme.native_draws module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.MLHS_anti"><code class="docutils literal notranslate"><span class="pre">MLHS_anti()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.RandomNumberGeneratorTuple"><code class="docutils literal notranslate"><span class="pre">RandomNumberGeneratorTuple</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.convert_random_generator_tuple"><code class="docutils literal notranslate"><span class="pre">convert_random_generator_tuple()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.description_of_native_draws"><code class="docutils literal notranslate"><span class="pre">description_of_native_draws()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.halton2"><code class="docutils literal notranslate"><span class="pre">halton2()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.halton3"><code class="docutils literal notranslate"><span class="pre">halton3()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.halton5"><code class="docutils literal notranslate"><span class="pre">halton5()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.normal_MLHS"><code class="docutils literal notranslate"><span class="pre">normal_MLHS()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.normal_MLHS_anti"><code class="docutils literal notranslate"><span class="pre">normal_MLHS_anti()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.normal_antithetic"><code class="docutils literal notranslate"><span class="pre">normal_antithetic()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.normal_halton2"><code class="docutils literal notranslate"><span class="pre">normal_halton2()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.normal_halton3"><code class="docutils literal notranslate"><span class="pre">normal_halton3()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.normal_halton5"><code class="docutils literal notranslate"><span class="pre">normal_halton5()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.symm_MLHS"><code class="docutils literal notranslate"><span class="pre">symm_MLHS()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.symm_MLHS_anti"><code class="docutils literal notranslate"><span class="pre">symm_MLHS_anti()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.symm_halton2"><code class="docutils literal notranslate"><span class="pre">symm_halton2()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.symm_halton3"><code class="docutils literal notranslate"><span class="pre">symm_halton3()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.symm_halton5"><code class="docutils literal notranslate"><span class="pre">symm_halton5()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.symm_uniform"><code class="docutils literal notranslate"><span class="pre">symm_uniform()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.symm_uniform_antithetic"><code class="docutils literal notranslate"><span class="pre">symm_uniform_antithetic()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/native_draws.html#biogeme.native_draws.uniform_antithetic"><code class="docutils literal notranslate"><span class="pre">uniform_antithetic()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/negative_likelihood.html">biogeme.negative_likelihood module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/negative_likelihood.html#biogeme.negative_likelihood.NegativeLikelihood"><code class="docutils literal notranslate"><span class="pre">NegativeLikelihood</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/nests.html">biogeme.nests module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/nests.html#biogeme.nests.Nests"><code class="docutils literal notranslate"><span class="pre">Nests</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/nests.html#biogeme.nests.NestsForCrossNestedLogit"><code class="docutils literal notranslate"><span class="pre">NestsForCrossNestedLogit</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/nests.html#biogeme.nests.NestsForNestedLogit"><code class="docutils literal notranslate"><span class="pre">NestsForNestedLogit</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/nests.html#biogeme.nests.OneNestForCrossNestedLogit"><code class="docutils literal notranslate"><span class="pre">OneNestForCrossNestedLogit</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/nests.html#biogeme.nests.OneNestForNestedLogit"><code class="docutils literal notranslate"><span class="pre">OneNestForNestedLogit</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/nests.html#biogeme.nests.get_nest"><code class="docutils literal notranslate"><span class="pre">get_nest()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/optimization.html">biogeme.optimization module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/optimization.html#biogeme.optimization.bfgs_linesearch_for_biogeme"><code class="docutils literal notranslate"><span class="pre">bfgs_linesearch_for_biogeme()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/optimization.html#biogeme.optimization.bfgs_trust_region_for_biogeme"><code class="docutils literal notranslate"><span class="pre">bfgs_trust_region_for_biogeme()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/optimization.html#biogeme.optimization.bio_bfgs"><code class="docutils literal notranslate"><span class="pre">bio_bfgs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/optimization.html#biogeme.optimization.bio_newton"><code class="docutils literal notranslate"><span class="pre">bio_newton()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/optimization.html#biogeme.optimization.newton_linesearch_for_biogeme"><code class="docutils literal notranslate"><span class="pre">newton_linesearch_for_biogeme()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/optimization.html#biogeme.optimization.newton_trust_region_for_biogeme"><code class="docutils literal notranslate"><span class="pre">newton_trust_region_for_biogeme()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/optimization.html#biogeme.optimization.scipy"><code class="docutils literal notranslate"><span class="pre">scipy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/optimization.html#biogeme.optimization.simple_bounds_newton_algorithm_for_biogeme"><code class="docutils literal notranslate"><span class="pre">simple_bounds_newton_algorithm_for_biogeme()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/parameters.html">biogeme.parameters module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/parameters.html#biogeme.parameters.NameSectionTuple"><code class="docutils literal notranslate"><span class="pre">NameSectionTuple</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/parameters.html#biogeme.parameters.Parameters"><code class="docutils literal notranslate"><span class="pre">Parameters</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/parameters.html#biogeme.parameters.format_comment"><code class="docutils literal notranslate"><span class="pre">format_comment()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/parameters.html#biogeme.parameters.get_default_value"><code class="docutils literal notranslate"><span class="pre">get_default_value()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/parameters.html#biogeme.parameters.parse_boolean"><code class="docutils literal notranslate"><span class="pre">parse_boolean()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/partition.html">biogeme.partition module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/partition.html#biogeme.partition.Partition"><code class="docutils literal notranslate"><span class="pre">Partition</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/results.html">biogeme.results module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/results.html#biogeme.results.Beta"><code class="docutils literal notranslate"><span class="pre">Beta</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/results.html#biogeme.results.GeneralStatistic"><code class="docutils literal notranslate"><span class="pre">GeneralStatistic</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/results.html#biogeme.results.RawResults"><code class="docutils literal notranslate"><span class="pre">RawResults</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/results.html#biogeme.results.bioResults"><code class="docutils literal notranslate"><span class="pre">bioResults</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/results.html#biogeme.results.calcPValue"><code class="docutils literal notranslate"><span class="pre">calcPValue()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/results.html#biogeme.results.calc_p_value"><code class="docutils literal notranslate"><span class="pre">calc_p_value()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/results.html#biogeme.results.compileEstimationResults"><code class="docutils literal notranslate"><span class="pre">compileEstimationResults()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/results.html#biogeme.results.compile_estimation_results"><code class="docutils literal notranslate"><span class="pre">compile_estimation_results()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/results.html#biogeme.results.compile_results_in_directory"><code class="docutils literal notranslate"><span class="pre">compile_results_in_directory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/results.html#biogeme.results.pareto_optimal"><code class="docutils literal notranslate"><span class="pre">pareto_optimal()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/sampling_of_alternatives.html">biogeme.sampling_of_alternatives module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/sampling_of_alternatives/choice_set_generation.html">biogeme.sampling_of_alternatives.choice_set_generation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/sampling_of_alternatives/generate_model.html">biogeme.sampling_of_alternatives.generate_model module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/sampling_of_alternatives/sampling_context.html">biogeme.sampling_of_alternatives.sampling_context module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/sampling_of_alternatives/sampling_of_alternatives.html">biogeme.sampling_of_alternatives.sampling_of_alternatives module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/segmentation.html">biogeme.segmentation module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/segmentation.html#biogeme.segmentation.DiscreteSegmentationTuple"><code class="docutils literal notranslate"><span class="pre">DiscreteSegmentationTuple</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/segmentation.html#biogeme.segmentation.OneSegmentation"><code class="docutils literal notranslate"><span class="pre">OneSegmentation</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/segmentation.html#biogeme.segmentation.Segmentation"><code class="docutils literal notranslate"><span class="pre">Segmentation</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/segmentation.html#biogeme.segmentation.segment_parameter"><code class="docutils literal notranslate"><span class="pre">segment_parameter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/segmentation.html#biogeme.segmentation.segmented_beta"><code class="docutils literal notranslate"><span class="pre">segmented_beta()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/singleton.html">biogeme.singleton module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/singleton.html#biogeme.singleton.Singleton"><code class="docutils literal notranslate"><span class="pre">Singleton</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/specification.html">biogeme.specification module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/specification.html#biogeme.specification.Specification"><code class="docutils literal notranslate"><span class="pre">Specification</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/tools.html">biogeme.tools module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/tools/checks.html">biogeme.tools.checks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/tools/database.html">biogeme.tools.database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/tools/derivatives.html">biogeme.tools.derivatives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/tools/files.html">biogeme.tools.files module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/tools/likelihood_ratio.html">biogeme.tools.likelihood_ratio module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/tools/primes.html">biogeme.tools.primes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/tools/time.html">biogeme.tools.time module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/tools/unique_ids.html">biogeme.tools.unique_ids module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/validity.html">biogeme.validity module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/validity.html#biogeme.validity.Validity"><code class="docutils literal notranslate"><span class="pre">Validity</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biogeme/version.html">biogeme.version module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/version.html#biogeme.version.getHtml"><code class="docutils literal notranslate"><span class="pre">getHtml()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/version.html#biogeme.version.getLaTeX"><code class="docutils literal notranslate"><span class="pre">getLaTeX()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/version.html#biogeme.version.getText"><code class="docutils literal notranslate"><span class="pre">getText()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/version.html#biogeme.version.getVersion"><code class="docutils literal notranslate"><span class="pre">getVersion()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/version.html#biogeme.version.get_html"><code class="docutils literal notranslate"><span class="pre">get_html()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/version.html#biogeme.version.get_latex"><code class="docutils literal notranslate"><span class="pre">get_latex()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/version.html#biogeme.version.get_text"><code class="docutils literal notranslate"><span class="pre">get_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme/version.html#biogeme.version.get_version"><code class="docutils literal notranslate"><span class="pre">get_version()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="native_draws.html" class="btn btn-neutral float-left" title="Native draws" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="biogeme/assisted.html" class="btn btn-neutral float-right" title="biogeme.assisted module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

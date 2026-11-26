@@ -1,0 +1,572 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.nests module &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=0b773b56"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="biogeme.optimization module" href="optimization.html" />
+    <link rel="prev" title="biogeme.negative_likelihood module" href="negative_likelihood.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../native_draws.html">Native draws</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../biogeme.html">.biogeme module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="assisted.html">biogeme.assisted module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme.html">biogeme.biogeme module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="biogeme_logging.html">biogeme.biogeme_logging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalog.html">biogeme.catalog module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="check_parameters.html">biogeme.check_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cnl.html">biogeme.cnl module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">biogeme.configuration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="controller.html">biogeme.controller module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html">biogeme.data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html">biogeme.database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="default_parameters.html">biogeme.default_parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deprecated.html">biogeme.deprecated module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dict_of_formulas.html">biogeme.dict_of_formulas module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distributions.html">biogeme.distributions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="draws.html">biogeme.draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptions.html">biogeme.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expressions.html">biogeme.expressions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filenames.html">biogeme.filenames module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="function_output.html">biogeme.function_output module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loglikelihood.html">biogeme.loglikelihood module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lsh.html">biogeme.lsh module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mdcev.html">biogeme.mdcev module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="messaging.html">biogeme.messaging module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html">biogeme.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiobjectives.html">biogeme.multiobjectives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="native_draws.html">biogeme.native_draws module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="negative_likelihood.html">biogeme.negative_likelihood module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">biogeme.nests module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.nests.Nests"><code class="docutils literal notranslate"><span class="pre">Nests</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.Nests.check_names"><code class="docutils literal notranslate"><span class="pre">Nests.check_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.Nests.check_union"><code class="docutils literal notranslate"><span class="pre">Nests.check_union()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.nests.NestsForCrossNestedLogit"><code class="docutils literal notranslate"><span class="pre">NestsForCrossNestedLogit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.NestsForCrossNestedLogit.all_alphas_fixed"><code class="docutils literal notranslate"><span class="pre">NestsForCrossNestedLogit.all_alphas_fixed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.NestsForCrossNestedLogit.check_validity"><code class="docutils literal notranslate"><span class="pre">NestsForCrossNestedLogit.check_validity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.NestsForCrossNestedLogit.correlation"><code class="docutils literal notranslate"><span class="pre">NestsForCrossNestedLogit.correlation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.NestsForCrossNestedLogit.covariance"><code class="docutils literal notranslate"><span class="pre">NestsForCrossNestedLogit.covariance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.NestsForCrossNestedLogit.get_alpha_dict"><code class="docutils literal notranslate"><span class="pre">NestsForCrossNestedLogit.get_alpha_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.NestsForCrossNestedLogit.get_alpha_values"><code class="docutils literal notranslate"><span class="pre">NestsForCrossNestedLogit.get_alpha_values()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.nests.NestsForNestedLogit"><code class="docutils literal notranslate"><span class="pre">NestsForNestedLogit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.NestsForNestedLogit.check_intersection"><code class="docutils literal notranslate"><span class="pre">NestsForNestedLogit.check_intersection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.NestsForNestedLogit.check_partition"><code class="docutils literal notranslate"><span class="pre">NestsForNestedLogit.check_partition()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.NestsForNestedLogit.correlation"><code class="docutils literal notranslate"><span class="pre">NestsForNestedLogit.correlation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.nests.OneNestForCrossNestedLogit"><code class="docutils literal notranslate"><span class="pre">OneNestForCrossNestedLogit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.OneNestForCrossNestedLogit.all_alpha_fixed"><code class="docutils literal notranslate"><span class="pre">OneNestForCrossNestedLogit.all_alpha_fixed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.OneNestForCrossNestedLogit.dict_of_alpha"><code class="docutils literal notranslate"><span class="pre">OneNestForCrossNestedLogit.dict_of_alpha</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.OneNestForCrossNestedLogit.from_tuple"><code class="docutils literal notranslate"><span class="pre">OneNestForCrossNestedLogit.from_tuple()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.OneNestForCrossNestedLogit.name"><code class="docutils literal notranslate"><span class="pre">OneNestForCrossNestedLogit.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.OneNestForCrossNestedLogit.nest_param"><code class="docutils literal notranslate"><span class="pre">OneNestForCrossNestedLogit.nest_param</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.nests.OneNestForNestedLogit"><code class="docutils literal notranslate"><span class="pre">OneNestForNestedLogit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.OneNestForNestedLogit.from_tuple"><code class="docutils literal notranslate"><span class="pre">OneNestForNestedLogit.from_tuple()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.OneNestForNestedLogit.intersection"><code class="docutils literal notranslate"><span class="pre">OneNestForNestedLogit.intersection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.OneNestForNestedLogit.list_of_alternatives"><code class="docutils literal notranslate"><span class="pre">OneNestForNestedLogit.list_of_alternatives</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.OneNestForNestedLogit.name"><code class="docutils literal notranslate"><span class="pre">OneNestForNestedLogit.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#biogeme.nests.OneNestForNestedLogit.nest_param"><code class="docutils literal notranslate"><span class="pre">OneNestForNestedLogit.nest_param</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#biogeme.nests.get_nest"><code class="docutils literal notranslate"><span class="pre">get_nest()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="optimization.html">biogeme.optimization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parameters.html">biogeme.parameters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition.html">biogeme.partition module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results.html">biogeme.results module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sampling_of_alternatives.html">biogeme.sampling_of_alternatives module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="segmentation.html">biogeme.segmentation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="singleton.html">biogeme.singleton module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="specification.html">biogeme.specification module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html">biogeme.tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="validity.html">biogeme.validity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="version.html">biogeme.version module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../biogeme.html">.biogeme module</a></li>
+      <li class="breadcrumb-item active">biogeme.nests module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/code/biogeme/nests.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-biogeme.nests">
+<span id="biogeme-nests-module"></span><h1>biogeme.nests module<a class="headerlink" href="#module-biogeme.nests" title="Link to this heading"></a></h1>
+<p>Implements objects in charge of the management of nests for the
+nested and the cross-nested logit model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Michel Bierlaire</p>
+</dd>
+<dt class="field-even">date<span class="colon">:</span></dt>
+<dd class="field-even"><p>Thu Oct  5 14:45:58 2023</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.nests.Nests">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.nests.</span></span><span class="sig-name descname"><span class="pre">Nests</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choice_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tuple_of_nests</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#Nests"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.Nests" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Generic interface for the nests.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>choice_set</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>tuple_of_nests</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="#biogeme.nests.OneNestForNestedLogit" title="biogeme.nests.OneNestForNestedLogit"><em>OneNestForNestedLogit</em></a><em> | </em><a class="reference internal" href="#biogeme.nests.OneNestForCrossNestedLogit" title="biogeme.nests.OneNestForCrossNestedLogit"><em>OneNestForCrossNestedLogit</em></a><em>, </em><em>...</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.Nests.check_names">
+<span class="sig-name descname"><span class="pre">check_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#Nests.check_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.Nests.check_names" title="Link to this definition"></a></dt>
+<dd><p>Checks that all the nests have a name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.Nests.check_union">
+<span class="sig-name descname"><span class="pre">check_union</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#Nests.check_union"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.Nests.check_union" title="Link to this definition"></a></dt>
+<dd><p>Check if the union of the nests is the choice set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a boolean with the result of the check, as a message if check fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.nests.NestsForCrossNestedLogit">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.nests.</span></span><span class="sig-name descname"><span class="pre">NestsForCrossNestedLogit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choice_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tuple_of_nests</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#NestsForCrossNestedLogit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.NestsForCrossNestedLogit" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#biogeme.nests.Nests" title="biogeme.nests.Nests"><code class="xref py py-class docutils literal notranslate"><span class="pre">Nests</span></code></a></p>
+<p>This class handles nests for the cross-nested logit model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>choice_set</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>tuple_of_nests</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="#biogeme.nests.OneNestForCrossNestedLogit" title="biogeme.nests.OneNestForCrossNestedLogit"><em>OneNestForCrossNestedLogit</em></a><em>, </em><em>...</em><em>] </em><em>| </em><em>OldNestsForCrossNestedLogit</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.NestsForCrossNestedLogit.all_alphas_fixed">
+<span class="sig-name descname"><span class="pre">all_alphas_fixed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#NestsForCrossNestedLogit.all_alphas_fixed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.NestsForCrossNestedLogit.all_alphas_fixed" title="Link to this definition"></a></dt>
+<dd><p>Check if all the alphas are fixed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.NestsForCrossNestedLogit.check_validity">
+<span class="sig-name descname"><span class="pre">check_validity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#NestsForCrossNestedLogit.check_validity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.NestsForCrossNestedLogit.check_validity" title="Link to this definition"></a></dt>
+<dd><p>Verifies if the cross-nested logit specification is valid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a boolean with the result of the check, and a message if check fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.NestsForCrossNestedLogit.correlation">
+<span class="sig-name descname"><span class="pre">correlation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternatives_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#NestsForCrossNestedLogit.correlation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.NestsForCrossNestedLogit.correlation" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Calculate the correlation matrix of the error terms of all</dt><dd><p>alternatives of cross-nested logit model.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – values of the parameters.</p></li>
+<li><p><strong>alternatives_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – names of the alternative, for
+better reporting. If not provided, the number are used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>correlation matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.NestsForCrossNestedLogit.covariance">
+<span class="sig-name descname"><span class="pre">covariance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#NestsForCrossNestedLogit.covariance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.NestsForCrossNestedLogit.covariance" title="Link to this definition"></a></dt>
+<dd><p>Calculate the covariance between the error terms of two
+alternatives of a cross-nested logit model. It is assumed that
+the homogeneity parameter mu of the model has been normalized
+to one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – values of the parameters.</p></li>
+<li><p><strong>i</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – first alternative</p></li>
+<li><p><strong>j</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – second alternative</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value of the correlation</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if the requested number is non-positive or a float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.NestsForCrossNestedLogit.get_alpha_dict">
+<span class="sig-name descname"><span class="pre">get_alpha_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alternative_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#NestsForCrossNestedLogit.get_alpha_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.NestsForCrossNestedLogit.get_alpha_dict" title="Link to this definition"></a></dt>
+<dd><p>Generates a dict mapping each nest with the alpha
+parameter, for a given alternative</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>alternative_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – identifier of the alternative</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a dict mapping the name of a nest and the alpha expression</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.NestsForCrossNestedLogit.get_alpha_values">
+<span class="sig-name descname"><span class="pre">get_alpha_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alternative_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#NestsForCrossNestedLogit.get_alpha_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.NestsForCrossNestedLogit.get_alpha_values" title="Link to this definition"></a></dt>
+<dd><p>Generates a dict mapping each nest with the value of the alpha
+parameters, for a given alternative</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>alternative_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – identifier of the alternative</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a dict mapping the name of a nest and the value of the alpha expression</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.nests.NestsForNestedLogit">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.nests.</span></span><span class="sig-name descname"><span class="pre">NestsForNestedLogit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choice_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tuple_of_nests</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#NestsForNestedLogit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.NestsForNestedLogit" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#biogeme.nests.Nests" title="biogeme.nests.Nests"><code class="xref py py-class docutils literal notranslate"><span class="pre">Nests</span></code></a></p>
+<p>This class handles nests for the nested logit model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>choice_set</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>tuple_of_nests</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="#biogeme.nests.OneNestForNestedLogit" title="biogeme.nests.OneNestForNestedLogit"><em>OneNestForNestedLogit</em></a><em>, </em><em>...</em><em>] </em><em>| </em><em>OldNestsForNestedLogit</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.NestsForNestedLogit.check_intersection">
+<span class="sig-name descname"><span class="pre">check_intersection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#NestsForNestedLogit.check_intersection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.NestsForNestedLogit.check_intersection" title="Link to this definition"></a></dt>
+<dd><p>Check if the intersection of nests is empty</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a boolean with the result of the check, and a message if check fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.NestsForNestedLogit.check_partition">
+<span class="sig-name descname"><span class="pre">check_partition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#NestsForNestedLogit.check_partition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.NestsForNestedLogit.check_partition" title="Link to this definition"></a></dt>
+<dd><p>Check if the nests correspond to a partition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a boolean with the result of the check, and a message if check fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.NestsForNestedLogit.correlation">
+<span class="sig-name descname"><span class="pre">correlation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternatives_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#NestsForNestedLogit.correlation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.NestsForNestedLogit.correlation" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Calculate the correlation matrix of the error terms of all</dt><dd><p>alternatives of a nested logit model.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – values of the parameters.</p></li>
+<li><p><strong>alternatives_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – dictionary associating a name with each alternative.</p></li>
+<li><p><strong>mu</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – value of the scale parameter mu.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>correlation matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.nests.OneNestForCrossNestedLogit">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.nests.</span></span><span class="sig-name descname"><span class="pre">OneNestForCrossNestedLogit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nest_param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_of_alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#OneNestForCrossNestedLogit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.OneNestForCrossNestedLogit" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Tuple capturing the information for one nest of the cross-nested logit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nest_param</strong> (<a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em> | </em><em>float</em><em> | </em><em>int</em><em> | </em><em>bool</em>)</p></li>
+<li><p><strong>dict_of_alpha</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em> | </em><em>float</em><em> | </em><em>int</em><em> | </em><em>bool</em><em>]</em>)</p></li>
+<li><p><strong>name</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.OneNestForCrossNestedLogit.all_alpha_fixed">
+<span class="sig-name descname"><span class="pre">all_alpha_fixed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#OneNestForCrossNestedLogit.all_alpha_fixed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.OneNestForCrossNestedLogit.all_alpha_fixed" title="Link to this definition"></a></dt>
+<dd><p>Check if the alpha parameters have a numeric value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.nests.OneNestForCrossNestedLogit.dict_of_alpha">
+<span class="sig-name descname"><span class="pre">dict_of_alpha</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">,</span> <a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code><span class="pre">]</span></em><a class="headerlink" href="#biogeme.nests.OneNestForCrossNestedLogit.dict_of_alpha" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.OneNestForCrossNestedLogit.from_tuple">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#OneNestForCrossNestedLogit.from_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.OneNestForCrossNestedLogit.from_tuple" title="Link to this definition"></a></dt>
+<dd><p>Ctor to initialize the nest using the old syntax of Biogeme with a tuple</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#biogeme.nests.OneNestForCrossNestedLogit" title="biogeme.nests.OneNestForCrossNestedLogit"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneNestForCrossNestedLogit</span></code></a></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>the_tuple</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em> | </em><em>float</em><em> | </em><em>int</em><em> | </em><em>bool</em><em>, </em><em>dict</em><em>[</em><em>int</em><em>, </em><a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em>]</em><em>]</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.nests.OneNestForCrossNestedLogit.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biogeme.nests.OneNestForCrossNestedLogit.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.nests.OneNestForCrossNestedLogit.nest_param">
+<span class="sig-name descname"><span class="pre">nest_param</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></em><a class="headerlink" href="#biogeme.nests.OneNestForCrossNestedLogit.nest_param" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.nests.OneNestForNestedLogit">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.nests.</span></span><span class="sig-name descname"><span class="pre">OneNestForNestedLogit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nest_param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_of_alternatives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#OneNestForNestedLogit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.OneNestForNestedLogit" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class capturing the information for one nest of the nested logit model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nest_param</strong> (<a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em> | </em><em>float</em><em> | </em><em>int</em><em> | </em><em>bool</em>)</p></li>
+<li><p><strong>list_of_alternatives</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>name</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.OneNestForNestedLogit.from_tuple">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#OneNestForNestedLogit.from_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.OneNestForNestedLogit.from_tuple" title="Link to this definition"></a></dt>
+<dd><p>Ctor to initialize the nest using the old syntax of Biogeme with a tuple</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#biogeme.nests.OneNestForNestedLogit" title="biogeme.nests.OneNestForNestedLogit"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneNestForNestedLogit</span></code></a></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>the_tuple</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em> | </em><em>float</em><em> | </em><em>int</em><em> | </em><em>bool</em><em>, </em><em>list</em><em>[</em><em>int</em><em>]</em><em>]</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.nests.OneNestForNestedLogit.intersection">
+<span class="sig-name descname"><span class="pre">intersection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other_nest</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#OneNestForNestedLogit.intersection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.OneNestForNestedLogit.intersection" title="Link to this definition"></a></dt>
+<dd><p>Returns the intersection of two nests. Designed to verify the
+validity of the specification</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>other_nest</strong> (<a class="reference internal" href="#biogeme.nests.OneNestForNestedLogit" title="biogeme.nests.OneNestForNestedLogit"><em>OneNestForNestedLogit</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.nests.OneNestForNestedLogit.list_of_alternatives">
+<span class="sig-name descname"><span class="pre">list_of_alternatives</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">]</span></em><a class="headerlink" href="#biogeme.nests.OneNestForNestedLogit.list_of_alternatives" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.nests.OneNestForNestedLogit.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#biogeme.nests.OneNestForNestedLogit.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.nests.OneNestForNestedLogit.nest_param">
+<span class="sig-name descname"><span class="pre">nest_param</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> <span class="pre">|</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></em><a class="headerlink" href="#biogeme.nests.OneNestForNestedLogit.nest_param" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="biogeme.nests.get_nest">
+<span class="sig-prename descclassname"><span class="pre">biogeme.nests.</span></span><span class="sig-name descname"><span class="pre">get_nest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_nest</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/biogeme/nests.html#get_nest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.nests.get_nest" title="Link to this definition"></a></dt>
+<dd><p>Convert a nest definition to an OneNestForNestedLogot, if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a_nest</strong> (<a class="reference internal" href="#biogeme.nests.OneNestForNestedLogit" title="biogeme.nests.OneNestForNestedLogit"><em>OneNestForNestedLogit</em></a><em> | </em><em>tuple</em><em>[</em><a class="reference internal" href="expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a><em> | </em><em>float</em><em> | </em><em>int</em><em> | </em><em>bool</em><em>, </em><em>list</em><em>[</em><em>int</em><em>]</em><em>]</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="negative_likelihood.html" class="btn btn-neutral float-left" title="biogeme.negative_likelihood module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="optimization.html" class="btn btn-neutral float-right" title="biogeme.optimization module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

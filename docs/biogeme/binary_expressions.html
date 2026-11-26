@@ -1,0 +1,537 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.expressions.binary_expressions module &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=0b773b56"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">biogeme.expressions.binary_expressions module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/binary_expressions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-biogeme.expressions.binary_expressions">
+<span id="biogeme-expressions-binary-expressions-module"></span><h1>biogeme.expressions.binary_expressions module<a class="headerlink" href="#module-biogeme.expressions.binary_expressions" title="Link to this heading"></a></h1>
+<p>Arithmetic expressions accepted by Biogeme: binary operators</p>
+<dl class="field-list simple">
+<dt class="field-odd">author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Michel Bierlaire</p>
+</dd>
+<dt class="field-even">date<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sat Sep  9 15:18:27 2023</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.And">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.binary_expressions.</span></span><span class="sig-name descname"><span class="pre">And</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#And"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.And" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.BinaryOperator" title="biogeme.expressions.binary_expressions.BinaryOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryOperator</span></code></a></p>
+<p>Logical and</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+<li><p><strong>right</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.And.getValue">
+<span class="sig-name descname"><span class="pre">getValue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#And.getValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.And.getValue" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.And.get_value" title="biogeme.expressions.binary_expressions.And.get_value"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.And.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#And.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.And.get_value" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the value of the expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value of the expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.BinaryOperator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.binary_expressions.</span></span><span class="sig-name descname"><span class="pre">BinaryOperator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#BinaryOperator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.BinaryOperator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><code class="xref py py-class docutils literal notranslate"><span class="pre">Expression</span></code></a></p>
+<p>Base class for arithmetic expressions that are binary operators.
+This expression is the result of the combination of two expressions,
+typically addition, subtraction, multiplication or division.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+<li><p><strong>right</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Divide">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.binary_expressions.</span></span><span class="sig-name descname"><span class="pre">Divide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Divide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Divide" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.BinaryOperator" title="biogeme.expressions.binary_expressions.BinaryOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryOperator</span></code></a></p>
+<p>Division expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+<li><p><strong>right</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Divide.getValue">
+<span class="sig-name descname"><span class="pre">getValue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Divide.getValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Divide.getValue" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.Divide.get_value" title="biogeme.expressions.binary_expressions.Divide.get_value"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Divide.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Divide.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Divide.get_value" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the value of the expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value of the expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Minus">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.binary_expressions.</span></span><span class="sig-name descname"><span class="pre">Minus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Minus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Minus" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.BinaryOperator" title="biogeme.expressions.binary_expressions.BinaryOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryOperator</span></code></a></p>
+<p>Substraction expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+<li><p><strong>right</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Minus.getValue">
+<span class="sig-name descname"><span class="pre">getValue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Minus.getValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Minus.getValue" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.Minus.get_value" title="biogeme.expressions.binary_expressions.Minus.get_value"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Minus.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Minus.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Minus.get_value" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the value of the expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value of the expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Or">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.binary_expressions.</span></span><span class="sig-name descname"><span class="pre">Or</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Or"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Or" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.BinaryOperator" title="biogeme.expressions.binary_expressions.BinaryOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryOperator</span></code></a></p>
+<p>Logical or</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+<li><p><strong>right</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Or.getValue">
+<span class="sig-name descname"><span class="pre">getValue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Or.getValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Or.getValue" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.Or.get_value" title="biogeme.expressions.binary_expressions.Or.get_value"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Or.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Or.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Or.get_value" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the value of the expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value of the expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Plus">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.binary_expressions.</span></span><span class="sig-name descname"><span class="pre">Plus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Plus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Plus" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.BinaryOperator" title="biogeme.expressions.binary_expressions.BinaryOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryOperator</span></code></a></p>
+<p>Addition expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+<li><p><strong>right</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Plus.getValue">
+<span class="sig-name descname"><span class="pre">getValue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Plus.getValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Plus.getValue" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.Plus.get_value" title="biogeme.expressions.binary_expressions.Plus.get_value"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Plus.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Plus.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Plus.get_value" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the value of the expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value of the expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Power">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.binary_expressions.</span></span><span class="sig-name descname"><span class="pre">Power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Power" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.BinaryOperator" title="biogeme.expressions.binary_expressions.BinaryOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryOperator</span></code></a></p>
+<p>Power expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+<li><p><strong>right</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Power.getValue">
+<span class="sig-name descname"><span class="pre">getValue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Power.getValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Power.getValue" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.Power.get_value" title="biogeme.expressions.binary_expressions.Power.get_value"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Power.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Power.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Power.get_value" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the value of the expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value of the expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Times">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.binary_expressions.</span></span><span class="sig-name descname"><span class="pre">Times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Times" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.BinaryOperator" title="biogeme.expressions.binary_expressions.BinaryOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryOperator</span></code></a></p>
+<p>Multiplication expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+<li><p><strong>right</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Times.getValue">
+<span class="sig-name descname"><span class="pre">getValue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Times.getValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Times.getValue" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.Times.get_value" title="biogeme.expressions.binary_expressions.Times.get_value"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.Times.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#Times.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.Times.get_value" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the value of the expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value of the expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.bioMax">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.binary_expressions.</span></span><span class="sig-name descname"><span class="pre">bioMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#bioMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.bioMax" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.BinaryOperator" title="biogeme.expressions.binary_expressions.BinaryOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryOperator</span></code></a></p>
+<p>Maximum of two expressions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+<li><p><strong>right</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.bioMax.getValue">
+<span class="sig-name descname"><span class="pre">getValue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#bioMax.getValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.bioMax.getValue" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.bioMax.get_value" title="biogeme.expressions.binary_expressions.bioMax.get_value"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.bioMax.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#bioMax.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.bioMax.get_value" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the value of the expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value of the expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.bioMin">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.binary_expressions.</span></span><span class="sig-name descname"><span class="pre">bioMin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#bioMin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.bioMin" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.BinaryOperator" title="biogeme.expressions.binary_expressions.BinaryOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryOperator</span></code></a></p>
+<p>Minimum of two expressions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+<li><p><strong>right</strong> (<em>ExpressionOrNumeric</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.bioMin.getValue">
+<span class="sig-name descname"><span class="pre">getValue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#bioMin.getValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.bioMin.getValue" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/binary_expressions.html#biogeme.expressions.binary_expressions.bioMin.get_value" title="biogeme.expressions.binary_expressions.bioMin.get_value"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.binary_expressions.bioMin.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/binary_expressions.html#bioMin.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.binary_expressions.bioMin.get_value" title="Link to this definition"></a></dt>
+<dd><p>Evaluates the value of the expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>value of the expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

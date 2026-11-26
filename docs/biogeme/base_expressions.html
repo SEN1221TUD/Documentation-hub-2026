@@ -1,0 +1,1107 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>biogeme.expressions.base_expressions module &mdash; Biogeme 3.2.14 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=0b773b56"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Biogeme
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code/toml.html">Configuration parameters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code/native_draws.html">Native draws</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code/biogeme.html">.biogeme module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Biogeme</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">biogeme.expressions.base_expressions module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/base_expressions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-biogeme.expressions.base_expressions">
+<span id="biogeme-expressions-base-expressions-module"></span><h1>biogeme.expressions.base_expressions module<a class="headerlink" href="#module-biogeme.expressions.base_expressions" title="Link to this heading"></a></h1>
+<p>Arithmetic expressions accepted by Biogeme: generic class</p>
+<dl class="field-list simple">
+<dt class="field-odd">author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Michel Bierlaire</p>
+</dd>
+<dt class="field-even">date<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sat Sep  9 15:25:07 2023</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">biogeme.expressions.base_expressions.</span></span><span class="sig-name descname"><span class="pre">Expression</span></span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This is the general arithmetic expression in biogeme.
+It serves as a base class for concrete expressions.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.audit">
+<span class="sig-name descname"><span class="pre">audit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.audit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.audit" title="Link to this definition"></a></dt>
+<dd><p>Performs various checks on the expressions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>database</strong> (<a class="reference internal" href="database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>) – database object</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple list_of_errors, list_of_warnings</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em>(string), <em>list</em>(string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.central_controller">
+<span class="sig-name descname"><span class="pre">central_controller</span></span><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.central_controller" title="Link to this definition"></a></dt>
+<dd><p>Central controller for the multiple expressions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.change_init_values">
+<span class="sig-name descname"><span class="pre">change_init_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">betas</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.change_init_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.change_init_values" title="Link to this definition"></a></dt>
+<dd><p>Modifies the initial values of the Beta parameters.</p>
+<p>The fact that the parameters are fixed or free is irrelevant here.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>betas</strong> (<em>dict</em><em>(</em><em>string:float</em><em>)</em>) – dictionary where the keys are the names of the
+parameters, and the values are the new value for
+the parameters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.check_draws">
+<span class="sig-name descname"><span class="pre">check_draws</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.check_draws"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.check_draws" title="Link to this definition"></a></dt>
+<dd><p>Set of draws defined outside of ‘MonteCarlo’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of names of variables</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.check_panel_trajectory">
+<span class="sig-name descname"><span class="pre">check_panel_trajectory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.check_panel_trajectory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.check_panel_trajectory" title="Link to this definition"></a></dt>
+<dd><p>Set of variables defined outside of ‘PanelLikelihoodTrajectory’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of names of variables</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.check_rv">
+<span class="sig-name descname"><span class="pre">check_rv</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.check_rv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.check_rv" title="Link to this definition"></a></dt>
+<dd><p>Set of random variables defined outside of ‘Integrate’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of names of variables</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.children">
+<span class="sig-name descname"><span class="pre">children</span></span><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.children" title="Link to this definition"></a></dt>
+<dd><p>List of children expressions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.configure_catalogs">
+<span class="sig-name descname"><span class="pre">configure_catalogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configuration</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.configure_catalogs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.configure_catalogs" title="Link to this definition"></a></dt>
+<dd><p>Select the items in each catalog corresponding to the requested configuration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configuration</strong> (<a class="reference internal" href="code/biogeme/configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><em>Configuration</em></a>) – catalog configuration</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.contains_catalog">
+<span class="sig-name descname"><span class="pre">contains_catalog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.contains_catalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.contains_catalog" title="Link to this definition"></a></dt>
+<dd><p>Check if the expression contains a specific catalog</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – name of the catalog to search.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the given catalog is contained in the
+expression. False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>bool</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.countPanelTrajectoryExpressions">
+<span class="sig-name descname"><span class="pre">countPanelTrajectoryExpressions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.countPanelTrajectoryExpressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.countPanelTrajectoryExpressions" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression.count_panel_trajectory_expressions" title="biogeme.expressions.base_expressions.Expression.count_panel_trajectory_expressions"><code class="xref py py-func docutils literal notranslate"><span class="pre">count_panel_trajectory_expressions()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.count_panel_trajectory_expressions">
+<span class="sig-name descname"><span class="pre">count_panel_trajectory_expressions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.count_panel_trajectory_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.count_panel_trajectory_expressions" title="Link to this definition"></a></dt>
+<dd><p>Count the number of times the PanelLikelihoodTrajectory
+is used in the formula. It should trigger an error if it
+is used more than once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>number of times the PanelLikelihoodTrajectory
+is used in the formula</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>int</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.createFunction">
+<span class="sig-name descname"><span class="pre">createFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_draws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hessian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bhhh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.createFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.createFunction" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression.create_function" title="biogeme.expressions.base_expressions.Expression.create_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_function()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <a class="reference internal" href="code/biogeme/function_output.html#biogeme.function_output.BiogemeFunctionOutput" title="biogeme.function_output.BiogemeFunctionOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">BiogemeFunctionOutput</span></code></a>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>database</strong> (<a class="reference internal" href="database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>number_of_draws</strong> (<em>int</em>)</p></li>
+<li><p><strong>gradient</strong> (<em>bool</em>)</p></li>
+<li><p><strong>hessian</strong> (<em>bool</em>)</p></li>
+<li><p><strong>bhhh</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.create_function">
+<span class="sig-name descname"><span class="pre">create_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_draws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hessian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bhhh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.create_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.create_function" title="Link to this definition"></a></dt>
+<dd><p>Create a function based on the expression. The function takes as
+argument an array for the free parameters, and return the
+value of the function, the gradient, the hessian and the BHHH. The
+calculation of the derivatives is optional.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<a class="reference internal" href="database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>) – database. If no database is provided, the
+expression must not contain any variable.</p></li>
+<li><p><strong>number_of_draws</strong> (<em>int</em>) – number of draws if needed by Monte-Carlo
+integration.</p></li>
+<li><p><strong>gradient</strong> (<em>bool</em>) – if True, the gradient is calculated.</p></li>
+<li><p><strong>hessian</strong> (<em>bool</em>) – if True, the hessian is calculated.</p></li>
+<li><p><strong>bhhh</strong> (<em>bool</em>) – if True, the BHHH matrix is calculated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the function. It will return, in that order, the
+value of the function, the gradient, the hessian and the
+BHHH matrix. Only requested quantities will be
+returned. For instance, if the gradient and the BHHH
+matrix are requested, and not the hessian, the tuple that
+is returned is f, g, bhhh.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>fct(np.array)</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="code/biogeme/exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if gradient is False and hessian or BHHH is True.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.create_objective_function">
+<span class="sig-name descname"><span class="pre">create_objective_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_draws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hessian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bhhh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.create_objective_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.create_objective_function" title="Link to this definition"></a></dt>
+<dd><p>Create a function based on the expression that complies
+with the interface of the biogeme_optimization model. The
+function takes as argument an array for the free parameters,
+and return the value of the function, the gradient, the
+hessian and the BHHH. The calculation of the derivatives is
+optional.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<a class="reference internal" href="database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>) – database. If no database is provided, the
+expression must not contain any variable.</p></li>
+<li><p><strong>number_of_draws</strong> (<em>int</em>) – number of draws if needed by Monte-Carlo
+integration.</p></li>
+<li><p><strong>gradient</strong> (<em>bool</em>) – if True, the gradient is calculated.</p></li>
+<li><p><strong>hessian</strong> (<em>bool</em>) – if True, the hessian is calculated.</p></li>
+<li><p><strong>bhhh</strong> (<em>bool</em>) – if True, the BHHH matrix is calculated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the function object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>FunctionToMinimize</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="code/biogeme/exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if gradient is False and hessian or BHHH is True.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.current_configuration">
+<span class="sig-name descname"><span class="pre">current_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.current_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.current_configuration" title="Link to this definition"></a></dt>
+<dd><p>Obtain the current configuration of an expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>configuration</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="code/biogeme/configuration.html#biogeme.configuration.Configuration" title="biogeme.configuration.Configuration"><em>Configuration</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.dict_of_catalogs">
+<span class="sig-name descname"><span class="pre">dict_of_catalogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ignore_synchronized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.dict_of_catalogs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.dict_of_catalogs" title="Link to this definition"></a></dt>
+<dd><p>Returns a dict with all catalogs in the expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="code/biogeme/catalog.html#biogeme.catalog.Catalog" title="biogeme.catalog.Catalog"><code class="xref py py-class docutils literal notranslate"><span class="pre">Catalog</span></code></a>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict with all the catalogs</p>
+</dd>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ignore_synchronized</strong> (<em>bool</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.dict_of_draw_types">
+<span class="sig-name descname"><span class="pre">dict_of_draw_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.dict_of_draw_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.dict_of_draw_types" title="Link to this definition"></a></dt>
+<dd><p>Extract a dict containing the types of draws involved in the expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[slice(&lt;class ‘str’&gt;, &lt;class ‘str’&gt;, None)]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.dict_of_elementary_expression">
+<span class="sig-name descname"><span class="pre">dict_of_elementary_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.dict_of_elementary_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.dict_of_elementary_expression" title="Link to this definition"></a></dt>
+<dd><p>Extract a dict with all elementary expressions of a specific type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>the_type</strong> (<a class="reference internal" href="elementary_types.html#biogeme.expressions.elementary_types.TypeOfElementaryExpression" title="biogeme.expressions.elementary_types.TypeOfElementaryExpression"><em>TypeOfElementaryExpression</em></a>) – the type of expression</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>returns a dict with the variables appearing in the
+expression the keys being their names.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em>(string:biogeme.expressions.Expression)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.embedExpression">
+<span class="sig-name descname"><span class="pre">embedExpression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.embedExpression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.embedExpression" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression.embed_expression" title="biogeme.expressions.base_expressions.Expression.embed_expression"><code class="xref py py-func docutils literal notranslate"><span class="pre">embed_expression()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>t</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.embed_expression">
+<span class="sig-name descname"><span class="pre">embed_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.embed_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.embed_expression" title="Link to this definition"></a></dt>
+<dd><p>Check if the expression contains an expression of type t.</p>
+<p>Typically, this would be used to check that a MonteCarlo
+expression contains a bioDraws expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the expression contains an expression of type t.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>bool</em></p>
+</dd>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.fix_betas">
+<span class="sig-name descname"><span class="pre">fix_betas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.fix_betas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.fix_betas" title="Link to this definition"></a></dt>
+<dd><p>Fix all the values of the Beta parameters appearing in the
+dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>beta_values</strong> (<em>dict</em><em>(</em><em>str: float</em><em>)</em>) – dictionary containing the betas to be
+fixed (as key) and their value.</p></li>
+<li><p><strong>prefix</strong> (<em>str</em>) – if not None, the parameter is renamed, with a
+prefix defined by this argument.</p></li>
+<li><p><strong>suffix</strong> (<em>str</em>) – if not None, the parameter is renamed, with a
+suffix defined by this argument.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.fixedBetaValues">
+<span class="sig-name descname"><span class="pre">fixedBetaValues</span></span><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.fixedBetaValues" title="Link to this definition"></a></dt>
+<dd><p>values of the Beta that are not estimated</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.getClassName">
+<span class="sig-name descname"><span class="pre">getClassName</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.getClassName"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.getClassName" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression.get_class_name" title="biogeme.expressions.base_expressions.Expression.get_class_name"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_class_name()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.getElementaryExpression">
+<span class="sig-name descname"><span class="pre">getElementaryExpression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.getElementaryExpression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.getElementaryExpression" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression.get_elementary_expression" title="biogeme.expressions.base_expressions.Expression.get_elementary_expression"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_elementary_expression()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="elementary_expressions.html#biogeme.expressions.elementary_expressions.Elementary" title="biogeme.expressions.elementary_expressions.Elementary"><code class="xref py py-class docutils literal notranslate"><span class="pre">Elementary</span></code></a> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>name</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.getSignature">
+<span class="sig-name descname"><span class="pre">getSignature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.getSignature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.getSignature" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression.get_signature" title="biogeme.expressions.base_expressions.Expression.get_signature"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_signature()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.getStatusIdManager">
+<span class="sig-name descname"><span class="pre">getStatusIdManager</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.getStatusIdManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.getStatusIdManager" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression.get_status_id_manager" title="biogeme.expressions.base_expressions.Expression.get_status_id_manager"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_status_id_manager()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.getValue">
+<span class="sig-name descname"><span class="pre">getValue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.getValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.getValue" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression.get_value" title="biogeme.expressions.base_expressions.Expression.get_value"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.getValueAndDerivatives">
+<span class="sig-name descname"><span class="pre">getValueAndDerivatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">betas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_draws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hessian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bhhh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepare_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.getValueAndDerivatives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.getValueAndDerivatives" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression.get_value_and_derivatives" title="biogeme.expressions.base_expressions.Expression.get_value_and_derivatives"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value_and_derivatives()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code> | <a class="reference internal" href="code/biogeme/function_output.html#biogeme.function_output.FunctionOutput" title="biogeme.function_output.FunctionOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">FunctionOutput</span></code></a></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>betas</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>database</strong> (<a class="reference internal" href="database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>number_of_draws</strong> (<em>int</em>)</p></li>
+<li><p><strong>gradient</strong> (<em>bool</em>)</p></li>
+<li><p><strong>hessian</strong> (<em>bool</em>)</p></li>
+<li><p><strong>bhhh</strong> (<em>bool</em>)</p></li>
+<li><p><strong>aggregation</strong> (<em>bool</em>)</p></li>
+<li><p><strong>prepare_ids</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.getValue_c">
+<span class="sig-name descname"><span class="pre">getValue_c</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">betas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_draws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepare_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.getValue_c"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.getValue_c" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression.get_value_c" title="biogeme.expressions.base_expressions.Expression.get_value_c"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_value_c()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<a class="reference internal" href="database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>betas</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>number_of_draws</strong> (<em>int</em>)</p></li>
+<li><p><strong>aggregation</strong> (<em>bool</em>)</p></li>
+<li><p><strong>prepare_ids</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.get_all_controllers">
+<span class="sig-name descname"><span class="pre">get_all_controllers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.get_all_controllers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.get_all_controllers" title="Link to this definition"></a></dt>
+<dd><p>Provides all controllers  controlling the specifications of a multiple expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a set of controllers</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>set</em>(<a class="reference internal" href="code/biogeme/controller.html#biogeme.controller.Controller" title="biogeme.controller.Controller"><em>Controller</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.get_beta_values">
+<span class="sig-name descname"><span class="pre">get_beta_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.get_beta_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.get_beta_values" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Returns a dict with the initial values of Beta. Typically</dt><dd><p>useful for simulation.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict with the initial values of the Beta</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em>(str: float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.get_children">
+<span class="sig-name descname"><span class="pre">get_children</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.get_children"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.get_children" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the list of children</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of children</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list</em>(<a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression" title="biogeme.expressions.base_expressions.Expression"><em>Expression</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.get_class_name">
+<span class="sig-name descname"><span class="pre">get_class_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.get_class_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.get_class_name" title="Link to this definition"></a></dt>
+<dd><p>Obtain the name of the top class of the expression structure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the name of the class</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.get_elementary_expression">
+<span class="sig-name descname"><span class="pre">get_elementary_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.get_elementary_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.get_elementary_expression" title="Link to this definition"></a></dt>
+<dd><p>Return: an elementary expression from its name if it appears in the
+expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>string</em>) – name of the elementary expression.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the expression if it exists. None otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>biogeme.expressions.Expression</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.get_id">
+<span class="sig-name descname"><span class="pre">get_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.get_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.get_id" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the id of the expression used in the signature</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>id of the object</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>int</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.get_signature">
+<span class="sig-name descname"><span class="pre">get_signature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.get_signature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.get_signature" title="Link to this definition"></a></dt>
+<dd><p>The signature of a string characterizing an expression.</p>
+<p>This is designed to be communicated to C++, so that the
+expression can be reconstructed in this environment.</p>
+<p>The list contains the following elements:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>the signatures of all the children expressions,</p></li>
+<li><p>the name of the expression between &lt; &gt;</p></li>
+<li><p>the id of the expression between { }</p></li>
+<li><p>the number of children between ( )</p></li>
+<li><p>the ids of each children, preceeded by a comma.</p></li>
+</ol>
+</div></blockquote>
+<p>Consider the following expression:</p>
+<div class="math notranslate nohighlight">
+\[2 \beta_1  V_1 -
+\frac{\exp(-\beta_2 V_2) }
+{ \beta_3  (\beta_2 \geq \beta_1)}.\]</div>
+<p>It is defined as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta1</span> <span class="o">*</span> <span class="n">Variable1</span> <span class="o">-</span> <span class="n">expressions</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">beta2</span><span class="o">*</span><span class="n">Variable2</span><span class="p">)</span> <span class="o">/</span>
+     <span class="p">(</span><span class="n">beta3</span> <span class="o">*</span> <span class="p">(</span><span class="n">beta2</span> <span class="o">&gt;=</span> <span class="n">beta1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>And its signature is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;&lt;Numeric&gt;</span><span class="si">{4780527008}</span><span class="s1">,2&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277152}</span><span class="s1">&quot;beta1&quot;[0],0,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780526952}</span><span class="s1">(2),4780527008,4780277152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Variable&gt;</span><span class="si">{4511837152}</span><span class="s1">&quot;Variable1&quot;,5,2&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527064}</span><span class="s1">(2),4780526952,4511837152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277656}</span><span class="s1">&quot;beta2&quot;[0],1,1&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;UnaryMinus&gt;</span><span class="si">{4780527120}</span><span class="s1">(1),4780277656&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Variable&gt;</span><span class="si">{4511837712}</span><span class="s1">&quot;Variable2&quot;,6,3&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527176}</span><span class="s1">(2),4780527120,4511837712&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;exp&gt;</span><span class="si">{4780527232}</span><span class="s1">(1),4780527176&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277264}</span><span class="s1">&quot;beta3&quot;[1],2,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277656}</span><span class="s1">&quot;beta2&quot;[0],1,1&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Beta&gt;</span><span class="si">{4780277152}</span><span class="s1">&quot;beta1&quot;[0],0,0&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;GreaterOrEqual&gt;</span><span class="si">{4780527288}</span><span class="s1">(2),4780277656,4780277152&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Times&gt;</span><span class="si">{4780527344}</span><span class="s1">(2),4780277264,4780527288&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Divide&gt;</span><span class="si">{4780527400}</span><span class="s1">(2),4780527232,4780527344&#39;</span><span class="p">,</span>
+ <span class="sa">b</span><span class="s1">&#39;&lt;Minus&gt;</span><span class="si">{4780527456}</span><span class="s1">(2),4780527064,4780527400&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of the signatures of an expression and its children.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list</em>(string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.get_status_id_manager">
+<span class="sig-name descname"><span class="pre">get_status_id_manager</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.get_status_id_manager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.get_status_id_manager" title="Link to this definition"></a></dt>
+<dd><p>Check the elementary expressions that are associated with
+an ID manager.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>two sets of elementary expressions, those with and
+without an ID manager.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.get_value" title="Link to this definition"></a></dt>
+<dd><p>Abstract method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.get_value_and_derivatives">
+<span class="sig-name descname"><span class="pre">get_value_and_derivatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">betas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_draws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hessian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bhhh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepare_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">named_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.get_value_and_derivatives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.get_value_and_derivatives" title="Link to this definition"></a></dt>
+<dd><p>Evaluation of the expression</p>
+<p>In Biogeme the complexity of some expressions requires a
+specific implementation, in C++. This function invokes the
+C++ code to evaluate the value of the expression for a
+series of entries in a database. Note that this function
+will generate draws if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>betas</strong> (<em>list</em><em>(</em><em>float</em><em>)</em>) – values of the free parameters</p></li>
+<li><p><strong>database</strong> (<a class="reference internal" href="database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>) – database. If no database is provided, the
+expression must not contain any variable.</p></li>
+<li><p><strong>number_of_draws</strong> (<em>int</em>) – number of draws if needed by Monte-Carlo
+integration.</p></li>
+<li><p><strong>gradient</strong> (<em>bool</em>) – If True, the gradient is calculated.</p></li>
+<li><p><strong>hessian</strong> (<em>bool</em>) – if True, the hessian is  calculated.</p></li>
+<li><p><strong>bhhh</strong> (<em>bool</em>) – if True, the BHHH matrix is calculated.</p></li>
+<li><p><strong>aggregation</strong> (<em>bool</em>) – if a database is provided, and this
+parameter is True, the expression is applied on each entry
+of the database, and all values are aggregated, so that
+the sum is returned. If False, the list of all values is returned.</p></li>
+<li><p><strong>prepare_ids</strong> (<em>bool</em>) – if True, it means that the IDs of the
+expression must be constructed before the evaluation of
+the expression.</p></li>
+<li><p><strong>named_results</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – if True, the gradients, hessians, etc. are reported as dicts associating the names of
+the variables with their corresponding entry.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>if a database is provided, a list where each entry is
+the result of applying the expression on one entry of the
+database. It returns a float, a vector, and a matrix,
+depending if derivatives are requested.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array or <em>float</em>, numpy.array, numpy.array</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="code/biogeme/exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if no database is given and the
+expressions involves variables.</p></li>
+<li><p><a class="reference internal" href="code/biogeme/exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if gradient is False and hessian or BHHH is True.</p></li>
+<li><p><a class="reference internal" href="code/biogeme/exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if derivatives are asked, and the expression
+is not simple.</p></li>
+<li><p><a class="reference internal" href="code/biogeme/exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if the expression involves MonteCarlo integration,
+and no database is provided.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.get_value_c">
+<span class="sig-name descname"><span class="pre">get_value_c</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">betas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_draws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepare_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.get_value_c"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.get_value_c" title="Link to this definition"></a></dt>
+<dd><p>Evaluation of the expression, without the derivatives</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>betas</strong> (<em>list</em><em>(</em><em>float</em><em>)</em>) – values of the free parameters</p></li>
+<li><p><strong>database</strong> (<a class="reference internal" href="database.html#biogeme.database.Database" title="biogeme.database.Database"><em>Database</em></a>) – database. If no database is provided, the
+expression must not contain any variable.</p></li>
+<li><p><strong>number_of_draws</strong> (<em>int</em>) – number of draws if needed by Monte-Carlo
+integration.</p></li>
+<li><p><strong>aggregation</strong> (<em>bool</em>) – if a database is provided, and this
+parameter is True, the expression is applied on each entry
+of the database, and all values are aggregated, so that
+the sum is returned. If False, the list of all values is returned.</p></li>
+<li><p><strong>prepare_ids</strong> (<em>bool</em>) – if True, it means that the IDs of the
+expression must be constructed before the evaluation of
+the expression.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>if a database is provided, a list where each entry is
+the result of applying the expression on one entry of the
+database. It returns a float.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array or <em>float</em></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="code/biogeme/exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if no database is given, and the number
+of returned values is different from one.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.id_manager">
+<span class="sig-name descname"><span class="pre">id_manager</span></span><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.id_manager" title="Link to this definition"></a></dt>
+<dd><p>in charge of the IDs</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.keep_id_manager">
+<span class="sig-name descname"><span class="pre">keep_id_manager</span></span><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.keep_id_manager" title="Link to this definition"></a></dt>
+<dd><p>a copy of the ID manager</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.missingData">
+<span class="sig-name descname"><span class="pre">missingData</span></span><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.missingData" title="Link to this definition"></a></dt>
+<dd><p>Value interpreted as missing data</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.numberOfDraws">
+<span class="sig-name descname"><span class="pre">numberOfDraws</span></span><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.numberOfDraws" title="Link to this definition"></a></dt>
+<dd><p>number of draws for Monte Carlo integration</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.number_of_multiple_expressions">
+<span class="sig-name descname"><span class="pre">number_of_multiple_expressions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.number_of_multiple_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.number_of_multiple_expressions" title="Link to this definition"></a></dt>
+<dd><p>Reports the number of multiple expressions available through the iterator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>number of  multiple expressions</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>int</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.prepare">
+<span class="sig-name descname"><span class="pre">prepare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_draws</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.prepare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.prepare" title="Link to this definition"></a></dt>
+<dd><p>Prepare the expression to be evaluated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="database.html#biogeme.database.Database" title="biogeme.database.Database"><code class="xref py py-class docutils literal notranslate"><span class="pre">Database</span></code></a></span>) – Biogeme database</p></li>
+<li><p><strong>number_of_draws</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – number of draws for Monte-Carlo integration</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.rename_elementary">
+<span class="sig-name descname"><span class="pre">rename_elementary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.rename_elementary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.rename_elementary" title="Link to this definition"></a></dt>
+<dd><p>Rename elementary expressions by adding a prefix and/or a suffix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>names</strong> (<em>list</em><em>(</em><em>str</em><em>)</em>) – names of expressions to rename</p></li>
+<li><p><strong>prefix</strong> (<em>str</em>) – if not None, the expression is renamed, with a
+prefix defined by this argument.</p></li>
+<li><p><strong>suffix</strong> (<em>str</em>) – if not None, the expression is renamed, with a
+suffix defined by this argument.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.requiresDraws">
+<span class="sig-name descname"><span class="pre">requiresDraws</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.requiresDraws"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.requiresDraws" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression.requires_draws" title="biogeme.expressions.base_expressions.Expression.requires_draws"><code class="xref py py-func docutils literal notranslate"><span class="pre">requires_draws()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.requires_draws">
+<span class="sig-name descname"><span class="pre">requires_draws</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.requires_draws"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.requires_draws" title="Link to this definition"></a></dt>
+<dd><p>Checks if the expression requires draws</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if it requires draws.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>bool</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.reset_expression_selection">
+<span class="sig-name descname"><span class="pre">reset_expression_selection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.reset_expression_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.reset_expression_selection" title="Link to this definition"></a></dt>
+<dd><p>In each group of expressions, select the first one</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.select_expression">
+<span class="sig-name descname"><span class="pre">select_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controller_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.select_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.select_expression" title="Link to this definition"></a></dt>
+<dd><p>Select a specific expression in a group</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>controller_name</strong> (<em>str</em>) – name of the controller</p></li>
+<li><p><strong>index</strong> (<em>int</em>) – index of the expression in the group</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="code/biogeme/exceptions.html#biogeme.exceptions.BiogemeError" title="biogeme.exceptions.BiogemeError"><strong>BiogemeError</strong></a> – if index is out of range</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.setIdManager">
+<span class="sig-name descname"><span class="pre">setIdManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.setIdManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.setIdManager" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function is deprecated. Use <a class="reference internal" href="code/biogeme/expressions/base_expressions.html#biogeme.expressions.base_expressions.Expression.set_id_manager" title="biogeme.expressions.base_expressions.Expression.set_id_manager"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_id_manager()</span></code></a> instead.</p>
+</div>
+<p>Kept for backward compatibility</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>id_manager</strong> (<a class="reference internal" href="idmanager.html#biogeme.expressions.idmanager.IdManager" title="biogeme.expressions.idmanager.IdManager"><em>IdManager</em></a><em> | </em><em>None</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.set_central_controller">
+<span class="sig-name descname"><span class="pre">set_central_controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_central_controller</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.set_central_controller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.set_central_controller" title="Link to this definition"></a></dt>
+<dd><p>For multiple expressions, defines the central controller</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="code/biogeme/controller.html#biogeme.controller.CentralController" title="biogeme.controller.CentralController"><code class="xref py py-class docutils literal notranslate"><span class="pre">CentralController</span></code></a></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>the_central_controller</strong> (<a class="reference internal" href="code/biogeme/controller.html#biogeme.controller.CentralController" title="biogeme.controller.CentralController"><em>CentralController</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.set_id_manager">
+<span class="sig-name descname"><span class="pre">set_id_manager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.set_id_manager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.set_id_manager" title="Link to this definition"></a></dt>
+<dd><p>The ID manager contains the IDs of the elementary expressions.</p>
+<p>It is externally created, as it may nee to coordinate the
+numbering of several expressions. It is stored only in the
+expressions of type Elementary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id_manager</strong> (<em>class IdManager</em>) – ID manager to be propagated to the
+elementary expressions. If None, all the IDs are set to None.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.set_of_configurations">
+<span class="sig-name descname"><span class="pre">set_of_configurations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.set_of_configurations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.set_of_configurations" title="Link to this definition"></a></dt>
+<dd><p>Provides the set of all possible configurations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.set_of_elementary_expression">
+<span class="sig-name descname"><span class="pre">set_of_elementary_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">the_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.set_of_elementary_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.set_of_elementary_expression" title="Link to this definition"></a></dt>
+<dd><p>Extract a set with all elementary expressions of a specific type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>the_type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="elementary_types.html#biogeme.expressions.elementary_types.TypeOfElementaryExpression" title="biogeme.expressions.elementary_types.TypeOfElementaryExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeOfElementaryExpression</span></code></a></span>) – the type of expression</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>returns a set with the names of the elementary expressions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="biogeme.expressions.base_expressions.Expression.set_of_multiple_expressions">
+<span class="sig-name descname"><span class="pre">set_of_multiple_expressions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/biogeme/expressions/base_expressions.html#Expression.set_of_multiple_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#biogeme.expressions.base_expressions.Expression.set_of_multiple_expressions" title="Link to this definition"></a></dt>
+<dd><p>Set of the multiple expressions found in the current expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a set of descriptions of the multiple expressions</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>set</em>(MultipleExpressionDescription)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Michel Bierlaire.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
